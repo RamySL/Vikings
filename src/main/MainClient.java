@@ -1,0 +1,20 @@
+package main;
+
+import controler.ControlerClient;
+import view.ViewClient;
+import view.ViewServer;
+
+import javax.swing.*;
+
+public class MainClient {
+    public static void main(String[] args) {
+        ViewClient view = new ViewClient();
+        ControlerClient controler = new ControlerClient(view);
+
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(view);
+        frame.pack();
+        frame.setVisible(true);
+    }
+}
