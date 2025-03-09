@@ -1,5 +1,6 @@
 package view;
 
+import model.Mouton;
 import model.Partie;
 
 import javax.swing.*;
@@ -36,7 +37,11 @@ public class ViewPartie extends JPanel{
         // l'antialiasing
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(Color.RED);
-        g2.fillOval(partieModel.getMouton().getX(), partieModel.getMouton().getY(), 50, 50);
+        Color[] couleurs = new Color[]{Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.PINK, Color.CYAN, Color.MAGENTA};
+        for (Mouton mouton : partieModel.getMoutons()) {
+            g2.setColor(couleurs[mouton.getId()]);
+            g2.fillOval(mouton.getX(), mouton.getY(), 50, 50);
+        }
     }
 
     public JButton getBroadcastButton() {

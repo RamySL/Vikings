@@ -45,6 +45,7 @@ public class ModelServer {
        Socket clientSoket;
        ThreadCommunicationServer threadCommunicationServer;
        int nbJoueursConnectes = 0;
+       ArrayList<Mouton> moutons = new ArrayList<>();
 
        while (nbJoueursConnectes<nbJoueurs) {
            try {
@@ -53,7 +54,9 @@ public class ModelServer {
                System.out.println("Connexion établie avec " + clientSoket.getInetAddress());
                nbJoueursConnectes++;
                // lancer un thread pour communiquer avec le client
-               threadCommunicationServer = new ThreadCommunicationServer(this, clientSoket);
+               Mouton mouton = new Mouton();
+               moutons.add(mouton);
+               threadCommunicationServer = new ThreadCommunicationServer(this, clientSoket, mouton);
                this.clients.add(threadCommunicationServer);
                threadCommunicationServer.start();
            } catch (IOException e) {
@@ -62,8 +65,10 @@ public class ModelServer {
            }
        }
        // Tous le joueurs sont connectés, on init la partie et on l'envoie
-        createPartie();
-       (new ThreadMouvement(this.partie.getMouton())).start();
+        createPartie(moutons);
+       /*for (Mouton mouton : moutons) {
+           (new ThreadMouvement(mouton)).start();
+       }*/
        (new ThreadGameState(this)).start();
 
     }
@@ -71,8 +76,11 @@ public class ModelServer {
     /**
      * Intialise la partie.
      */
-    public void createPartie() {
+    public void createPartie(ArrayList<Mouton> moutons) {
         this.partie = new Partie();
+        for (Mouton mouton : moutons) {
+            this.partie.addMouton(mouton);
+        }
     }
 
     /**

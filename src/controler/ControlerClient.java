@@ -1,23 +1,22 @@
 package controler;
 
+import com.google.gson.Gson;
 import model.ModelClient;
 import view.ViewClient;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 
 /**
  * Gère les évenements déclenchés par l'utilisateur en interagissant avec l'interface graphique du jeu
  */
-public class ControlerClient implements ActionListener, KeyListener {
+public class ControlerClient implements ActionListener, KeyListener, MouseListener {
     private ThreadCommunicationClient threadCommunicationClient;
     private ViewClient view;
 
     public ControlerClient(ViewClient view) {
         this.view = view;
 
+        this.view.getViewPartie().addMouseListener(this);
         this.view.getConnectButton().addActionListener(this);
         this.view.getBroadcastButton().addActionListener(this);
         this.view.getUnicastButton().addActionListener(this);
@@ -43,6 +42,11 @@ public class ControlerClient implements ActionListener, KeyListener {
     }
 
     @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
     public void keyTyped(KeyEvent e) {
 
     }
@@ -53,7 +57,29 @@ public class ControlerClient implements ActionListener, KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void mouseClicked(MouseEvent e) {
+        Gson gson = new Gson();
+        String json = gson.toJson(new PaquetMouvement(e.getX(),e.getY()));
+        this.threadCommunicationClient.getClient().sendMessage(json);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }

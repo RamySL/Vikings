@@ -1,6 +1,9 @@
 package controler;
 
+import com.google.gson.Gson;
 import model.ModelServer;
+import model.Mouton;
+import model.Partie;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,9 +20,11 @@ public class ThreadCommunicationServer extends Thread{
     // Les flux d'IO des sockets
     private PrintWriter out;
     private BufferedReader in;
+    private Mouton mouton;
 
 
-    public ThreadCommunicationServer(ModelServer server, Socket client){
+    public ThreadCommunicationServer(ModelServer server, Socket client, Mouton mouton) {
+        this.mouton=mouton;
         this.client = client;
         this.server = server;
         try {
@@ -67,11 +72,15 @@ public class ThreadCommunicationServer extends Thread{
      * @param message
      */
     public void reactMessage(String message) {
-
-        switch (message) {
+        Gson gson = new Gson();
+        PaquetMouvement paquetMouvement = gson.fromJson(message, PaquetMouvement.class);
+        this.mouton.setX(paquetMouvement.getX());
+        this.mouton.setY(paquetMouvement.getY());
+        // le broadcast de l'état de la partie est fait par threadGameState
+        /*switch (message) {
             default:
                 this.sendMessage("Commande non reconnue");
-        }
+        }*/
     }
 
     /**
@@ -87,4 +96,6 @@ public class ThreadCommunicationServer extends Thread{
         }
         return res;
     }
+
+
 }

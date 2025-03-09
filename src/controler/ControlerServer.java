@@ -30,7 +30,6 @@ public class ControlerServer implements ActionListener {
             this.server = new ModelServer(1234,2);
             // lance un thread avec la méthode launch
             new Thread(() -> this.server.launch()).start();
-
         }
     }
 }

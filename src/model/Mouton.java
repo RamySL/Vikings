@@ -4,6 +4,7 @@ package model;
  * Pour représenter un objet du modèle
  */
 public class Mouton {
+    private static int idstatic = 0;
     private int id;
     private int x;
     private int y;
@@ -13,6 +14,16 @@ public class Mouton {
         this.id = id;
         this.x = x;
         this.y = y;
+
+    }
+
+    public Mouton(int id) {
+        this.id = id;
+    }
+
+    public Mouton(){
+        this(idstatic,100,100);
+        idstatic++;
     }
 
     public int getId() {
