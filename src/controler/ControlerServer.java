@@ -27,7 +27,7 @@ public class ControlerServer implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.view.getConnectButton()){
             // norlement je recupere les infos saisie dans les field
-            this.server = new ModelServer(1234,2);
+            this.server = new ModelServer(1234,4);
             // lance un thread avec la méthode launch
             new Thread(() -> this.server.launch()).start();
         }
