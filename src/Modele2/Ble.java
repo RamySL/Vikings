@@ -1,4 +1,4 @@
-package src.Modele2;
+package Modele2;
 
 public class Ble {
     public static final int LIMITE = 100; // Limite maximale de la taille d'un blé

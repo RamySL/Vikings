@@ -1,6 +1,6 @@
-package src.Controller;
-import src.Modele2.*;
-import src.Vue.PanelBle;
+package Controller;
+import Modele2.*;
+import Vue.PanelBle;
 import java.awt.event.*;
 
 public class PanelBleController {

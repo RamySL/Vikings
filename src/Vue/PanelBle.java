@@ -1,8 +1,8 @@
-package src.Vue;
+package Vue;
 
 import javax.swing.*;
 import java.awt.*;
-import src.Modele2.Ble;
+import Modele2.Ble;
 
 public class PanelBle extends JPanel {
     private Ble ble;

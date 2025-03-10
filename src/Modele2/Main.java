@@ -1,8 +1,8 @@
-package src.Modele2;
+package Modele2;
 
 import javax.swing.*;
-import src.Vue.PanelBle;
-import src.Controller.PanelBleController;
+import Vue.PanelBle;
+import Controller.PanelBleController;
 
 public class Main {
     public static void main(String[] args) {

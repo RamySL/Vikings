@@ -1,5 +1,5 @@
-package src.Modele2;
-import src.Controller.PanelBleController;
+package Modele2;
+import Controller.PanelBleController;
 import java.util.List;
 
 public class Decroissance implements Runnable {
