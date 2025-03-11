@@ -1,4 +1,4 @@
-package model;
+package server.model;
 
 /**
  * Pour représenter un objet du modèle

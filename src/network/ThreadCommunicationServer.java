@@ -1,7 +1,6 @@
-package controler;
+package network;
 
 import com.google.gson.Gson;
-import model.ModelServer;
 import server.model.Mouton;
 
 import java.io.BufferedReader;
@@ -14,7 +13,7 @@ import java.net.Socket;
  * et donc communiquer avec tout le monde en parallel.
  */
 public class ThreadCommunicationServer extends Thread{
-    private ModelServer server;
+    private Server server;
     private Socket client;
     // Les flux d'IO des sockets
     private PrintWriter out;
@@ -22,7 +21,7 @@ public class ThreadCommunicationServer extends Thread{
     private Mouton mouton;
 
 
-    public ThreadCommunicationServer(ModelServer server, Socket client, Mouton mouton) {
+    public ThreadCommunicationServer(Server server, Socket client, Mouton mouton) {
         this.mouton=mouton;
         this.client = client;
         this.server = server;

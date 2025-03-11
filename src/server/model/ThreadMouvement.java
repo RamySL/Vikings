@@ -1,4 +1,4 @@
-package model;
+package server.model;
 
 /**
  * Bouge un objet du modèle

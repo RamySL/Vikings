@@ -1,4 +1,4 @@
-package controler;
+package network;
 
 /**
  * Thread qui envoie l'état du jeu à tous les clients chaque 100ms<p>
@@ -6,9 +6,9 @@ package controler;
  * clients, et donc faire d'autre broadcast en dehors de cette classe.
  */
 public class ThreadGameState extends Thread{
-    private model.ModelServer server;
+    private Server server;
 
-    public ThreadGameState(model.ModelServer server) {
+    public ThreadGameState(Server server) {
         this.server = server;
     }
 

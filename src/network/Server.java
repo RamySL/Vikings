@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Classe pricipale du serveur, Création du serveur, lancement, gestion des connexions, gestion des partie.
  */
-public class ModelServer {
+public class Server {
 
     private ServerSocket socket;
     private ArrayList<ThreadCommunicationServer> clients;
@@ -24,7 +24,7 @@ public class ModelServer {
      * @param port
      * @param nbJoueurs nombre de jr à attendre pour lancer la partie
      */
-    public ModelServer(int port, int nbJoueurs) {
+    public Server(int port, int nbJoueurs) {
         this.nbJoueurs = nbJoueurs;
         try {
             this.socket = new ServerSocket(port);

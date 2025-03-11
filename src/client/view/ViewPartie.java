@@ -1,6 +1,7 @@
 package client.view;
 
 import server.model.Mouton;
+import server.model.Partie;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,16 +9,16 @@ import java.awt.*;
 /**
  * Vue de la partie, Dessine tous les éléments du modèle
  */
-public class Partie extends JPanel{
+public class ViewPartie extends JPanel{
     private JButton broadcastButton, unicastButton;
-    private server.model.Partie partieModel;
+    private Partie partieModel;
 
     /**
      * ? a quoi sert viewCient ?
      * @param viewClient
      * @param partieModel
      */
-    public Partie(ViewClient viewClient, server.model.Partie partieModel) {
+    public ViewPartie(ViewClient viewClient,Partie partieModel) {
         this.partieModel = partieModel;
         // ajouter les boutons broadcast et unicast
         this.setLayout(new BorderLayout());
@@ -51,7 +52,7 @@ public class Partie extends JPanel{
         return unicastButton;
     }
 
-    public void setPartie(server.model.Partie partieModel) {
+    public void setPartie(Partie partieModel) {
         this.partieModel = partieModel;
     }
 

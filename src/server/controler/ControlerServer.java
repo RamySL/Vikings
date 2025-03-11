@@ -1,7 +1,6 @@
-package controler;
+package server.controler;
 
-import model.ModelServer;
-import view.ViewServer;
+import server.view.Server;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,10 +10,10 @@ import java.awt.event.ActionListener;
  * du serveur. Lance le thread du serveur quand l'utilisateur clique sur le bouton.
  */
 public class ControlerServer implements ActionListener {
-    private ModelServer server;
-    private ViewServer view;
+    private network.Server server;
+    private Server view;
 
-    public ControlerServer(ViewServer view) {
+    public ControlerServer(Server view) {
         this.view = view;
         this.view.getConnectButton().addActionListener(this);
     }
@@ -27,7 +26,7 @@ public class ControlerServer implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.view.getConnectButton()){
             // norlement je recupere les infos saisie dans les field
-            this.server = new ModelServer(1234,4);
+            this.server = new network.Server(1234,4);
             // lance un thread avec la méthode launch
             new Thread(() -> this.server.launch()).start();
         }

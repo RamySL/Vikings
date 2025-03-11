@@ -6,11 +6,11 @@ import java.awt.*;
 /**
  * Classe pricipale pour l'interface graphique du serveur.
  */
-public class ViewServer extends JPanel {
+public class Server extends JPanel {
     private CardLayout cardLayout;
     private Lancement lancement;
 
-    public ViewServer() {
+    public Server() {
         //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension(800,600));
         this.cardLayout = new CardLayout();

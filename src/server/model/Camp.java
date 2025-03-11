@@ -1,4 +1,4 @@
-package model;
+package server.model;
 
 /**
  * Représente un camp viking, avec un nombre de guerriers, bétail, nourriture, etc.

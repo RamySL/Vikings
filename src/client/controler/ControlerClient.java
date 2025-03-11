@@ -1,8 +1,10 @@
-package controler;
+package client.controler;
 
 import com.google.gson.Gson;
-import model.ModelClient;
-import view.ViewClient;
+import network.PaquetMouvement;
+import network.ThreadCommunicationClient;
+import network.Client;
+import client.view.ViewClient;
 
 import java.awt.event.*;
 
@@ -27,7 +29,7 @@ public class ControlerClient implements ActionListener, KeyListener, MouseListen
         if (e.getSource() == this.view.getConnectButton()){
             this.view.changeCard("2");
             // On écoute le serveur.// norlement je recupere les infos saisie dans les field
-            this.threadCommunicationClient = new ThreadCommunicationClient(new ModelClient("localhost", 1234), this.view);
+            this.threadCommunicationClient = new ThreadCommunicationClient(new Client("localhost", 1234), this.view);
             this.threadCommunicationClient.start();
         }
 

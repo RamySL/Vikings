@@ -1,4 +1,4 @@
-package view;
+package client.view;
 
 /**
  * Redessine la vue de la partie

@@ -1,6 +1,5 @@
-package controler;
+package network;
 
-import model.ModelClient;
 import server.model.Partie;
 import client.view.ThreadRepaint;
 import client.view.ViewClient;
@@ -10,12 +9,12 @@ import com.google.gson.Gson;
  * Thread qui écouter ce que le serveur envoie et actualise l'interface graphique du client
  */
 public class ThreadCommunicationClient extends Thread{
-    private ModelClient client;
+    private Client client;
     // pour distinguer l'unique moment ou on doit changer
     // la vue ver celle de la partie
     private boolean gameStarted = false;
     private ViewClient view;
-    public ThreadCommunicationClient(ModelClient client, ViewClient view) {
+    public ThreadCommunicationClient(Client client, ViewClient view) {
         this.client = client;
         this.view = view;
     }
@@ -61,7 +60,7 @@ public class ThreadCommunicationClient extends Thread{
         return gson.fromJson(msg, Partie.class);
     }
 
-    public ModelClient getClient() {
+    public Client getClient() {
         return client;
     }
 }

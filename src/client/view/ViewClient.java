@@ -1,6 +1,6 @@
-package view;
+package client.view;
 
-import model.Partie;
+import server.model.Partie;
 
 import javax.swing.*;
 import java.awt.*;

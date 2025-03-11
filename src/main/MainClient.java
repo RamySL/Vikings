@@ -1,8 +1,7 @@
 package main;
 
-import controler.ControlerClient;
-import view.ViewClient;
-import view.ViewServer;
+import client.controler.ControlerClient;
+import client.view.ViewClient;
 
 import javax.swing.*;
 

@@ -1,14 +1,13 @@
 package main;
 
-import controler.ControlerServer;
-import model.ModelServer;
-import view.ViewServer;
+import server.controler.ControlerServer;
+import server.view.Server;
 
 import javax.swing.*;
 
 public class MainServer {
     public static void main(String[] args) {
-        ViewServer view = new ViewServer();
+        Server view = new Server();
         ControlerServer controler = new ControlerServer(view);
 
         JFrame frame = new JFrame();

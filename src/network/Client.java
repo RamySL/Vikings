@@ -10,13 +10,13 @@ import java.net.Socket;
  * ? Peut etre enlver la creation de la socket du constructeur et la mettre dans une methode comme ça le constructeur
  * ne prend pas de param.
  */
-public class ModelClient {
+public class Client {
 
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
 
-    public ModelClient(String host, int port) {
+    public Client(String host, int port) {
         try {
             this.socket = new Socket(host,port);
         } catch (IOException e) {
