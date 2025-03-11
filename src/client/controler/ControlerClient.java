@@ -1,7 +1,8 @@
 package client.controler;
 
 import com.google.gson.Gson;
-import network.PaquetMouvement;
+import network.FormatPacket;
+import network.PaquetCoordClick;
 import network.ThreadCommunicationClient;
 import network.Client;
 import client.view.ViewClient;
@@ -11,7 +12,7 @@ import java.awt.event.*;
 /**
  * Gère les évenements déclenchés par l'utilisateur en interagissant avec l'interface graphique du jeu
  */
-public class ControlerClient implements ActionListener, KeyListener, MouseListener {
+public class ControlerClient extends MouseAdapter implements ActionListener, MouseListener {
     private ThreadCommunicationClient threadCommunicationClient;
     private ViewClient view;
 
@@ -20,8 +21,7 @@ public class ControlerClient implements ActionListener, KeyListener, MouseListen
 
         this.view.getViewPartie().addMouseListener(this);
         this.view.getConnectButton().addActionListener(this);
-        this.view.getBroadcastButton().addActionListener(this);
-        this.view.getUnicastButton().addActionListener(this);
+
     }
 
     @Override
@@ -33,55 +33,17 @@ public class ControlerClient implements ActionListener, KeyListener, MouseListen
             this.threadCommunicationClient.start();
         }
 
-        if(e.getSource() == this.view.getBroadcastButton()){
-            //this.client.sendMessage(this.view.getMessageField().getText());
-            this.threadCommunicationClient.getClient().sendMessage("broadcast");
-        }
-
-        if(e.getSource() == this.view.getUnicastButton()){
-            this.threadCommunicationClient.getClient().sendMessage("unicast");
-        }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         Gson gson = new Gson();
-        String json = gson.toJson(new PaquetMouvement(e.getX(),e.getY()));
-        this.threadCommunicationClient.getClient().sendMessage(json);
+        String contentPaquet = gson.toJson(new PaquetCoordClick(e.getX(),e.getY()));
+
+        // ! ! je pense sans le get c'est mieux
+        this.threadCommunicationClient.getClient().sendMessage(FormatPacket.format("PaquetCoordClick",contentPaquet));
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
 
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
 }

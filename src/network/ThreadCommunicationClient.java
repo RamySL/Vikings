@@ -37,28 +37,26 @@ public class ThreadCommunicationClient extends Thread{
 
     /**
      * Actualise l'interface graphique du client en fonction du message reçu du serveur<p>
-     * Pour l'instant on gère qu'un seule type d'objet reçus.
      * @param msg
      */
     public void reactMessage(String msg){
-        Partie game = deserialize(msg);
-        this.view.actualisePartie(game);
-        if(!gameStarted) {
-            this.view.changeCard("3");
-            new ThreadRepaint(this.view.getViewPartie()).start();
+        Gson gson = new Gson();
+        PacketWrapper wrapper = gson.fromJson(msg, PacketWrapper.class);
+        switch (wrapper.type){
+            case "Partie":
+                Partie game = gson.fromJson(wrapper.content, Partie.class);
+                this.view.actualisePartie(game);
+                if(!gameStarted) {
+                    this.view.changeCard("3");
+                    new ThreadRepaint(this.view.getViewPartie()).start();
+                }
+                break;
+            default:
+                System.out.println("Invalid message format");
         }
+
     }
 
-    /**
-     * Déserialise le meessage reçu par le serveur en objet Partie<p>
-     * Précondition: le message est un objet Partie !! sérialisé
-     * @param msg
-     * @return
-     */
-    public Partie deserialize(String msg){
-        Gson gson = new Gson();
-        return gson.fromJson(msg, Partie.class);
-    }
 
     public Client getClient() {
         return client;

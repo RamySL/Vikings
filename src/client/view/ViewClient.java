@@ -21,7 +21,7 @@ public class ViewClient extends JPanel {
     public ViewClient() {
 
         //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setPreferredSize(new Dimension(800,600));
+        this.setPreferredSize(new Dimension(850,600));
         this.cardLayout = new CardLayout();
 
         this.lancement = new Lancement();

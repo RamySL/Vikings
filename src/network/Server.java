@@ -1,7 +1,7 @@
 package network;
 
 import com.google.gson.Gson;
-import server.model.Mouton;
+import server.model.Camp;
 import server.model.Partie;
 
 import java.io.IOException;
@@ -45,18 +45,20 @@ public class Server {
        Socket clientSoket;
        ThreadCommunicationServer threadCommunicationServer;
        int nbJoueursConnectes = 0;
-       ArrayList<Mouton> moutons = new ArrayList<>();
+        Camp[] camps = new Camp[nbJoueurs];
 
        while (nbJoueursConnectes<nbJoueurs) {
            try {
                System.out.println("En attente de connexion");
                clientSoket =  socket.accept();
                System.out.println("Connexion établie avec " + clientSoket.getInetAddress());
+
+               // On créer un camp pour le client connecté
+               Camp camp = new Camp();
+               System.out.println("Camp créé : " + camp);
+               camps[nbJoueursConnectes] = camp;
                nbJoueursConnectes++;
-               // lancer un thread pour communiquer avec le client
-               Mouton mouton = new Mouton();
-               moutons.add(mouton);
-               threadCommunicationServer = new ThreadCommunicationServer(this, clientSoket, mouton);
+               threadCommunicationServer = new ThreadCommunicationServer(this, clientSoket, camp);
                this.clients.add(threadCommunicationServer);
                threadCommunicationServer.start();
            } catch (IOException e) {
@@ -64,11 +66,7 @@ public class Server {
                throw new RuntimeException(e);
            }
        }
-       // Tous le joueurs sont connectés, on init la partie et on l'envoie
-        createPartie(moutons);
-       /*for (Mouton mouton : moutons) {
-           (new ThreadMouvement(mouton)).start();
-       }*/
+        createPartie(camps);
        (new ThreadGameState(this)).start();
 
     }
@@ -76,11 +74,9 @@ public class Server {
     /**
      * Intialise la partie.
      */
-    public void createPartie(ArrayList<Mouton> moutons) {
-        this.partie = new Partie();
-        for (Mouton mouton : moutons) {
-            this.partie.addMouton(mouton);
-        }
+    public void createPartie(Camp[] camps) {
+        this.partie = new Partie(camps);
+
     }
 
     /**
@@ -88,8 +84,8 @@ public class Server {
      */
     public void broadcastGameState() {
         Gson gson = new Gson();
-        String json = gson.toJson(partie);
-        broadcast(json);
+        String content = gson.toJson(partie);
+        broadcast(FormatPacket.format("Partie",content));
     }
 
     /**
@@ -101,6 +97,12 @@ public class Server {
             client.sendMessage(message);
         }
     }
+    // pour la version generale un Map entre id et coordonnées de camps peut être dans Partie serait une solution
+    public boolean clickOncamp(int campId,int x, int y) {
+        return (campId==0 && x>0 && x<390 && y>0 && y<600)
+                || (campId==1 && x>400 && x<800 && y>0 && y<600);
+    }
+
 
     public void closeConnection() {
         try {

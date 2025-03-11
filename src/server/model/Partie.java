@@ -3,21 +3,19 @@ package server.model;
 import java.util.ArrayList;
 
 /**
- * Classe qui va regroupé toutes les donnée modèle de la partie
+ * Partie de jeu avec les camps
  */
+
 public class Partie {
-    private ArrayList<Mouton> moutons;
+    private Camp[] camps;
 
-    public Partie() {
-        this.moutons = new ArrayList<>();
+
+    public Partie(Camp[] camps ) {
+        this.camps = camps;
     }
 
-    // add a sheep to the list of sheeps
-    public void addMouton(Mouton mouton) {
-        moutons.add(mouton);
+    public Camp[] getCamps() {
+        return camps;
     }
 
-    public ArrayList<Mouton> getMoutons() {
-        return moutons;
-    }
 }

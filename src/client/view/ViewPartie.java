@@ -1,13 +1,14 @@
 package client.view;
 
-import server.model.Mouton;
-import server.model.Partie;
+import server.model.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Vue de la partie, Dessine tous les éléments du modèle
+ * !!! Elle est hardcode pour deux joueurs !!!
  */
 public class ViewPartie extends JPanel{
     private JButton broadcastButton, unicastButton;
@@ -37,10 +38,48 @@ public class ViewPartie extends JPanel{
         // l'antialiasing
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(Color.RED);
-        Color[] couleurs = new Color[]{Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.PINK, Color.CYAN, Color.MAGENTA};
-        for (Mouton mouton : partieModel.getMoutons()) {
-            g2.setColor(couleurs[mouton.getId()]);
-            g2.fillOval(mouton.getX(), mouton.getY(), 50, 50);
+
+        for (Camp camp : partieModel.getCamps()) {
+            drawCamp(camp, g2);
+        }
+
+    }
+
+    private void drawCamp(Camp camp, Graphics2D g2) {
+        g2.setColor(Color.BLUE);
+        if(camp.getId() == 0)
+            g2.drawRect(0, 0, 390, 600);
+        else{
+            g2.drawRect(400, 0, 400, 600);
+        }
+
+        drawVikings(camp.getVikings(),g2);
+        drawLivestock(camp.getLivestock(),g2);
+
+    }
+
+    private void drawLivestock(ArrayList<Cow> livestock, Graphics2D g2) {
+        for (Livestock l : livestock) {
+            if(l instanceof Cow){
+                g2.setColor(Color.GREEN);
+                g2.fillOval(l.getPosition().x + l.getCampId()*400, l.getPosition().y, 16, 16);
+            }
+            else{
+                g2.setColor(Color.YELLOW);
+                g2.fillOval(l.getPosition().x + l.getCampId()*400, l.getPosition().y, 16, 16);
+            }
+
+        }
+    }
+
+    public void drawViking(Warrior viking, Graphics2D g2) {
+        g2.setColor(Color.RED);
+        g2.fillRect(viking.getPosition().x + viking.getCampId()*400 - 8, viking.getPosition().y - 8, 16, 16);
+    }
+
+    public void drawVikings(ArrayList<Warrior> vikings, Graphics2D g2) {
+        for (Warrior viking : vikings) {
+            drawViking(viking, g2);
         }
     }
 
