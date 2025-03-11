@@ -1,8 +1,8 @@
-package model;
+package network;
 
 import com.google.gson.Gson;
-import controler.ThreadCommunicationServer;
-import controler.ThreadGameState;
+import server.model.Mouton;
+import server.model.Partie;
 
 import java.io.IOException;
 import java.net.ServerSocket;

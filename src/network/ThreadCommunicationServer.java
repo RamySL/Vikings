@@ -2,8 +2,7 @@ package controler;
 
 import com.google.gson.Gson;
 import model.ModelServer;
-import model.Mouton;
-import model.Partie;
+import server.model.Mouton;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,9 +1,9 @@
 package controler;
 
 import model.ModelClient;
-import model.Partie;
-import view.ThreadRepaint;
-import view.ViewClient;
+import server.model.Partie;
+import client.view.ThreadRepaint;
+import client.view.ViewClient;
 import com.google.gson.Gson;
 
 /**
