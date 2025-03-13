@@ -49,8 +49,12 @@ public class ThreadCommunicationClient extends Thread{
                 if(!gameStarted) {
                     this.view.changeCard("3");
                     new ThreadRepaint(this.view.getViewPartie()).start();
+                    gameStarted=true;
                 }
                 break;
+            case "PacketOpenPanelControl":
+                PacketOpenPanelControl pCtrl = gson.fromJson(wrapper.content, PacketOpenPanelControl.class);
+                //this.view.changeCard("4");
             default:
                 System.out.println("Invalid message format");
         }

@@ -8,42 +8,32 @@ import java.awt.*;
  */
 public class Server extends JPanel {
     private CardLayout cardLayout;
-    private Lancement lancement;
+    private Start start;
 
     public Server() {
         //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension(800,600));
         this.cardLayout = new CardLayout();
-        this.lancement = new Lancement();
+        this.start = new Start();
         this.setLayout(this.cardLayout);
-        this.add(this.lancement, "1");
+        this.add(this.start, "1");
         this.cardLayout.show(this, "1");
     }
 
     public CardLayout getCardLayout() {
         return cardLayout;
-
     }
 
     public JButton getConnectButton() {
-        return lancement.getConnectButton();
+        return this.start.getConnectButton();
     }
 
-    class Lancement extends JPanel{
-        private JButton connectButton;
-        private JTextField textField;
+    public int getPort(){
+        return this.start.getPort();
+    }
 
-        public Lancement(){
-            connectButton = new JButton("Lancer le server");
-            textField = new JTextField();
-            this.textField.setPreferredSize(new Dimension(200, 50));
-            this.add(connectButton);
-            this.add(textField);
-        }
-
-        public JButton getConnectButton() {
-            return connectButton;
-        }
+    public int getNbPlayers(){
+        return this.start.getNbPlayers();
     }
 
 }

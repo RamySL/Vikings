@@ -18,10 +18,8 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
 
     public ControlerClient(ViewClient view) {
         this.view = view;
-
         this.view.getViewPartie().addMouseListener(this);
         this.view.getConnectButton().addActionListener(this);
-
     }
 
     @Override
@@ -29,7 +27,7 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
         if (e.getSource() == this.view.getConnectButton()){
             this.view.changeCard("2");
             // On écoute le serveur.// norlement je recupere les infos saisie dans les field
-            this.threadCommunicationClient = new ThreadCommunicationClient(new Client("localhost", 1234), this.view);
+            this.threadCommunicationClient = new ThreadCommunicationClient(new Client(this.view.getIp(), this.view.getPort()), this.view);
             this.threadCommunicationClient.start();
         }
 

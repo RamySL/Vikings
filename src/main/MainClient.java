@@ -11,6 +11,8 @@ public class MainClient {
         ControlerClient controler = new ControlerClient(view);
 
         JFrame frame = new JFrame();
+        frame.setIconImage(new ImageIcon("src/ressources/images/viking_ico_64.png").getImage());
+        frame.setTitle("Vikings");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(view);
         frame.pack();

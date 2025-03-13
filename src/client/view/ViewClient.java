@@ -14,9 +14,10 @@ import java.awt.*;
  */
 public class ViewClient extends JPanel {
     private CardLayout cardLayout;
-    private Lancement lancement;
+    private Start start;
     private ViewWaiting viewWaiting;
     private ViewPartie viewPartie;
+    private PartyConfigPanel partyConfigPanel;
 
     public ViewClient() {
 
@@ -24,15 +25,17 @@ public class ViewClient extends JPanel {
         this.setPreferredSize(new Dimension(850,600));
         this.cardLayout = new CardLayout();
 
-        this.lancement = new Lancement();
+        this.start = new Start();
         // A ce moment la partie n'est pas encore lancer don on met null
         this.viewPartie = new ViewPartie(this,null);
         this.viewWaiting = new ViewWaiting();
+        this.partyConfigPanel = new PartyConfigPanel();
 
         this.setLayout(this.cardLayout);
-        this.add(this.lancement, "1");
+        this.add(this.start, "1");
         this.add(this.viewWaiting, "2");
         this.add(this.viewPartie, "3");
+        this.add(this.partyConfigPanel, "4");
 
         this.cardLayout.show(this, "1");
 
@@ -66,36 +69,17 @@ public class ViewClient extends JPanel {
     }
 
     public JButton getConnectButton() {
-        return lancement.getConnectButton();
+        return start.getConnectButton();
     }
 
-    public JButton getBroadcastButton() {
-        return viewPartie.getBroadcastButton();
+    public String getIp(){
+        return this.start.getIp();
     }
 
-    public JButton getUnicastButton() {
-        return viewPartie.getUnicastButton();
+    public int getPort(){
+        return this.start.getPort();
     }
 
-    /**
-     * Vue de lancement
-     */
-    class Lancement extends JPanel{
-        private JButton connectButton;
-        private JTextField textField;
-
-        public Lancement(){
-            connectButton = new JButton("Rejoinre le server");
-            textField = new JTextField();
-            this.textField.setPreferredSize(new Dimension(200, 50));
-            this.add(connectButton);
-            this.add(textField);
-        }
-
-        public JButton getConnectButton() {
-            return connectButton;
-        }
-    }
 
 }
 

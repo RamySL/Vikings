@@ -13,6 +13,7 @@ public class ThreadRepaint extends Thread {
     @Override
     public void run() {
         while (true) {
+            //this.viewPartie.revalidate();
             this.viewPartie.repaint();
             try {
                 Thread.sleep(100);

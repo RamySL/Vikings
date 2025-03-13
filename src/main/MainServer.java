@@ -11,6 +11,8 @@ public class MainServer {
         ControlerServer controler = new ControlerServer(view);
 
         JFrame frame = new JFrame();
+        frame.setIconImage(new ImageIcon("src/ressources/images/vikingServer_ico_128.png").getImage());
+        frame.setTitle("Vikings Server");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(view);
         frame.pack();

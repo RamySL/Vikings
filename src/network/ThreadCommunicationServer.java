@@ -100,6 +100,7 @@ public class ThreadCommunicationServer extends Thread{
                             firstClick=false;
                         }
                         // Et on envoi un message pour ouvrir le panneau (pas encore implementé)
+                        this.sendMessage(FormatPacket.format("PacketOpenPanelControl",gson.toJson(new PacketOpenPanelControl())));
                     }else {
                         // On déplace l'entité vers le click
                         if(entitySelected!=null){
