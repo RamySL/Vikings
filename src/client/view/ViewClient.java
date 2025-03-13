@@ -17,7 +17,7 @@ public class ViewClient extends JPanel {
     private Start start;
     private ViewWaiting viewWaiting;
     private ViewPartie viewPartie;
-    private PartyConfigPanel partyConfigPanel;
+    //private PartyConfigPanel partyConfigPanel;
 
     public ViewClient() {
 
@@ -29,13 +29,13 @@ public class ViewClient extends JPanel {
         // A ce moment la partie n'est pas encore lancer don on met null
         this.viewPartie = new ViewPartie(this,null);
         this.viewWaiting = new ViewWaiting();
-        this.partyConfigPanel = new PartyConfigPanel();
+        //this.partyConfigPanel = new PartyConfigPanel();
 
         this.setLayout(this.cardLayout);
         this.add(this.start, "1");
         this.add(this.viewWaiting, "2");
         this.add(this.viewPartie, "3");
-        this.add(this.partyConfigPanel, "4");
+        //this.add(this.partyConfigPanel, "4");
 
         this.cardLayout.show(this, "1");
 
