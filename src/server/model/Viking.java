@@ -20,5 +20,13 @@ public abstract class Viking extends Entity implements Moveable{
     }
     public void eat(){
 
+
+    }
+
+    public void takeDamage(float amount) {
+        this.health -= amount;
+        if (this.health < 0) {
+            this.health = 0;
+        }
     }
 }

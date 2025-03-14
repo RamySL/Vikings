@@ -14,15 +14,15 @@ public class Camp {
     public static int lastId = 0;
     private final int id;
     private ArrayList<Warrior> vikings;
-    private ArrayList<Cow> livestock;
-    private ArrayList<Wheat> vegetables;
+    private ArrayList<Livestock> livestock;
+    private ArrayList<Vegetable> vegetables;
 
     // declare the constructor
     public Camp() {
         // initialize the instance variables
-        vikings = new ArrayList<Warrior>();
-        livestock = new ArrayList<Cow>();
-        vegetables = new ArrayList<Wheat>();
+        vikings = new ArrayList<>();
+        livestock = new ArrayList<>();
+        vegetables = new ArrayList<>();
         this.id = lastId++;
         init();
 
@@ -37,12 +37,24 @@ public class Camp {
         vikings.add(v3);
 
         // add some livestock
-        Cow l1 = new Cow(100, new Point(10, 50), this.id);
-        Cow l2 = new Cow(100, new Point(30, 50), this.id);
-        Cow l3 = new Cow(100, new Point(50, 50), this.id);
+        Cow l1 = new Cow(100, new Point(10, 50), this.id , 6, this);
+        Cow l2 = new Cow(100, new Point(30, 50), this.id,5,this);
+        Cow l3 = new Cow(100, new Point(50, 50), this.id , 4 , this );
+
+        Sheap s1 = new Sheap(100, new Point(5, 50), this.id , 6 , this );
+        Sheap s2 = new Sheap(100, new Point(15, 50), this.id,5,this);
+        Sheap s3 = new Sheap(100, new Point(35, 50), this.id,4,this);
+        
+
+
+
         livestock.add(l1);
         livestock.add(l2);
         livestock.add(l3);
+
+        livestock.add(s1);
+        livestock.add(s2);
+        livestock.add(s3) ;
 
         // add some vegetables
         Wheat v = new Wheat(100, new Point(70, 50), this.id);
@@ -55,15 +67,15 @@ public class Camp {
         vikings.add(viking);
     }
 
-//    public void addLivestock(Livestock l) {
-//        // add the livestock to the livestock list
-//        livestock.add(l);
-//    }
-//
-//    public void addVegetable(Vegetable v) {
-//        // add the vegetable to the vegetable list
-//        vegetables.add(v);
-//    }
+    public void addLivestock(Livestock l) {
+        
+        livestock.add(l);
+        System.out.println("Un nouvel animal a été ajouté au camp !");
+    }
+    public void addVegetable(Vegetable vegetable) {
+        vegetables.add(vegetable);
+    }
+
 
     public void removeViking(Viking viking) {
         // remove the viking from the vikings list
@@ -88,19 +100,19 @@ public class Camp {
         }
     }
 
+    // Déplacement du bétail (simulation)
     public void moveLivestock() {
-        // loop through the livestock list
         for (Livestock l : livestock) {
-            // move the livestock
-
+            // Déplacement aléatoire (
+            l.move(new Point(l.getPosition().x + 5, l.getPosition().y));
         }
     }
 
-    public ArrayList<Cow> getLivestock() {
+    public ArrayList<Livestock> getLivestock() {
         return livestock;
     }
 
-    public ArrayList<Wheat> getVegetables() {
+    public ArrayList<Vegetable> getVegetables() {
         return vegetables;
     }
 
