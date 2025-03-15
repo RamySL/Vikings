@@ -4,6 +4,7 @@ package server.model;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe représentant un cap viking, au début j'aivais mis les classes abstraites en type de listes
@@ -16,11 +17,10 @@ public class Camp {
     private ArrayList<Warrior> warriors;
     private ArrayList<Field> fields;
     private ArrayList<Farmer> farmers;
-    // declare the constructor
     private float strength; // Force du camp
-    private ArrayList<Viking> vikings; // Liste des Vikings (Warrior et Farmer)
-    private ArrayList<Livestock> livestock;
-    private ArrayList<Vegetable> vegetables;
+    //private ArrayList<Viking> vikings; // Liste des Vikings (Warrior et Farmer)
+    private ArrayList<Sheap> sheap;
+    private ArrayList<Wheat> wheats;
 
     // Constructeur
     public Camp() {
@@ -30,56 +30,50 @@ public class Camp {
         farmers = new ArrayList<>();
         this.id = lastId++;
         this.strength = 0;
-        vikings = new ArrayList<>();
-        livestock = new ArrayList<>();
-        vegetables = new ArrayList<>();
+        //vikings = new ArrayList<>();
+        sheap = new ArrayList<>();
+        wheats = new ArrayList<>();
         CampManager.addCamp(this);
         init();
 
     }
     public void init() {
         // Ajout des guerriers
-        Warrior v1 = new Warrior(100, new Point(10, 10), this.id, this);
-        Warrior v2 = new Warrior(100, new Point(30, 10), this.id, this);
-        Warrior v3 = new Warrior(100, new Point(50, 10), this.id, this);
+        Warrior v1 = new Warrior(100, new Point(10, 10), this.id/*,this*/);
+        Warrior v2 = new Warrior(100, new Point(30, 10), this.id/*,this*/);
+        Warrior v3 = new Warrior(100, new Point(50, 10), this.id/*,this*/);
 
         // Ajout des fermiers
-        Farmer f1 = new Farmer(100, new Point(15, 10), this.id, this);
-        Farmer f2 = new Farmer(100, new Point(25, 10), this.id, this);
+        Farmer f1 = new Farmer(100, new Point(15, 10), this.id/*,this*/);
+        Farmer f2 = new Farmer(100, new Point(25, 10), this.id/*,this*/);
 
-        vikings.add(v1);
-        vikings.add(v2);
-        vikings.add(v3);
-        vikings.add(f1);
-        vikings.add(f2);
+        //vikings.add(v1);
+        //vikings.add(v2);
+        //vikings.add(v3);
+       // vikings.add(f1);
+       // vikings.add(f2);
 
-        // Ajout du bétail
-        Cow l1 = new Cow(100, new Point(10, 50), this.id, 6, this);
-        Cow l2 = new Cow(100, new Point(30, 50), this.id, 5, this);
-        Cow l3 = new Cow(100, new Point(50, 50), this.id, 4, this);
+
         warriors.add(v1);
         warriors.add(v2);
         warriors.add(v3);
 
-        Sheap s1 = new Sheap(100, new Point(5, 50), this.id, 6, this);
-        Sheap s2 = new Sheap(100, new Point(15, 50), this.id, 5, this);
-        Sheap s3 = new Sheap(100, new Point(35, 50), this.id, 4, this);
+        Sheap s1 = new Sheap(100, new Point(5, 50), this.id, 6/*,this*/);
+        Sheap s2 = new Sheap(100, new Point(15, 50), this.id, 5/*,this*/);
+        Sheap s3 = new Sheap(100, new Point(35, 50), this.id, 4/*,this*/);
 
-        livestock.add(l1);
-        livestock.add(l2);
-        livestock.add(l3);
-        livestock.add(s1);
-        livestock.add(s2);
-        livestock.add(s3);
+        sheap.add(s1);
+        sheap.add(s2);
+        sheap.add(s3);
 
         // Ajout des cultures
         Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
-        vegetables.add(v);
+        wheats.add(v);
 
-        Field f1 = new Field(new Point(10, 100), this.id);
-        Field f2 = new Field(new Point(30, 100), this.id);
-        fields.add(f1);
-        fields.add(f2);
+        Field fi1 = new Field(new Point(10, 100), this.id);
+        Field fi2 = new Field(new Point(30, 100), this.id);
+        fields.add(fi1);
+        fields.add(fi2);
 
         Farmer fa1 = new Farmer(100, new Point(10, 150), this.id);
         farmers.add(fa1);
@@ -104,8 +98,9 @@ public class Camp {
     /**
      * Ajoute un Viking au camp.
      */
-    public void addViking(Viking viking) {
+    /*public void addViking(Viking viking) {
         vikings.add(viking);
+    }*/
     // declare the methods
     public void addWarrior(Warrior warrior) {
         // add the viking to the warriors list
@@ -123,51 +118,54 @@ public class Camp {
     public ArrayList<Farmer> getFarmers() {
         return farmers;
     }
+    public ArrayList<Warrior> getWarriors() {
+        return warriors;
+    }
 
     /**
      * Ajoute un animal d'élevage au camp.
      */
-    public void addLivestock(Livestock l) {
-        livestock.add(l);
+    public void addSheap(Sheap l) {
+        sheap.add(l);
         System.out.println("Un nouvel animal a été ajouté au camp !");
     }
 
     /**
      * Ajoute une culture au camp.
      */
-    public void addVegetable(Vegetable vegetable) {
-        vegetables.add(vegetable);
+    public void addWheat(Wheat vegetable) {
+        wheats.add(vegetable);
     }
 
     /**
      * Supprime un Viking du camp.
      */
-    public void removeViking(Viking viking) {
+    /*public void removeViking(Viking viking) {
         vikings.remove(viking);
-    }
+    }*/
 
     /**
      * Supprime un animal du camp.
      */
-    public void removeLivestock(Livestock l) {
-        // remove the livestock from the livestock list
-        livestock.remove(l);
+    public void removeSheap(Sheap l) {
+        // remove the sheap from the sheap list
+        sheap.remove(l);
     }
 
     /**
      * Supprime une culture du camp.
      */
-    public void removeVegetable(Vegetable v) {
+    public void removeWheat(Wheat v) {
         // remove the vegetable from the vegetable list
-        vegetables.remove(v);
+        wheats.remove(v);
     }
 
     /**
      * Fait grandir toutes les cultures.
      */
-    public void growVegetables() {
+    public void growWheats() {
         // loop through the vegetable list
-        for (Vegetable v : vegetables) {
+        for (Wheat v : wheats) {
             // grow the vegetable
             v.grow();
         }
@@ -176,8 +174,8 @@ public class Camp {
     /**
      * Déplace le bétail de façon aléatoire.
      */
-    public void moveLivestock() {
-        for (Livestock l : livestock) {
+    public void moveSheap() {
+        for (Sheap l : sheap) {
             l.move(new Point(l.getPosition().x + 5, l.getPosition().y));
         }
     }
@@ -185,23 +183,23 @@ public class Camp {
     /**
      * Retourne la liste des animaux du camp.
      */
-    public ArrayList<Livestock> getLivestock() {
-        return livestock;
+    public ArrayList<Sheap> getSheap() {
+        return sheap;
     }
 
     /**
      * Retourne la liste des cultures du camp.
      */
-    public ArrayList<Vegetable> getVegetables() {
-        return vegetables;
+    public ArrayList<Wheat> getWheats() {
+        return wheats;
     }
 
     /**
      * Retourne la liste des Vikings du camp.
      */
-    public ArrayList<Viking> getVikings() {
+    /*public ArrayList<Viking> getVikings() {
         return vikings;
-    }
+    }*/
 
     /**
      * Retourne la force actuelle du camp.
@@ -232,11 +230,11 @@ public void decreaseStrength(float amount) {
     // declare the toString method
     @Override
     public String toString() {
-        // return the list of warriors, livestock and vegetables
+        // return the list of warriors, sheap and wheats
         return "Camp{" +
-                "vikings=" + vikings +
-                ", livestock=" + livestock +
-                ", vegetables=" + vegetables +
+                /*"vikings=" + vikings +*/
+                ", sheap=" + sheap +
+                ", wheats=" + wheats +
                 ", fields= " + fields +
                 ", strength=" + strength +
                 '}';

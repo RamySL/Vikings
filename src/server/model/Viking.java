@@ -3,19 +3,20 @@ package server.model;
 import javax.swing.text.Position;
 import java.awt.*;
 
+
 public abstract class Viking extends Entity implements Moveable {
 
     protected Camp camp; // Référence au camp
     protected static float coeffStrength = 1.0f; // Coefficient appliqué à tous les Vikings
 
-    public Viking(float health, Point position, int campId, Camp camp) {
+    public Viking(float health, Point position, int campId/*, Camp camp*/) {
         super(health, position, campId);
-        this.camp = camp;
+        /*this.camp = camp;*/
     }
 
     @Override
     public void move(Point destination) {
-        this.position = destination;
+        new MovementThread(this, destination).start();
     }
 
     /**
@@ -23,21 +24,20 @@ public abstract class Viking extends Entity implements Moveable {
      * La vérification de proximité est gérée par un thread extérieur.
      * La force gagnée est égale à la santé de l'animal multipliée par le coeffStrength global des Vikings.
      */
-    public void eat(Livestock animal) {
-        System.out.println("Le Viking mange " + (animal instanceof Cow ? "une vache" : "un mouton") + " !");
+    public void eat(Sheap animal) {
+        System.out.println("Le Viking mange un mouton !");
 
         // Calcul de la force gagnée (santé * coeffStrength partagé par tous les Vikings)
         float strengthGained = animal.getHealth() * coeffStrength;
         camp.increaseStrength(strengthGained);
 
         // Supprime l'animal du camp
-        camp.removeLivestock(animal);
+        camp.removeSheap(animal);
 
         System.out.println("Force du camp augmentée de " + strengthGained);
     }
 
-    public void move(Point destination) {
-        new MovementThread(this, destination).start();
+
     /**
      * Définit le coefficient de force global pour tous les Vikings.
      * @param coeff Nouveau coefficient.

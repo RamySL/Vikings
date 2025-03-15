@@ -128,7 +128,7 @@ public class ThreadCommunicationServer extends Thread{
     // pour l'instant traite que les warrior on attendant de lire la doc Gson qui n'accepte pas les
     // classes abstraites
     public Warrior DetermineSelectedWarrior(int x, int y) {
-        for (Warrior warrior : this.camp.getVikings()) {
+        for (Warrior warrior : this.camp.getWarriors()) {
             if (Math.abs(warrior.getPosition().getX() + 400*this.camp.getId() - x) < 8 && Math.abs(warrior.getPosition().getY() - y) < 8) {
                 return warrior;
             }

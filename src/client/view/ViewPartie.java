@@ -64,32 +64,29 @@ public class ViewPartie extends JPanel {
             g2.drawRect(400, 0, 400, 600);
         }
 
-        drawVikings(camp.getVikings(), g2);
-        drawLivestock(camp.getLivestock(), g2);
+        drawWarriors(camp.getWarriors(), g2);
+        drawSheap(camp.getSheap(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawFields(camp.getFields(), g2);
     }
 
-    private void drawLivestock(ArrayList<Cow> livestock, Graphics2D g2) {
-        for (Livestock l : livestock) {
-            if(l instanceof Cow){
-                g2.setColor(Color.GREEN);
-                g2.fillOval(l.getPosition().x + l.getCampId() * 400, l.getPosition().y, 16, 16);
-            } else {
+    private void drawSheap(ArrayList<Sheap> sheap, Graphics2D g2) {
+        for (Sheap l : sheap) {
+
                 g2.setColor(Color.YELLOW);
                 g2.fillOval(l.getPosition().x + l.getCampId() * 400, l.getPosition().y, 16, 16);
-            }
+
         }
     }
 
-    public void drawViking(Warrior viking, Graphics2D g2) {
+    public void drawWarrior(Warrior warrior, Graphics2D g2) {
         g2.setColor(Color.RED);
-        g2.fillRect(viking.getPosition().x + viking.getCampId() * 400 - 8, viking.getPosition().y - 8, 16, 16);
+        g2.fillRect(warrior.getPosition().x + warrior.getCampId() * 400 - 8, warrior.getPosition().y - 8, 16, 16);
     }
 
-    public void drawVikings(ArrayList<Warrior> vikings, Graphics2D g2) {
-        for (Warrior viking : vikings) {
-            drawViking(viking, g2);
+    public void drawWarriors(ArrayList<Warrior> warriors, Graphics2D g2) {
+        for (Warrior warrior : warriors) {
+            drawWarrior(warrior, g2);
         }
     }
 

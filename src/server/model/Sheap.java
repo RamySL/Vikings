@@ -6,8 +6,8 @@ import java.awt.*;
 public class Sheap extends Livestock{
 
 
-    public Sheap(float health, Point position, int campId, int age, Camp camp) {
-        super(health, position, campId, age, camp);
+    public Sheap(float health, Point position, int campId, int age/*, Camp camp*/) {
+        super(health, position, campId, age/*, camp*/);
     }
 
 

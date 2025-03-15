@@ -6,8 +6,8 @@ import java.util.List;
 public class Farmer extends Viking {
      // Référence au camp pour gérer les cultures et le bétail
 
-     public Farmer(float health, Point position, int camp, Camp campInstance) {
-        super(health, position, camp, campInstance);
+     public Farmer(float health, Point position, int camp/*, Camp campInstance*/) {
+        super(health, position, camp/*, campInstance*/);
     }
 
 
@@ -17,7 +17,7 @@ public class Farmer extends Viking {
      */
     public void plant() {
         // Vérifie s'il y a déjà du blé à proximité (évite la superposition)
-        for (Vegetable v : camp.getVegetables()) {
+        for (Vegetable v : camp.getWheats()) {
             if (position.distance(v.getPosition()) < 5) {
                 System.out.println("Un blé est déjà planté ici !");
                 return;
@@ -31,7 +31,7 @@ public class Farmer extends Viking {
 
         // Création et ajout du nouveau blé
         Wheat newWheat = new Wheat(100, plantPosition, camp.getId(), 0);
-        camp.addVegetable(newWheat);
+        camp.addWheat(newWheat);
 
         System.out.println("Le fermier plante du blé à " + plantPosition);
     }
@@ -47,15 +47,15 @@ public class Farmer extends Viking {
      * La détection de proximité est gérée par un thread externe.
      */
     public void harvest() {
-        for (Vegetable v : camp.getVegetables()) {
+        for (Vegetable v : camp.getWheats()) {
             if (v instanceof Wheat wheat && wheat.isMature()) {
                 System.out.println("Le fermier récolte du blé !");
-                camp.removeVegetable(wheat);
+                camp.removeWheat(wheat);
                 return;
             }
         }
         System.out.println("Aucun blé mûr à récolter !");
-
+    }
 
     /*public String harvest(Field field) {
         return field.harvest();
@@ -66,7 +66,7 @@ public class Farmer extends Viking {
      * La logique d'affichage du bouton dépend du thread de détection de proximité.
      */
     public void feed() {
-        for (Livestock l : camp.getLivestock()) {
+        for (Livestock l : camp.getSheap()) {
             System.out.println("Le fermier nourrit " + (l instanceof Cow ? "une vache" : "un mouton") + " !");
             l.health += 10;
             if (l.health > 100) l.health = 100; // Limite à 100
@@ -79,7 +79,7 @@ public class Farmer extends Viking {
      * Arrose les cultures sans vérifier la proximité (gérée ailleurs).
      */
     public void water() {
-        for (Vegetable v : camp.getVegetables()) {
+        for (Vegetable v : camp.getWheats()) {
             System.out.println("Le fermier arrose les cultures !");
             v.grow(); // Augmente la croissance
             return;
