@@ -3,14 +3,13 @@ package server.model;
 import java.awt.*;
 
 /*
-    Blé
+    Blé (Wheat) - Hérite de Vegetable
  */
-public class Wheat extends Vegetable{
-    public Wheat(float health, Point position, int camp) {
-        super(health, position, camp);
-    }
+public class Wheat extends Vegetable {
 
-    public void grow(){
-        System.out.println("Wheat is growing");
+    public Wheat(float health, Point position, int camp, int growthStage) {
+        super(health, position, camp, 5); // 5 = maxGrowthStage
+        this.growthStage = growthStage;
     }
 }
+
