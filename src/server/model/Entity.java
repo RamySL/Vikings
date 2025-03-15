@@ -17,4 +17,15 @@ public abstract class Entity {
     public int getCampId() {
         return campId;
     }
+    public float getHealth() {
+        return health;
+    }
+    public Point getPosition() {
+        return position;
+    }
+    public boolean isAlive() {
+        return this.health > 0;
+    }
+
+
 }
