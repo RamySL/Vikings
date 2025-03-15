@@ -1,75 +1,94 @@
 package client.view;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 /**
- * PanneauControle class
- * This class represents the control panel for the game.
- * It extends the JPanel class and displays the control buttons.
+ * Panel de contrôle qui gère l'affichage du bouton "Planter" et d'autres composants de contrôle.
  */
 public class PanneauControle extends JPanel {
+    private JButton plantButton;
+    private boolean isFarmerOnField;
+    private JComboBox<String> plantComboBox;
+
     public PanneauControle() {
-        // Configuration du layout pour disposer les boutons en carré
-        setLayout(new GridLayout(2, 2));
+        // Définir la disposition du panneau (GridLayout pour une disposition simple)
+        setLayout(new GridLayout(20, 15));
 
-        // Création des boutons
-        JButton boutonDeplacer = new JButton("Se déplacer");
-        JButton boutonPlanter = new JButton("Planter");
-        JButton boutonRecolter = new JButton("Récolter");
-        JButton boutonRester = new JButton("Rester sur place");
+        // Initialiser le bouton "Planter"
+        plantButton = new JButton("Plant");
 
-        /**
-         * ActionListener for the "Se déplacer" button.
-         * This ActionListener prints a message to the console when the button is clicked.
-         */
-        // Ajouter les ActionListeners aux boutons
-        boutonDeplacer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Action : Se déplacer");
-            }
+        // Définir une taille préférée pour le bouton
+        plantButton.setPreferredSize(new Dimension(5, 5));
+
+
+        // Initialiser le JComboBox avec des végétaux à planter
+        String[] vegetals = {"Wheat", "Corn", "Mais"};
+        plantComboBox = new JComboBox<>(vegetals);
+        plantComboBox.setVisible(false); // Le JComboBox est caché au début
+
+        // Action du bouton "Planter"
+        plantButton.addActionListener(e -> {
+            plantButton.setVisible(false);  // Cacher le bouton lorsque "Planter" est cliqué
+            plantComboBox.setVisible(true);  // Afficher le JComboBox pour choisir un végétal
+            System.out.println("Le choix du végétal est maintenant visible");
+        });
+        plantComboBox.addActionListener(e -> {
+            String selectedVegetal = (String) plantComboBox.getSelectedItem(); // Récupérer le végétal choisi
+            System.out.println("Végétal choisi: " + selectedVegetal);
+
+            //ne pas oublier envoi d'un message au serveur pour planter le vegetal choisi
+
+            // Cacher le JComboBox après sélection
+            plantComboBox.setVisible(false);
+            System.out.println("Le JComboBox a été caché après la sélection");
         });
 
-        /**
-         * ActionListener for the "Planter" button.
-         * This ActionListener prints a message to the console when the button is clicked.
-         */
-        boutonPlanter.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Action : Planter");
-            }
-        });
+        // Ajouter les composants au panneau
+        add(plantButton);
+        add(plantComboBox);
 
-        /**
-         * ActionListener for the "Récolter" button.
-         * This ActionListener prints a message to the console when the button is clicked.
-         */
-        boutonRecolter.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Action : Récolter");
-            }
-        });
+        // Le bouton est initialement invisible
+        plantButton.setVisible(false); // Le bouton est visible au début
+    }
 
-        /**
-         * ActionListener for the "Rester sur place" button.
-         * This ActionListener prints a message to the console when the button is clicked.
-         */
-        boutonRester.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Action : Rester sur place");
-            }
-        });
+    // Getter pour le bouton "Planter"
+    public JButton getPlantButton() {
+        return plantButton;
+    }
 
-        // Ajouter les boutons au panneau de contrôle
-        add(boutonDeplacer);
-        add(boutonPlanter);
-        add(boutonRecolter);
-        add(boutonRester);
+    /**
+     * Mise à jour de la visibilité du bouton "Planter" en fonction de la position du fermier.
+     */
+    public void updatePlantButtonVisibility(boolean isFarmerOnField) {
+        this.isFarmerOnField = isFarmerOnField;
+
+        // Si le fermier est sur un champ, le bouton devient visible
+        if (isFarmerOnField) {
+            plantButton.setVisible(true);
+            System.out.println("Planter visible");
+        } else {
+            plantButton.setVisible(false);
+            System.out.println("Planter caché");
+        }
+
+        // Rafraîchir la vue pour que la mise à jour de la visibilité soit prise en compte immédiatement
+        this.revalidate();
+        this.repaint();
+    }
+
+    /**
+     * Actualise la visibilité du bouton en fonction de l'état du fermier.
+     */
+    public void refreshVisibility() {
+        plantButton.setVisible(isFarmerOnField);
+    }
+
+    /**
+     * Méthode à appeler chaque fois que l'état du fermier change (si le fermier est sur un champ ou non)
+     */
+    public void setFarmerOnField(boolean isFarmerOnField) {
+        this.isFarmerOnField = isFarmerOnField;
+        refreshVisibility();  // Rafraîchir la visibilité du bouton en fonction de l'état du fermier
     }
 }

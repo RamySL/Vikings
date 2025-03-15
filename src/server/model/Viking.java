@@ -10,13 +10,8 @@ public abstract class Viking extends Entity implements Moveable{
         super(health, position, camp);
     }
 
-    public void move(Point position){
-        if(this.campId==1){
-            this.position = new Point(position.x-400, position.y);
-        }else{
-            this.position =  position;
-        }
-
+    public void move(Point destination) {
+        new MovementThread(this, destination).start();
     }
     public void eat(){
 

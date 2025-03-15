@@ -2,8 +2,11 @@ package client.view;
 
 import server.model.Partie;
 
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 /**
  * Classe qui regroupe toutes les vues de l'application.<p>
@@ -17,27 +20,22 @@ public class ViewClient extends JPanel {
     private Start start;
     private ViewWaiting viewWaiting;
     private ViewPartie viewPartie;
-    //private PartyConfigPanel partyConfigPanel;
 
     public ViewClient() {
-
-        //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setPreferredSize(new Dimension(850,600));
+        this.setPreferredSize(new Dimension(850, 600));
         this.cardLayout = new CardLayout();
 
         this.start = new Start();
-        // A ce moment la partie n'est pas encore lancer don on met null
-        this.viewPartie = new ViewPartie(this,null);
+        this.viewPartie = new ViewPartie(this, null);
         this.viewWaiting = new ViewWaiting();
-        //this.partyConfigPanel = new PartyConfigPanel();
 
         this.setLayout(this.cardLayout);
         this.add(this.start, "1");
         this.add(this.viewWaiting, "2");
         this.add(this.viewPartie, "3");
-        //this.add(this.partyConfigPanel, "4");
 
         this.cardLayout.show(this, "1");
+
 
     }
 
@@ -61,8 +59,9 @@ public class ViewClient extends JPanel {
     public ViewPartie getViewPartie() {
         return viewPartie;
     }
+
     /**
-     * !! Cette classe ne devrait pas avoir de méthode pour actualiser la partie
+     *  Cette classe ne devrait pas avoir de méthode pour actualiser la partie
      */
     public void actualisePartie(Partie partie) {
         this.viewPartie.setPartie(partie);
@@ -79,6 +78,9 @@ public class ViewClient extends JPanel {
     public int getPort(){
         return this.start.getPort();
     }
+
+
+
 
 
 }

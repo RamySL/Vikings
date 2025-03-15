@@ -4,7 +4,7 @@ package server.model;
 
 import java.awt.*;
 import java.util.ArrayList;
-
+import java.util.List;
 /**
  * Classe représentant un cap viking, au début j'aivais mis les classes abstraites en type de listes
  * mais après ça faisait une erreur avec Gson, il n'acecptait pas les classes abstraites. Donc j'ai mis Viking Cow
@@ -13,17 +13,21 @@ import java.util.ArrayList;
 public class Camp {
     public static int lastId = 0;
     private final int id;
-    private ArrayList<Warrior> vikings;
+    private ArrayList<Warrior> warriors;
     private ArrayList<Cow> livestock;
     private ArrayList<Wheat> vegetables;
-
+    private ArrayList<Field> fields;
+    private ArrayList<Farmer> farmers;
     // declare the constructor
     public Camp() {
         // initialize the instance variables
-        vikings = new ArrayList<Warrior>();
+        warriors = new ArrayList<Warrior>();
         livestock = new ArrayList<Cow>();
         vegetables = new ArrayList<Wheat>();
+        fields = new ArrayList<>();
+        farmers = new ArrayList<>();
         this.id = lastId++;
+        CampManager.addCamp(this);
         init();
 
     }
@@ -32,9 +36,9 @@ public class Camp {
         Warrior v1 = new Warrior(100, new Point(10, 10), this.id);
         Warrior v2 = new Warrior(100, new Point(30, 10), this.id);
         Warrior v3 = new Warrior(100, new Point(50, 10), this.id);
-        vikings.add(v1);
-        vikings.add(v2);
-        vikings.add(v3);
+        warriors.add(v1);
+        warriors.add(v2);
+        warriors.add(v3);
 
         // add some livestock
         Cow l1 = new Cow(100, new Point(10, 50), this.id);
@@ -47,12 +51,40 @@ public class Camp {
         // add some vegetables
         Wheat v = new Wheat(100, new Point(70, 50), this.id);
         vegetables.add(v);
+
+        Field f1 = new Field(new Point(10, 100), this.id);
+        Field f2 = new Field(new Point(30, 100), this.id);
+        fields.add(f1);
+        fields.add(f2);
+
+        Farmer fa1 = new Farmer(100, new Point(10, 150), this.id);
+        farmers.add(fa1);
+    }
+
+    public List<Point> getFieldPositions() {
+        List<Point> positions = new ArrayList<>();
+        for (Field field : fields) {
+            positions.add(field.getPosition());
+        }
+        return positions;
     }
 
     // declare the methods
-    public void addViking(Warrior viking) {
-        // add the viking to the vikings list
-        vikings.add(viking);
+    public void addWarrior(Warrior warrior) {
+        // add the viking to the warriors list
+        warriors.add(warrior);
+    }
+
+    public void addFarmer(Farmer farmer) {
+        // add the farmer to the farmers list
+        farmers.add(farmer);
+    }
+
+    public ArrayList<Field> getFields() {
+        return fields;
+    }
+    public ArrayList<Farmer> getFarmers() {
+        return farmers;
     }
 
 //    public void addLivestock(Livestock l) {
@@ -66,8 +98,8 @@ public class Camp {
 //    }
 
     public void removeViking(Viking viking) {
-        // remove the viking from the vikings list
-        vikings.remove(viking);
+        // remove the viking from the warriors list
+        warriors.remove(viking);
     }
 
     public void removeLivestock(Livestock l) {
@@ -105,20 +137,23 @@ public class Camp {
     }
 
     public ArrayList<Warrior> getVikings() {
-        return vikings;
+        return warriors;
     }
 
     public int getId() {
         return id;
     }
 
+
+
     // declare the toString method
     public String toString() {
-        // return the list of vikings, livestock and vegetables
+        // return the list of warriors, livestock and vegetables
         return "Camp{" +
-                "vikings=" + vikings +
+                "warriors=" + warriors +
                 ", livestock=" + livestock +
                 ", vegetables=" + vegetables +
+                ", fields= " + fields +
                 '}';
     }
 }
