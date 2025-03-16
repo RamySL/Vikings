@@ -129,19 +129,36 @@ public class ThreadCommunicationServer extends Thread{
         }
     }
 
-    // pour l'instant traite que les warrior on attendant de lire la doc Gson qui n'accepte pas les
-    // classes abstraites
+    /**
+     * takes model coordinates and returns the warrior that is at that position
+     * @param x
+     * @param y
+     * @return
+     */
     public Warrior DetermineSelectedWarrior(int x, int y) {
+        System.out.println("Determining selected warrior");
+        System.out.println("x: " + x + " y: " + y);
+
         for (Warrior warrior : this.camp.getWarriors()) {
-            if (Math.abs(warrior.getPosition().getX() + 400*this.camp.getId() - x) < 8 && Math.abs(warrior.getPosition().getY() - y) < 8) {
+            // top left point of the warrior
+            Point topLeft = new Point(warrior.getPosition().x - Position.WIDTH_VIKINGS/2, warrior.getPosition().y+Position.HEIGHT_VIKINGS/2);
+            System.out.println("Top left point of warrior: " + topLeft);
+            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_VIKINGS && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_VIKINGS) {
                 return warrior;
             }
         }
         return null;
     }
+    /**
+     * takes model coordinates and returns the farmer that is at that position
+     * @param x
+     * @param y
+     * @return
+     */
     public Farmer DetermineSelectedFarmer(int x, int y) {
         for (Farmer farmer : this.camp.getFarmers()) {
-            if (Math.abs(farmer.getPosition().getX() + 400*this.camp.getId() - x) < 8 && Math.abs(farmer.getPosition().getY() - y) < 8) {
+            Point topLeft = new Point(farmer.getPosition().x - Position.WIDTH_VIKINGS/2, farmer.getPosition().y+Position.HEIGHT_VIKINGS/2);
+            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_VIKINGS && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_VIKINGS) {
                 return farmer;
             }
         }
