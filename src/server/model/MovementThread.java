@@ -13,7 +13,7 @@ class MovementThread extends Thread {
 
     @Override
     public void run() {
-        int destinationX = (entity.getCampId() == 1) ? destination.x-400  : destination.x;
+        int destinationX = destination.x;
         int destinationY = destination.y;
 
         while (entity.getPosition().x != destinationX || entity.getPosition().y != destinationY) {

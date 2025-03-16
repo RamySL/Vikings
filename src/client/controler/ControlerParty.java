@@ -5,14 +5,12 @@ import com.google.gson.Gson;
 import network.FormatPacket;
 import network.PaquetClick;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 
 /**
  * Controler of the party
  */
-public class ControlerParty extends MouseAdapter implements MouseMotionListener {
+public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener {
 
     private ControlerClient controlerClient;
     private ViewPartie viewPartie;
@@ -47,6 +45,10 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener 
         this.viewPartie.addToOffset(e.getX() - lastMouseX, e.getY() - lastMouseY);
         lastMouseX = e.getX();
         lastMouseY = e.getY();
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
     }
 
 }
