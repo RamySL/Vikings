@@ -1,8 +1,5 @@
 package client.controler;
 
-import com.google.gson.Gson;
-import network.FormatPacket;
-import network.PaquetCoordClick;
 import network.ThreadCommunicationClient;
 import network.Client;
 import client.view.ViewClient;

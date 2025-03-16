@@ -97,11 +97,6 @@ public class Server {
             client.sendMessage(message);
         }
     }
-    // pour la version generale un Map entre id et coordonnées de camps peut être dans Partie serait une solution
-    public boolean clickOncamp(int campId,int x, int y) {
-        return (campId==0 && x>0 && x<390 && y>0 && y<600)
-                || (campId==1 && x>400 && x<800 && y>0 && y<600);
-    }
 
 
     public void closeConnection() {

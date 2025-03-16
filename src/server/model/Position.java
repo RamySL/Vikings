@@ -1,5 +1,7 @@
 package server.model;
 
+import client.view.ViewPartie;
+
 import java.awt.*;
 import java.util.HashMap;
 
@@ -30,7 +32,19 @@ public class Position {
     };
 
     /**
-     * Check if the click is on the camp with the given id
+     * a méthode that tranforms view coordinates into model coordinates using :
+     * -  removing translation
+     *  - x = x’/RatioX et y = height + 2 × margin − (y′/RatioY )
+     *  ? est-ce que mauvaise pratique d'avoir utiliser ViewPartie.RATIO_X
+     */
+    public static Point viewToModel(Point viewPoint, Point translation) {
+        viewPoint.translate(-translation.x,-translation.y);
+        return new Point(viewPoint.x / ViewPartie.RATIO_X, HEIGHT+2*MARGIN - (viewPoint.y / ViewPartie.RATIO_Y));
+    }
+
+    /**
+     * Check if the click is on the camp with the given id<p>
+     * !! takes model coord
      * @param campId
      * @param clickX
      * @param clickY

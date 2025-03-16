@@ -3,6 +3,7 @@ package network;
 import com.google.gson.Gson;
 import server.model.Camp;
 import server.model.Farmer;
+import server.model.Position;
 import server.model.Warrior;
 
 import java.awt.*;
@@ -86,16 +87,18 @@ public class ThreadCommunicationServer extends Thread{
         }
 
         switch (wrapper.type) {
-            case "PaquetCoordClick":
-                PaquetCoordClick paquet = gson.fromJson(wrapper.content, PaquetCoordClick.class);
-                int x = paquet.getX();
-                int y = paquet.getY();
+            case "PaquetClick":
+                PaquetClick paquet = gson.fromJson(wrapper.content, PaquetClick.class);
+                Point viewPoint = new Point(paquet.getX(), paquet.getY());
+                Point translation = new Point(paquet.getTranslationX(), paquet.getTranslationY());
+                Point modelPoint = Position.viewToModel(viewPoint, translation);
                 // On verifie si le click est sur le camp du client
-                if (this.server.clickOncamp(this.camp.getId(), x, y)) {
+                if  (Position.isInCamp(this.camp.getId(), modelPoint.x, modelPoint.y)) {
+                    System.out.println("Click in camp");
                     if (firstClick) {
-                        warriorSelected = DetermineSelectedWarrior(x, y);
+                        warriorSelected = DetermineSelectedWarrior(modelPoint.x, modelPoint.y);
                         if (warriorSelected == null) {
-                            farmerSelected = DetermineSelectedFarmer(x, y);
+                            farmerSelected = DetermineSelectedFarmer(modelPoint.x, modelPoint.y);
                             if (farmerSelected != null) {
                                 System.out.println("Farmer selected at position: " + farmerSelected.getPosition());
                                 firstClick = false;
@@ -111,12 +114,11 @@ public class ThreadCommunicationServer extends Thread{
                     } else {
                         // On déplace l'entité vers le click
                         if (warriorSelected != null) {
-                            System.out.println("Moving warrior to position: " + x + ", " + y);
-                            warriorSelected.move(new Point(x, y));
+                            System.out.println("Moving warrior to position: " + modelPoint.x + ", " + modelPoint.y + " in model ");
+                            warriorSelected.move(new Point(modelPoint.x, modelPoint.y));
                         } else if (farmerSelected != null) {
-                            System.out.println("Moving farmer to position: " + x + ", " + y);
-                            farmerSelected.move(new Point(x, y));
-
+                            System.out.println("Moving farmer to position: " + modelPoint.x + ", " + modelPoint.y + " in model ");
+                            farmerSelected.move(new Point(modelPoint.x, modelPoint.y));
                         }
                         firstClick = true;
                     }

@@ -3,7 +3,7 @@ package client.controler;
 import client.view.ViewPartie;
 import com.google.gson.Gson;
 import network.FormatPacket;
-import network.PaquetCoordClick;
+import network.PaquetClick;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -29,10 +29,11 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener 
     @Override
     public void mouseClicked(MouseEvent e) {
         Gson gson = new Gson();
-        String contentPaquet = gson.toJson(new PaquetCoordClick(e.getX(),e.getY()));
+        String contentPaquet = gson.toJson(new PaquetClick(e.getX(),e.getY(),
+                this.viewPartie.getTotalOffset().x, this.viewPartie.getTotalOffset().y));
 
         // ! ! je pense sans le get c'est mieux
-        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetCoordClick",contentPaquet));
+        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetClick",contentPaquet));
     }
 
     @Override
