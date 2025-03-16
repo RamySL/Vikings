@@ -82,6 +82,10 @@ public class ViewPartie extends JPanel {
         this.offsetCampY = offset.y;
     }
 
+    /**
+     * !! a lot of redundant calculations for the drawing !!
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -95,13 +99,17 @@ public class ViewPartie extends JPanel {
         }
     }
 
+    /**
+     * @param camp
+     * @param g2
+     */
     private void drawCamp(Camp camp, Graphics2D g2) {
         g2.setColor(Color.BLUE);
-        if(camp.getId() == 0)
-            g2.drawRect(0, 0, 390, 600);
-        else{
-            g2.drawRect(400, 0, 400, 600);
-        }
+
+        Point topLeftModel = Position.MAP_CAMPS_POSITION.get(camp.getId());
+        Point topLeftView = pointModelToView(topLeftModel);
+        // redundant calculation (can be stock in a map for each camp)
+        g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
 
         drawWarriors(camp.getWarriors(), g2);
         drawSheap(camp.getSheap(), g2);
@@ -111,16 +119,22 @@ public class ViewPartie extends JPanel {
 
     private void drawSheap(ArrayList<Sheap> sheap, Graphics2D g2) {
         for (Sheap l : sheap) {
-
                 g2.setColor(Color.YELLOW);
-                g2.fillOval(l.getPosition().x + l.getCampId() * 400, l.getPosition().y, 16, 16);
+                Point pointView = pointModelToView(l.getPosition());
+                int width = Position.WIDTH_SHEAP * RATIO_X;
+                int height = Position.HEIGHT_SHEAP * RATIO_Y;
+                g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
 
         }
     }
 
     public void drawWarrior(Warrior warrior, Graphics2D g2) {
         g2.setColor(Color.RED);
-        g2.fillRect(warrior.getPosition().x + warrior.getCampId() * 400 - 8, warrior.getPosition().y - 8, 16, 16);
+        Point pointView = pointModelToView(warrior.getPosition());
+        int width = Position.WIDTH_VIKINGS * RATIO_X;
+        int height = Position.HEIGHT_VIKINGS * RATIO_Y;
+        g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+
     }
 
     public void drawWarriors(ArrayList<Warrior> warriors, Graphics2D g2) {
@@ -132,16 +146,23 @@ public class ViewPartie extends JPanel {
     private void drawFarmers(ArrayList<Farmer> farmers, Graphics2D g2) {
         g2.setColor(Color.ORANGE);
         for (Farmer farmer : farmers) {
-            g2.fillRect(farmer.getPosition().x + farmer.getCampId() * 400 - 8, farmer.getPosition().y - 8, 16, 16);
+            Point pointView = pointModelToView(farmer.getPosition());
+            int width = Position.WIDTH_VIKINGS * RATIO_X;
+            int height = Position.HEIGHT_VIKINGS * RATIO_Y;
+            g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
         }
     }
 
     private void drawFields(ArrayList<Field> fields, Graphics2D g2) {
         g2.setColor(Color.BLACK);
         for (Field field : fields) {
-            g2.drawRect(field.getPosition().x + field.getCampId() * 400 - 8, field.getPosition().y - 8, 16, 16);
+            Point pointView = pointModelToView(field.getPosition());
+            int width = Position.WIDTH_FIELD * RATIO_X;
+            int height = Position.HEIGHT_FIELD * RATIO_Y;
+            g2.drawRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
             if (field.isPlanted()) {
-                g2.drawString(field.getResource(), field.getPosition().x + field.getCampId() * 400, field.getPosition().y);
+                g2.drawString(field.getResource(), pointView.x - width / 2, pointView.y - height / 2);
+
             }
         }
     }

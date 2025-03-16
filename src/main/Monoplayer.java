@@ -10,46 +10,33 @@ import javax.swing.*;
 
 public class Monoplayer {
     public static void main(String[] args) {
-        // Start the server in a new thread
+        // mettez le nombre de joueur que vous voulez
+        int nbJR = 4;
         new Thread(() -> {
             Server serverView = new Server();
-            ControlerServer serverControler = new ControlerServer(serverView);
             // Simulate button click to start the server
-            serverView.getConnectButton().doClick();
+            network.Server server = new network.Server(1234,nbJR);
+            // lance un thread avec la méthode launch
+            new Thread(() -> server.launch()).start();
         }).start();
 
-        // Start the client in a new thread
-        new Thread(() -> {
-            ViewClient clientView = new ViewClient();
-            ControlerClient clientControler = new ControlerClient(clientView);
-            ControlerParty controlerParty = new ControlerParty(clientControler, clientView.getViewPartie());
+        for (int i = 0; i < nbJR; i++) {
+            new Thread(() -> {
+                ViewClient clientView = new ViewClient();
+                ControlerClient clientControler = new ControlerClient(clientView);
+                ControlerParty controlerParty = new ControlerParty(clientControler, clientView.getViewPartie());
 
-            JFrame clientFrame = new JFrame();
-            clientFrame.setIconImage(new ImageIcon("src/ressources/images/viking_ico_64.png").getImage());
-            clientFrame.setTitle("Vikings");
-            clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            clientFrame.add(clientView);
-            clientFrame.pack();
-            clientFrame.setVisible(true);
+                JFrame clientFrame = new JFrame();
+                clientFrame.setIconImage(new ImageIcon("src/ressources/images/viking_ico_64.png").getImage());
+                clientFrame.setTitle("Vikings");
+                clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                clientFrame.add(clientView);
+                clientFrame.pack();
+                clientFrame.setVisible(true);
 
-            // Simulate button click to connect the client
-            clientView.getConnectButton().doClick();
-        }).start();
-        new Thread(() -> {
-            ViewClient clientView = new ViewClient();
-            ControlerClient clientControler = new ControlerClient(clientView);
-            ControlerParty controlerParty = new ControlerParty(clientControler, clientView.getViewPartie());
-
-            JFrame clientFrame = new JFrame();
-            clientFrame.setIconImage(new ImageIcon("src/ressources/images/viking_ico_64.png").getImage());
-            clientFrame.setTitle("Vikings");
-            clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            clientFrame.add(clientView);
-            clientFrame.pack();
-            clientFrame.setVisible(true);
-
-            // Simulate button click to connect the client
-            clientView.getConnectButton().doClick();
-        }).start();
+                // Simulate button click to connect the client
+                clientView.getConnectButton().doClick();
+            }).start();
+        }
     }
 }

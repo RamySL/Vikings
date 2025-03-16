@@ -10,9 +10,15 @@ public class Position {
     // See the doc
     public static final int MARGIN = 10;
     // width of a camp
-    public static final int WIDTH = 200;
+    public static final int WIDTH = 250;
     // height of a camp
-    public static final int HEIGHT = 150;
+    public static final int HEIGHT = 200;
+    // from top left of the entities
+    public static final int WIDTH_VIKINGS = 10, HEIGHT_VIKINGS = 10;
+    public static final int WIDTH_WHEAT = 10, HEIGHT_WHEAT = 10;
+    public static final int WIDTH_SHEAP = 10, HEIGHT_SHEAP = 10;
+    public static final int WIDTH_FIELD = 30, HEIGHT_FIELD = 30;
+
     // map betwwen camp id and the coordinates of the top left corner of the camp
     public static final HashMap<Integer, Point> MAP_CAMPS_POSITION = new HashMap<Integer, Point>(){
         {

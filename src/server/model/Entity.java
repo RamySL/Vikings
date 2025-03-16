@@ -5,6 +5,7 @@ import java.awt.geom.Point2D;
 
 public abstract class Entity {
     protected float health;
+    // center of the entity
     protected Point position;
     protected int campId;
 

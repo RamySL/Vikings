@@ -9,10 +9,12 @@ import java.util.List;
 /**
  * Classe représentant un cap viking, au début j'aivais mis les classes abstraites en type de listes
  * mais après ça faisait une erreur avec Gson, il n'acecptait pas les classes abstraites. Donc j'ai mis Viking Cow
- * Wheat pour le test juste.
+ * Wheat pour le test juste.<p>
+ * !!!!!!!! On ne peut pas compter sur l'attribut static lastId pour avoir l'id du camp parceque gsoon quand on reçoit
+ * du coté du client il va réexecuter le constructeur. On delesse la tache au serveur pour les id.
  */
 public class Camp {
-    public static int lastId = 0;
+    //public static int lastId = 0;
     private final int id;
     private ArrayList<Warrior> warriors;
     private ArrayList<Field> fields;
@@ -23,12 +25,12 @@ public class Camp {
     private ArrayList<Wheat> wheats;
 
     // Constructeur
-    public Camp() {
+    public Camp(int id) {
         // initialize the instance variables
-        warriors = new ArrayList<Warrior>();
+        warriors = new ArrayList<>();
         fields = new ArrayList<>();
         farmers = new ArrayList<>();
-        this.id = lastId++;
+        this.id = id;
         this.strength = 0;
         //vikings = new ArrayList<>();
         sheap = new ArrayList<>();
@@ -37,15 +39,19 @@ public class Camp {
         init();
 
     }
+
+    /**
+     * the init of the position is relative to the camp.
+     */
     public void init() {
         // Ajout des guerriers
-        Warrior v1 = new Warrior(100, new Point(10, 10), this.id/*,this*/);
-        Warrior v2 = new Warrior(100, new Point(30, 10), this.id/*,this*/);
-        Warrior v3 = new Warrior(100, new Point(50, 10), this.id/*,this*/);
+        Point topLeftCamp =  Position.MAP_CAMPS_POSITION.get(this.id);
+        Warrior v1 = new Warrior(100,new Point(topLeftCamp.x + 10,topLeftCamp.y - 10), this.id/*,this*/);
+        Warrior v2 = new Warrior(100,new Point(topLeftCamp.x + 30,topLeftCamp.y - 10), this.id/*,this*/);
 
-        // Ajout des fermiers
-        Farmer f1 = new Farmer(100, new Point(15, 10), this.id/*,this*/);
-        Farmer f2 = new Farmer(100, new Point(25, 10), this.id/*,this*/);
+        Farmer f1 = new Farmer(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 30), this.id/*,this*/);
+        Farmer f2 = new Farmer(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 30), this.id/*,this*/);
+
 
         //vikings.add(v1);
         //vikings.add(v2);
@@ -56,27 +62,28 @@ public class Camp {
 
         warriors.add(v1);
         warriors.add(v2);
-        warriors.add(v3);
-
-        Sheap s1 = new Sheap(100, new Point(5, 50), this.id, 6/*,this*/);
-        Sheap s2 = new Sheap(100, new Point(15, 50), this.id, 5/*,this*/);
-        Sheap s3 = new Sheap(100, new Point(35, 50), this.id, 4/*,this*/);
+        ;
+        Sheap s1 = new Sheap(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6/*,this*/);
+        Sheap s2 = new Sheap(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5/*,this*/);
 
         sheap.add(s1);
         sheap.add(s2);
-        sheap.add(s3);
 
         // Ajout des cultures
-        Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
+        //Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
+        Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70,topLeftCamp.y - 50), this.id, 0);
         wheats.add(v);
 
-        Field fi1 = new Field(new Point(10, 100), this.id);
-        Field fi2 = new Field(new Point(30, 100), this.id);
+//        Field fi1 = new Field(new Point(10, 100), this.id);
+//        Field fi2 = new Field(new Point(30, 100), this.id);
+        Field fi1 = new Field(new Point(topLeftCamp.x + 15,topLeftCamp.y - 100), this.id);
+        Field fi2 = new Field(new Point(topLeftCamp.x + 50,topLeftCamp.y - 100), this.id);
         fields.add(fi1);
         fields.add(fi2);
 
-        Farmer fa1 = new Farmer(100, new Point(10, 150), this.id);
-        farmers.add(fa1);
+        // add farmer
+        farmers.add(f1);
+        farmers.add(f2);
     }
 
     public List<Point> getFieldPositions() {

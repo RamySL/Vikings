@@ -54,7 +54,7 @@ public class Server {
                System.out.println("Connexion établie avec " + clientSoket.getInetAddress());
 
                // On créer un camp pour le client connecté
-               Camp camp = new Camp();
+               Camp camp = new Camp(nbJoueursConnectes);
                System.out.println("Camp créé : " + camp);
                camps[nbJoueursConnectes] = camp;
                nbJoueursConnectes++;
