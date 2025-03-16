@@ -25,6 +25,7 @@ public class ThreadCommunicationServer extends Thread{
     private boolean firstClick = true;
     private Warrior warriorSelected;
     private Farmer farmerSelected;
+    private Gson gson = new Gson();
 
     public ThreadCommunicationServer(Server server, Socket client, Camp camp) {
         this.camp=camp;
@@ -40,6 +41,8 @@ public class ThreadCommunicationServer extends Thread{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        // we send the camp id to the client
+        this.sendMessage(FormatPacket.format("PacketCampId", gson.toJson(new PacketCampId(camp.getId()))));
 
     }
 
@@ -76,7 +79,6 @@ public class ThreadCommunicationServer extends Thread{
      */
 
     public void reactMessage(String message) {
-        Gson gson = new Gson();
         PacketWrapper wrapper = gson.fromJson(message, PacketWrapper.class);
         if (wrapper.type == null || wrapper.content == null) {
             System.out.println("Invalid message format");

@@ -61,6 +61,10 @@ public class ThreadCommunicationClient extends Thread {
             case "PacketOpenPanelControl":
                 PacketOpenPanelControl pCtrl = gson.fromJson(wrapper.content, PacketOpenPanelControl.class);
                 break;
+            case "PacketCampId":
+                PacketCampId pCampId = gson.fromJson(wrapper.content, PacketCampId.class);
+                this.view.getViewPartie().setOffsetCampID(pCampId.getCampId());
+                break;
             default:
                 System.out.println("Invalid message format");
         }

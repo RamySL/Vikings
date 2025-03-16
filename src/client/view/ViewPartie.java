@@ -16,8 +16,13 @@ public class ViewPartie extends JPanel {
     public static final int RATIO_X = 3, RATIO_Y = 2;
     public static final int WIDTH_VIEW = (2*Position.MARGIN+Position.WIDTH)*RATIO_X;
     public static final int HEIGHT_VIEW = (2*Position.MARGIN+Position.HEIGHT)*RATIO_Y;
-    // the amount that will be used to translate swing coordinates
-    private int offsetX = 0, offsetY = 0;
+    // the point where the camp shold be translated to
+    public static final Point POINT_ANCRE = new Point(Position.MARGIN*RATIO_X,Position.MARGIN*RATIO_Y);
+    // the amount that will be used to translate swing coordinates when draging
+    private int offsetDraggingX = 0, offsetDraggingY = 0;
+    // the offset to use when translating to show the client camp on the screen
+    private int offsetCampX, offsetCampY;
+    private int camp_id;
 
     private Partie partieModel;
     private PanneauControle panneauControle;  // Ajout du champ PanneauControle
@@ -53,24 +58,38 @@ public class ViewPartie extends JPanel {
     }
 
     /**
-     *
+     * add the offset passed to the current draging offsets
      * @param x amount to add to offsetX
      * @param y amount to add to offsetY
      */
     public void addToOffset(int x, int y) {
-        offsetX += x;
-        offsetY += y;
+        offsetDraggingX += x;
+        offsetDraggingY += y;
+    }
+
+    /**
+     * set the offset to the camp with the given id<p>
+     * !! this method should be executed before the view is painted !!
+     * @param camp_id
+     */
+    public void setOffsetCampID(int camp_id) {
+        this.camp_id = camp_id;
+        // top left point of the camp in view coordinates
+        Point pointTopLeft = pointModelToView(Position.MAP_CAMPS_POSITION.get(camp_id));
+        //Point translation = new Point(ancre.x - pointCible.x, ancre.y - pointCible.y );
+        Point offset = new Point(POINT_ANCRE.x - pointTopLeft.x, POINT_ANCRE.y - pointTopLeft.y);
+        this.offsetCampX = offset.x;
+        this.offsetCampY = offset.y;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.translate(offsetX, offsetY);
+        g2.translate(offsetDraggingX, offsetDraggingY);
         // L'anti-aliasing
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Color.RED);
-
+        g2.translate(this.offsetCampX, this.offsetCampY);
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
         }
@@ -132,5 +151,15 @@ public class ViewPartie extends JPanel {
         this.revalidate();
         this.repaint();
 
+    }
+
+    /**
+     *
+     * @return the total offset used to translate view coordinates (dragging + camp position offset)
+     */
+    public Point getTotalOffset() {
+        int totalOffsetX = offsetDraggingX + offsetCampX;
+        int totalOffsetY = offsetDraggingY + offsetCampY;
+        return new Point(totalOffsetX, totalOffsetY);
     }
 }
