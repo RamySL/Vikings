@@ -33,15 +33,7 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
 
     }
 
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        Gson gson = new Gson();
-        String contentPaquet = gson.toJson(new PaquetCoordClick(e.getX(),e.getY()));
-
-        // ! ! je pense sans le get c'est mieux
-        this.threadCommunicationClient.getClient().sendMessage(FormatPacket.format("PaquetCoordClick",contentPaquet));
+    public ThreadCommunicationClient getThreadCommunicationClient() {
+        return threadCommunicationClient;
     }
-
-
 }

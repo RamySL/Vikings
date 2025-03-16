@@ -1,6 +1,7 @@
 package main;
 
 import client.controler.ControlerClient;
+import client.controler.ControlerParty;
 import client.view.ViewClient;
 import server.controler.ControlerServer;
 import server.view.Server;
@@ -13,15 +14,6 @@ public class Monoplayer {
         new Thread(() -> {
             Server serverView = new Server();
             ControlerServer serverControler = new ControlerServer(serverView);
-
-            JFrame serverFrame = new JFrame();
-            serverFrame.setIconImage(new ImageIcon("src/ressources/images/vikingServer_ico_128.png").getImage());
-            serverFrame.setTitle("Vikings Server");
-            serverFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            serverFrame.add(serverView);
-            serverFrame.pack();
-            serverFrame.setVisible(true);
-
             // Simulate button click to start the server
             serverView.getConnectButton().doClick();
         }).start();
@@ -30,6 +22,7 @@ public class Monoplayer {
         new Thread(() -> {
             ViewClient clientView = new ViewClient();
             ControlerClient clientControler = new ControlerClient(clientView);
+            ControlerParty controlerParty = new ControlerParty(clientControler, clientView.getViewPartie());
 
             JFrame clientFrame = new JFrame();
             clientFrame.setIconImage(new ImageIcon("src/ressources/images/viking_ico_64.png").getImage());
@@ -45,6 +38,7 @@ public class Monoplayer {
         new Thread(() -> {
             ViewClient clientView = new ViewClient();
             ControlerClient clientControler = new ControlerClient(clientView);
+            ControlerParty controlerParty = new ControlerParty(clientControler, clientView.getViewPartie());
 
             JFrame clientFrame = new JFrame();
             clientFrame.setIconImage(new ImageIcon("src/ressources/images/viking_ico_64.png").getImage());

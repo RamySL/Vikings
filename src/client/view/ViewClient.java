@@ -22,7 +22,7 @@ public class ViewClient extends JPanel {
     private ViewPartie viewPartie;
 
     public ViewClient() {
-        this.setPreferredSize(new Dimension(850, 600));
+        this.setPreferredSize(new Dimension(ViewPartie.WIDTH_VIEW, ViewPartie.HEIGHT_VIEW));
         this.cardLayout = new CardLayout();
 
         this.start = new Start();

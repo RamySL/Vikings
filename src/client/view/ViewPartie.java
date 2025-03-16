@@ -13,7 +13,12 @@ import java.util.ArrayList;
 
 
 public class ViewPartie extends JPanel {
-    private JButton broadcastButton, unicastButton;
+    public static final int RATIO_X = 3, RATIO_Y = 2;
+    public static final int WIDTH_VIEW = (2*Position.MARGIN+Position.WIDTH)*RATIO_X;
+    public static final int HEIGHT_VIEW = (2*Position.MARGIN+Position.HEIGHT)*RATIO_Y;
+    // the amount that will be used to translate swing coordinates
+    private int offsetX = 0, offsetY = 0;
+
     private Partie partieModel;
     private PanneauControle panneauControle;  // Ajout du champ PanneauControle
 
@@ -21,18 +26,14 @@ public class ViewPartie extends JPanel {
      * Constructeur de la vue de la partie
      */
     public ViewPartie(ViewClient viewClient, Partie partieModel) {
+        this.setPreferredSize(new Dimension(WIDTH_VIEW, HEIGHT_VIEW));
         this.partieModel = partieModel;
         // Initialisation de PanneauControle
         this.panneauControle = new PanneauControle();
 
-        // Ajouter les boutons broadcast et unicast
         this.setLayout(new BorderLayout());
-        broadcastButton = new JButton("Broadcast");
-        unicastButton = new JButton("Unicast");
         this.panneauControle.setOpaque(false);
 
-        //this.add(broadcastButton, BorderLayout.NORTH);
-        //this.add(unicastButton, BorderLayout.SOUTH);
         this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
 
     }
@@ -42,14 +43,33 @@ public class ViewPartie extends JPanel {
         return panneauControle;
     }
 
+    /**
+     * Convertit un point du modèle en un point de la vue
+     * @param pointModele
+     * @return
+     */
+    public Point pointModelToView(Point pointModele) {
+        return new Point(pointModele.x * RATIO_X, (Position.HEIGHT + 2 * Position.MARGIN - pointModele.y) * RATIO_Y);
+    }
+
+    /**
+     *
+     * @param x amount to add to offsetX
+     * @param y amount to add to offsetY
+     */
+    public void addToOffset(int x, int y) {
+        offsetX += x;
+        offsetY += y;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        g2.translate(offsetX, offsetY);
         // L'anti-aliasing
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(Color.RED);
-
 
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
@@ -105,14 +125,6 @@ public class ViewPartie extends JPanel {
                 g2.drawString(field.getResource(), field.getPosition().x + field.getCampId() * 400, field.getPosition().y);
             }
         }
-    }
-
-    public JButton getBroadcastButton() {
-        return broadcastButton;
-    }
-
-    public JButton getUnicastButton() {
-        return unicastButton;
     }
 
     public void setPartie(Partie partieModel) {
