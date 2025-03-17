@@ -91,7 +91,7 @@ public class ThreadCommunicationServer extends Thread{
                 PaquetClick paquet = gson.fromJson(wrapper.content, PaquetClick.class);
                 Point viewPoint = new Point(paquet.getX(), paquet.getY());
                 Point translation = new Point(paquet.getTranslationX(), paquet.getTranslationY());
-                Point modelPoint = Position.viewToModel(viewPoint, translation);
+                Point modelPoint = Position.viewToModel(viewPoint, translation, paquet.getScale());
                 // On verifie si le click est sur le camp du client
                 if  (Position.isInCamp(this.camp.getId(), modelPoint.x, modelPoint.y)) {
                     System.out.println("Click in camp");

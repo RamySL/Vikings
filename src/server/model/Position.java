@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class Position {
     // See the doc
-    public static final int MARGIN = 10;
+    public static final int MARGIN = 50;
     // width of a camp
     public static final int WIDTH = 250;
     // height of a camp
@@ -34,11 +34,14 @@ public class Position {
     /**
      * a méthode that tranforms view coordinates into model coordinates using :
      * -  removing translation
+     * - removing scale
      *  - x = x’/RatioX et y = height + 2 × margin − (y′/RatioY )
      *  ? est-ce que mauvaise pratique d'avoir utiliser ViewPartie.RATIO_X
      */
-    public static Point viewToModel(Point viewPoint, Point translation) {
+    public static Point viewToModel(Point viewPoint, Point translation, double scale) {
         viewPoint.translate(-translation.x,-translation.y);
+        viewPoint.x = (int) (viewPoint.x / scale);
+        viewPoint.y = (int) (viewPoint.y / scale);
         return new Point(viewPoint.x / ViewPartie.RATIO_X, HEIGHT+2*MARGIN - (viewPoint.y / ViewPartie.RATIO_Y));
     }
 

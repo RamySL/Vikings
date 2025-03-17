@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 
 public class ViewPartie extends JPanel {
-    public static final int RATIO_X = 3, RATIO_Y = 2;
+    public static final int RATIO_X = 3, RATIO_Y = 3;
     public static final int WIDTH_VIEW = (2*Position.MARGIN+Position.WIDTH)*RATIO_X;
     public static final int HEIGHT_VIEW = (2*Position.MARGIN+Position.HEIGHT)*RATIO_Y;
     // the point where the camp shold be translated to
@@ -22,6 +22,8 @@ public class ViewPartie extends JPanel {
     private int offsetDraggingX = 0, offsetDraggingY = 0;
     // the offset to use when translating to show the client camp on the screen
     private int offsetCampX, offsetCampY;
+    // scale factor for handeling the zoom
+    private double scaleFactor=1.0;
     private int camp_id;
 
     private Partie partieModel;
@@ -68,6 +70,14 @@ public class ViewPartie extends JPanel {
     }
 
     /**
+     * multiply the current scaling by the one passed in parms
+     * @param scaleFactor
+     */
+    public void multiplyScale(double scaleFactor){
+        this.scaleFactor *= scaleFactor;
+    }
+
+    /**
      * set the offset to the camp with the given id<p>
      * !! this method should be executed before the view is painted !!
      * @param camp_id
@@ -91,9 +101,17 @@ public class ViewPartie extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.translate(offsetDraggingX, offsetDraggingY);
+        g2.translate(this.offsetCampX, this.offsetCampY);
+        g2.scale(scaleFactor,scaleFactor);
         // L'anti-aliasing
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.translate(this.offsetCampX, this.offsetCampY);
+
+        // draw the x and y axes in black and thick
+        g2.setColor(Color.BLACK);
+        g2.setStroke(new BasicStroke(2));
+        g2.drawLine(0, 0, 1000, 0);
+        g2.drawLine(0, 0, 0, 1000);
+
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
         }
@@ -182,5 +200,9 @@ public class ViewPartie extends JPanel {
         int totalOffsetX = offsetDraggingX + offsetCampX;
         int totalOffsetY = offsetDraggingY + offsetCampY;
         return new Point(totalOffsetX, totalOffsetY);
+    }
+
+    public double getScaleFactor() {
+        return scaleFactor;
     }
 }
