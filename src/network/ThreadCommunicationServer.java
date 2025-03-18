@@ -34,33 +34,24 @@ public class ThreadCommunicationServer extends Thread{
         this.server = server;
         try {
             this.out = new PrintWriter(this.client.getOutputStream());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
             this.in = new BufferedReader(new java.io.InputStreamReader(client.getInputStream()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        // we send the camp id to the client
+        //we send the camp id to the client
         this.sendMessage(FormatPacket.format("PacketCampId", gson.toJson(new PacketCampId(camp.getId()))));
 
     }
 
     @Override
     public void run(){
+        // print the THread id
         String msg;
         while (true) {
+            System.out.println("Thread id: " + this.threadId());
             msg = this.receiveMessage();
-            if(!msg.isEmpty()) {
-                System.out.println(client.getInetAddress() + " : " + msg);
-                reactMessage(msg);
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            System.out.println(client.getInetAddress() + " : " + msg);
+            reactMessage(msg);
         }
 
     }
@@ -70,6 +61,7 @@ public class ThreadCommunicationServer extends Thread{
      * @param message
      */
     public void sendMessage(String message) {
+        //System.out.println("dans thread message " + this.threadId());
         this.out.println(message);
         this.out.flush();
     }
@@ -165,7 +157,8 @@ public class ThreadCommunicationServer extends Thread{
         return null;
     }
     /**
-     * Recoit un message du client, en lisant sur le flux d'entrée de la socket.
+     * Recoit un message du client, en lisant sur le flux d'entrée de la socket.<p>
+     * Cette méthode est bloquante.
      * @return
      */
     public String receiveMessage() {
