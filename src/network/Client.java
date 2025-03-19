@@ -47,7 +47,9 @@ public class Client {
     }
 
     /**
-     * Recoit un message du serveur.
+     * Recoit un message du serveur.<p>
+     * La méthode est bloquante.
+     *
      * @return
      */
     public String receiveMessage() {

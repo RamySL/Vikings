@@ -26,14 +26,7 @@ public class ThreadCommunicationClient extends Thread {
     public void run() {
         while (true) {
             String msg = this.client.receiveMessage();
-            if (!msg.isEmpty()) {
-                reactMessage(msg);
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            reactMessage(msg);
         }
     }
 

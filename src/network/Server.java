@@ -93,6 +93,7 @@ public class Server {
      * @param message
      */
     public void broadcast(String message) {
+        //System.out.println("thread id: " + Thread.currentThread().threadId());
         for (ThreadCommunicationServer client : this.clients) {
             client.sendMessage(message);
         }
