@@ -5,6 +5,7 @@ import server.model.Camp;
 import server.model.Farmer;
 import server.model.Position;
 import server.model.Warrior;
+import server.model.Field;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -74,6 +75,15 @@ public class ThreadCommunicationServer extends Thread{
         this.out.flush();
     }
 
+    public void sendPlantPacket(PaquetPlant paquetPlant) {
+        PacketWrapper packetWrapper = new PacketWrapper();
+        packetWrapper.type = "PaquetPlant";
+        packetWrapper.content = new Gson().toJsonTree(paquetPlant);
+
+        String jsonPacket = new Gson().toJson(packetWrapper);
+        sendMessage(jsonPacket);  // Envoie le paquet au client
+    }
+
     /**
      * Réagit sur le modèle selon le message reçu de la part du client
      * @param message
@@ -87,6 +97,13 @@ public class ThreadCommunicationServer extends Thread{
         }
 
         switch (wrapper.type) {
+            case "PaquetPlant":
+                PaquetPlant paquetPlant = gson.fromJson(wrapper.content, PaquetPlant.class);
+                Field field = camp.getFieldById(paquetPlant.getFieldId());
+                if (field != null) {
+                    field.plant(paquetPlant.getResource());
+                }
+                break;
             case "PaquetClick":
                 PaquetClick paquet = gson.fromJson(wrapper.content, PaquetClick.class);
                 Point viewPoint = new Point(paquet.getX(), paquet.getY());
@@ -111,6 +128,7 @@ public class ThreadCommunicationServer extends Thread{
                         }
                         // Et on envoi un message pour ouvrir le panneau (pas encore implementé)
                         this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl())));
+                        this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                     } else {
                         // On déplace l'entité vers le click
                         if (warriorSelected != null) {
@@ -121,9 +139,11 @@ public class ThreadCommunicationServer extends Thread{
                             farmerSelected.move(new Point(modelPoint.x, modelPoint.y));
                         }
                         firstClick = true;
+
                     }
                 } else {
                     // click sur camp ennemie à traiter
+                    this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                 }
                 break;
         }

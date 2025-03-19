@@ -5,13 +5,16 @@ import client.view.ThreadRepaint;
 import client.view.ViewClient;
 import com.google.gson.Gson;
 import javax.swing.JButton;
+import com.google.gson.JsonObject;
+
+import java.awt.*;
+
 /**
  * Thread qui écouter ce que le serveur envoie et actualise l'interface graphique du client
  */
 public class ThreadCommunicationClient extends Thread {
     private Client client;
     private boolean gameStarted = false;
-    private boolean isFarmerNearField = false;
     private ViewClient view;
 
     public ThreadCommunicationClient(Client client, ViewClient view) {
@@ -50,7 +53,6 @@ public class ThreadCommunicationClient extends Thread {
                 break;
             case "FarmerNearField":
                 System.out.println("Received FarmerNearField message, showing Plant button.");
-                // Le fermier est sur un champ, donc on affiche le bouton Planter
                 this.view.getViewPartie().getPanneauControle().setFarmerOnField(true);
                 break;
             case "FarmerNotNearField":
@@ -60,6 +62,11 @@ public class ThreadCommunicationClient extends Thread {
                 break;
             case "PacketOpenPanelControl":
                 PacketOpenPanelControl pCtrl = gson.fromJson(wrapper.content, PacketOpenPanelControl.class);
+                break;
+            case "ClicSurAutreChose":
+                System.out.println("Received ClicSurAutreChose message, hiding Plant button.");
+                // Le joueur a cliqué sur autre chose que le bouton Planter, donc on cache le bouton Planter
+                this.view.getViewPartie().getPanneauControle().elseWhereClicked();
                 break;
             case "PacketCampId":
                 PacketCampId pCampId = gson.fromJson(wrapper.content, PacketCampId.class);

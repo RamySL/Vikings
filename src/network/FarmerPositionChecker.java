@@ -33,35 +33,41 @@ public class FarmerPositionChecker extends Thread {
         }
     }
 
-    private void checkFarmerNearField() {
-        boolean nearField = isNearFieldWithMargin(farmer, distanceTolerance);
-        if (nearField != previousNearFieldState) {
-            if (nearField) {
-                System.out.println("Farmer is near a field with margin, sending message to client.");
-                communicationServer.sendMessage(FormatPacket.format("FarmerNearField", "{}"));
-            } else {
-                System.out.println("Farmer is not near a field, sending message to client.");
-                communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField", "{}"));
-            }
-            previousNearFieldState = nearField;
-        }
-    }
 
-    private boolean isNearFieldWithMargin(Farmer farmer, double margin) {
-        double distanceToField = calculateDistanceToField(farmer);
+
+   private void checkFarmerNearField() {
+       Field nearestField = getNearestField(farmer);
+       boolean nearField = isNearFieldWithMargin(farmer, distanceTolerance, nearestField);
+       if (nearField != previousNearFieldState) {
+           if (nearField) {
+               System.out.println("Farmer is near a field with margin, sending message to client.");
+               communicationServer.sendMessage(FormatPacket.format("FarmerNearField",
+                       String.format("{\"farmerId\": %d, \"fieldId\": %d}", farmer.getId(), nearestField.getCampId())));
+           } else {
+               System.out.println("Farmer is not near a field, sending message to client.");
+               communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField",
+                       String.format("{\"farmerId\": %d}", farmer.getId())));
+           }
+           previousNearFieldState = nearField;
+       }
+   }
+
+    private boolean isNearFieldWithMargin(Farmer farmer, double margin, Field field) {
+        double distanceToField = farmer.getPosition().distance(field.getPosition());
         return distanceToField <= margin;
     }
 
-    private double calculateDistanceToField(Farmer farmer) {
+    private Field getNearestField(Farmer farmer) {
         Point farmerPosition = farmer.getPosition();
         double minDistance = Double.MAX_VALUE;
+        Field nearestField = null;
         for (Field field : camp.getFields()) {
-            Point fieldPosition = field.getPosition();
-            double distance = farmerPosition.distance(fieldPosition);
+            double distance = farmerPosition.distance(field.getPosition());
             if (distance < minDistance) {
                 minDistance = distance;
+                nearestField = field;
             }
         }
-        return minDistance;
+        return nearestField;
     }
 }

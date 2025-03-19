@@ -36,6 +36,7 @@ public class Field {
         if (!isPlanted) {
             this.resource = resource;
             this.isPlanted = true;
+            System.out.println("ressource "+ resource + " plantée");
         }
     }
 

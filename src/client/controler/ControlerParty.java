@@ -51,4 +51,6 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
     public void mouseWheelMoved(MouseWheelEvent e) {
     }
 
+
+
 }

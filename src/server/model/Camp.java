@@ -65,9 +65,9 @@ public class Camp {
         ;
         Sheap s1 = new Sheap(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6/*,this*/);
         Sheap s2 = new Sheap(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5/*,this*/);
-
         sheap.add(s1);
         sheap.add(s2);
+
 
         // Ajout des cultures
         //Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
@@ -93,6 +93,19 @@ public class Camp {
         }
         return positions;
     }
+
+    public Field getFieldById(int fieldId) {
+        for (Field field : fields) {
+            if (field.getCampId() == fieldId) {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    /*public List<Field> getFields() {
+        return fields;
+    }*/
 
     /**
      * Augmente la force du camp en fonction de la nourriture consommée.
@@ -245,6 +258,9 @@ public void decreaseStrength(float amount) {
                 ", fields= " + fields +
                 ", strength=" + strength +
                 '}';
+    }
+    public Point getPosition() {
+        return Position.MAP_CAMPS_POSITION.get(this.id);
     }
 }
 
