@@ -3,6 +3,8 @@ package network;
 import server.model.Camp;
 import server.model.Farmer;
 import server.model.Field;
+import server.model.Position;
+
 import java.awt.Point;
 
 public class FarmerPositionChecker extends Thread {
@@ -39,14 +41,15 @@ public class FarmerPositionChecker extends Thread {
        Field nearestField = getNearestField(farmer);
        boolean nearField = isNearFieldWithMargin(farmer, distanceTolerance, nearestField);
        if (nearField != previousNearFieldState) {
+           String message = String.format("{\"farmerX\": %d, \"farmerY\": %d, \"fieldX\": %d, \"fieldY\": %d, \"isPlanted\": %b}",
+                   farmer.getPosition().x, farmer.getPosition().y,
+                   nearestField.getPosition().x, nearestField.getPosition().y, nearestField.isPlanted());
            if (nearField) {
-               System.out.println("Farmer is near a field with margin, sending message to client.");
-               communicationServer.sendMessage(FormatPacket.format("FarmerNearField",
-                       String.format("{\"farmerId\": %d, \"fieldId\": %d}", farmer.getId(), nearestField.getCampId())));
+               //System.out.println("Farmer is near a field with margin, sending message to client.");
+               communicationServer.sendMessage(FormatPacket.format("FarmerNearField", message ));
            } else {
-               System.out.println("Farmer is not near a field, sending message to client.");
-               communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField",
-                       String.format("{\"farmerId\": %d}", farmer.getId())));
+               //System.out.println("Farmer is not near a field, sending message to client.");
+               communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField", message ));
            }
            previousNearFieldState = nearField;
        }
@@ -70,4 +73,5 @@ public class FarmerPositionChecker extends Thread {
         }
         return nearestField;
     }
+
 }

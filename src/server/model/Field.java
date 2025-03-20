@@ -50,5 +50,9 @@ public class Field {
         return null;
     }
 
+    public int getId(){
+        return 1;
+    }
+
 
 }

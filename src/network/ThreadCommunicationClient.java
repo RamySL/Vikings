@@ -1,13 +1,10 @@
 package network;
 
-import server.model.Partie;
+import server.model.*;
 import client.view.ThreadRepaint;
 import client.view.ViewClient;
 import com.google.gson.Gson;
-import javax.swing.JButton;
-import com.google.gson.JsonObject;
 
-import java.awt.*;
 
 /**
  * Thread qui écouter ce que le serveur envoie et actualise l'interface graphique du client
@@ -45,19 +42,31 @@ public class ThreadCommunicationClient extends Thread {
                 }
                 break;
             case "FarmerNearField":
-                System.out.println("Received FarmerNearField message, showing Plant button.");
-                this.view.getViewPartie().getPanneauControle().setFarmerOnField(true);
+                //System.out.println("Received FarmerNearField message, showing Plant button.");
+                FarmerFieldWrapper farmerFieldWrapper = gson.fromJson(wrapper.content, FarmerFieldWrapper.class);
+                int farmerX = farmerFieldWrapper.getFarmerX();
+                int farmerY = farmerFieldWrapper.getFarmerY();
+                int fieldX = farmerFieldWrapper.getFieldX();
+                int fieldY = farmerFieldWrapper.getFieldY();
+                boolean isFieldPlanted = farmerFieldWrapper.getIsPlanted();
+                this.view.getViewPartie().getPanneauControle().setFarmerOnField(true, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
                 break;
             case "FarmerNotNearField":
-                System.out.println("Received FarmerNotNearField message, hiding Plant button.");
+                //System.out.println("Received FarmerNotNearField message, hiding Plant button.");
+                farmerFieldWrapper = gson.fromJson(wrapper.content, FarmerFieldWrapper.class);
+                farmerX = farmerFieldWrapper.getFarmerX();
+                farmerY = farmerFieldWrapper.getFarmerY();
+                fieldX = farmerFieldWrapper.getFieldX();
+                fieldY = farmerFieldWrapper.getFieldY();
+                isFieldPlanted = farmerFieldWrapper.getIsPlanted();
                 // Le fermier n'est pas sur un champ, donc on cache le bouton Planter
-                this.view.getViewPartie().getPanneauControle().setFarmerOnField(false);
+                this.view.getViewPartie().getPanneauControle().setFarmerOnField(false, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
                 break;
             case "PacketOpenPanelControl":
                 PacketOpenPanelControl pCtrl = gson.fromJson(wrapper.content, PacketOpenPanelControl.class);
                 break;
             case "ClicSurAutreChose":
-                System.out.println("Received ClicSurAutreChose message, hiding Plant button.");
+                //System.out.println("Received ClicSurAutreChose message, hiding Plant button.");
                 // Le joueur a cliqué sur autre chose que le bouton Planter, donc on cache le bouton Planter
                 this.view.getViewPartie().getPanneauControle().elseWhereClicked();
                 break;
@@ -73,4 +82,5 @@ public class ThreadCommunicationClient extends Thread {
     public Client getClient() {
         return client;
     }
+
 }

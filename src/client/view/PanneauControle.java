@@ -24,12 +24,7 @@ public class PanneauControle extends JPanel {
 
     }
 
-    /*public void updatePosition(int width, int height){
-        this.menuHeight=height;
-        this.posMenuX=width;
-        System.out.println(this.posMenuX+"  ");
-        slidingMenu.updatePosition(posMenuX, menuHeight );
-    }*/
+
     public void updatePosition(int width, int height) {
         this.menuHeight = height;
         this.posMenuX = width - this.menuWidth;  // Mise à jour de la position X pour être égale à la largeur de la fenêtre moins la largeur du menu
@@ -44,14 +39,17 @@ public class PanneauControle extends JPanel {
         }
     }
 
-    public void setFarmerOnField(boolean isFarmerOnField) {
+
+    public void setFarmerOnField(boolean isFarmerOnField, int farmerX, int farmerY, int fieldX, int fieldY, boolean isFieldPlanted) {
         updateSlidingMenuVisibility(isFarmerOnField);
-        slidingMenu.updatePlantButtonVisibility(isFarmerOnField);
+        slidingMenu.updatePlantButtonVisibility(isFarmerOnField, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
     }
 
     public void elseWhereClicked() {
-        slidingMenu.toggle();
+        slidingMenu.toggleHide();
     }
 
-
+    public SlidingMenu getSlidingMenu() {
+        return slidingMenu;
+    }
 }

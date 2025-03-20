@@ -1,12 +1,8 @@
 package network;
 
-import com.google.gson.Gson;
-import server.model.Camp;
-import server.model.Farmer;
-import server.model.Position;
-import server.model.Warrior;
-import server.model.Field;
+import server.model.*;
 
+import com.google.gson.Gson;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +23,7 @@ public class ThreadCommunicationServer extends Thread{
     private boolean firstClick = true;
     private Warrior warriorSelected;
     private Farmer farmerSelected;
+    private Field fieldSelected;
     private Gson gson = new Gson();
 
     public ThreadCommunicationServer(Server server, Socket client, Camp camp) {
@@ -62,19 +59,11 @@ public class ThreadCommunicationServer extends Thread{
      * @param message
      */
     public void sendMessage(String message) {
-        //System.out.println("dans thread message " + this.threadId());
         this.out.println(message);
         this.out.flush();
     }
 
-    public void sendPlantPacket(PaquetPlant paquetPlant) {
-        PacketWrapper packetWrapper = new PacketWrapper();
-        packetWrapper.type = "PaquetPlant";
-        packetWrapper.content = new Gson().toJsonTree(paquetPlant);
 
-        String jsonPacket = new Gson().toJson(packetWrapper);
-        sendMessage(jsonPacket);  // Envoie le paquet au client
-    }
 
     /**
      * Réagit sur le modèle selon le message reçu de la part du client
@@ -91,10 +80,16 @@ public class ThreadCommunicationServer extends Thread{
         switch (wrapper.type) {
             case "PaquetPlant":
                 PaquetPlant paquetPlant = gson.fromJson(wrapper.content, PaquetPlant.class);
-                Field field = camp.getFieldById(paquetPlant.getFieldId());
-                if (field != null) {
-                    field.plant(paquetPlant.getResource());
-                }
+                String ressource= paquetPlant.getResource();
+                int farmerX = paquetPlant.getFarmerX();
+                int farmerY = paquetPlant.getFarmerY();
+                int fieldX = paquetPlant.getFieldX();
+                int fieldY = paquetPlant.getFieldY();
+
+                System.out.println("Received PaquetPlant with coordinates: Farmer(" + farmerX + ", " + farmerY + "), Field(" + fieldX + ", " + fieldY + ")");
+                farmerSelected=DetermineSelectedFarmer(farmerX, farmerY);
+                fieldSelected=DetermineSelectedField(fieldX, fieldY);
+                fieldSelected.plant(ressource);
                 break;
             case "PaquetClick":
                 PaquetClick paquet = gson.fromJson(wrapper.content, PaquetClick.class);
@@ -172,6 +167,16 @@ public class ThreadCommunicationServer extends Thread{
             Point topLeft = new Point(farmer.getPosition().x - Position.WIDTH_VIKINGS/2, farmer.getPosition().y+Position.HEIGHT_VIKINGS/2);
             if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_VIKINGS && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_VIKINGS) {
                 return farmer;
+            }
+        }
+        return null;
+    }
+
+    public Field DetermineSelectedField(int x, int y){
+        for (Field field : this.camp.getFields()) {
+            Point topLeft = new Point(field.getPosition().x - Position.WIDTH_FIELD/2, field.getPosition().y+Position.HEIGHT_FIELD/2);
+            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_FIELD && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_FIELD) {
+                return field;
             }
         }
         return null;

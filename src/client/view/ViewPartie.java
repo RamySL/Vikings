@@ -1,5 +1,7 @@
 package client.view;
 
+import client.controler.ControlerClient;
+import client.controler.ControlerParty;
 import server.model.*;
 
 import javax.swing.*;
@@ -35,7 +37,6 @@ public class ViewPartie extends JPanel {
     private PanneauControle panneauControle;  // Ajout du champ PanneauControle
     private int windowWidth=WIDTH_VIEW, windowHeight=HEIGHT_VIEW;
 
-
     /**
      * Constructeur de la vue de la partie
      */
@@ -63,7 +64,6 @@ public class ViewPartie extends JPanel {
         // Redimensionner et déplacer le panneau de contrôle à droite de la fenêtre
         int width = getWidth();  // Largeur de la fenêtre
         int height = getHeight();  // Hauteur de la fenêtre
-        //System.out.println(width + "    " + height);
         panneauControle.updatePosition(width, height);
 
     }
