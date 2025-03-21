@@ -6,8 +6,8 @@ import java.util.List;
 public class Farmer extends Viking {
      // Référence au camp pour gérer les cultures et le bétail
 
-     public Farmer(float health, Point position, int camp/*, Camp campInstance*/) {
-        super(health, position, camp/*, campInstance*/);
+     public Farmer(float health, Point position, int camp) {
+        super(health, position, camp);
     }
 
 
@@ -96,19 +96,11 @@ public class Farmer extends Viking {
         // Assuming you have a way to get the camp by ID
         return CampManager.getCampById(this.campId);
     }
-
-    public boolean isOnField() {
-        Camp camp = getCamp(); // Récupérer le camp du fermier
-        List<Point> fieldPositions = camp.getFieldPositions(); // Récupérer les positions des champs
-
-        // Comparer la position du fermier avec celles des champs
-        for (Point fieldPosition : fieldPositions) {
-            if (this.position.equals(fieldPosition)) {
-                return true; // Le fermier est sur un champ
-            }
-        }
-        return false; // Le fermier n'est pas sur un champ
+    public int getId() {
+        return 1;
     }
+
+
 
 
 }

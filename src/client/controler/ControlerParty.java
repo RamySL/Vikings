@@ -1,16 +1,17 @@
 package client.controler;
 
-import client.view.ViewPartie;
+import client.controler.event.EventBus;
+import client.controler.event.PlantEvent;
+import client.controler.event.PlantListener;
+import client.view.*;
+import network.*;
 import com.google.gson.Gson;
-import network.FormatPacket;
-import network.PaquetClick;
-
 import java.awt.event.*;
 
 /**
  * Controler of the party
  */
-public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener {
+public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener, PlantListener {
 
     private ControlerClient controlerClient;
     private ViewPartie viewPartie;
@@ -25,6 +26,7 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         this.viewPartie.addMouseListener(this);
         this.viewPartie.addMouseMotionListener(this);
         this.viewPartie.addMouseWheelListener(this);
+        EventBus.getInstance().subscribe("PlantEvent", this::handlePlantEvent);
     }
 
     @Override
@@ -36,6 +38,8 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         // ! ! je pense sans le get c'est mieux
         this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetClick",contentPaquet));
     }
+
+
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -71,5 +75,24 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         }
 
     }
+    @Override
+    public void onPlant(PlantEvent event) {
+        sendPlantPacketToServer(event.getResource(), event.getFarmerX(), event.getFarmerY(), event.getFieldX(), event.getFieldY());
+    }
+
+    private void handlePlantEvent(Object event) {
+        if (event instanceof PlantEvent) {
+            PlantEvent plantEvent = (PlantEvent) event;
+            sendPlantPacketToServer(plantEvent.getResource(), plantEvent.getFarmerX(), plantEvent.getFarmerY(), plantEvent.getFieldX(), plantEvent.getFieldY());
+        }
+    }
+
+    public void sendPlantPacketToServer(String resource, int farmerX, int farmerY, int fieldX, int fieldY) {
+        Gson gson = new Gson();
+        String contentPaquet = gson.toJson(new PaquetPlant(resource, farmerX, farmerY, fieldX, fieldY));
+        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetPlant", contentPaquet));
+    }
+
+
 
 }

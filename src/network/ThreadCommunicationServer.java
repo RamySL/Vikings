@@ -1,11 +1,8 @@
 package network;
 
-import com.google.gson.Gson;
-import server.model.Camp;
-import server.model.Farmer;
-import server.model.Position;
-import server.model.Warrior;
+import server.model.*;
 
+import com.google.gson.Gson;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +23,7 @@ public class ThreadCommunicationServer extends Thread{
     private boolean firstClick = true;
     private Warrior warriorSelected;
     private Farmer farmerSelected;
+    private Field fieldSelected;
     private Gson gson = new Gson();
 
     public ThreadCommunicationServer(Server server, Socket client, Camp camp) {
@@ -61,10 +59,11 @@ public class ThreadCommunicationServer extends Thread{
      * @param message
      */
     public void sendMessage(String message) {
-        //System.out.println("dans thread message " + this.threadId());
         this.out.println(message);
         this.out.flush();
     }
+
+
 
     /**
      * Réagit sur le modèle selon le message reçu de la part du client
@@ -79,6 +78,19 @@ public class ThreadCommunicationServer extends Thread{
         }
 
         switch (wrapper.type) {
+            case "PaquetPlant":
+                PaquetPlant paquetPlant = gson.fromJson(wrapper.content, PaquetPlant.class);
+                String ressource= paquetPlant.getResource();
+                int farmerX = paquetPlant.getFarmerX();
+                int farmerY = paquetPlant.getFarmerY();
+                int fieldX = paquetPlant.getFieldX();
+                int fieldY = paquetPlant.getFieldY();
+
+                System.out.println("Received PaquetPlant with coordinates: Farmer(" + farmerX + ", " + farmerY + "), Field(" + fieldX + ", " + fieldY + ")");
+                farmerSelected=DetermineSelectedFarmer(farmerX, farmerY);
+                fieldSelected=DetermineSelectedField(fieldX, fieldY);
+                fieldSelected.plant(ressource);
+                break;
             case "PaquetClick":
                 PaquetClick paquet = gson.fromJson(wrapper.content, PaquetClick.class);
                 Point viewPoint = new Point(paquet.getX(), paquet.getY());
@@ -103,6 +115,7 @@ public class ThreadCommunicationServer extends Thread{
                         }
                         // Et on envoi un message pour ouvrir le panneau (pas encore implementé)
                         this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl())));
+                        this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                     } else {
                         // On déplace l'entité vers le click
                         if (warriorSelected != null) {
@@ -113,9 +126,11 @@ public class ThreadCommunicationServer extends Thread{
                             farmerSelected.move(new Point(modelPoint.x, modelPoint.y));
                         }
                         firstClick = true;
+
                     }
                 } else {
                     // click sur camp ennemie à traiter
+                    this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                 }
                 break;
         }
@@ -152,6 +167,16 @@ public class ThreadCommunicationServer extends Thread{
             Point topLeft = new Point(farmer.getPosition().x - Position.WIDTH_VIKINGS/2, farmer.getPosition().y+Position.HEIGHT_VIKINGS/2);
             if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_VIKINGS && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_VIKINGS) {
                 return farmer;
+            }
+        }
+        return null;
+    }
+
+    public Field DetermineSelectedField(int x, int y){
+        for (Field field : this.camp.getFields()) {
+            Point topLeft = new Point(field.getPosition().x - Position.WIDTH_FIELD/2, field.getPosition().y+Position.HEIGHT_FIELD/2);
+            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_FIELD && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_FIELD) {
+                return field;
             }
         }
         return null;

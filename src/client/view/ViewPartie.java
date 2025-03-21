@@ -1,10 +1,17 @@
 package client.view;
 
+import client.controler.ControlerClient;
+import client.controler.ControlerParty;
 import server.model.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import java.awt.geom.AffineTransform;
 
 /**
  * Vue de la partie, Dessine tous les éléments du modèle
@@ -28,34 +35,50 @@ public class ViewPartie extends JPanel {
 
     private Partie partieModel;
     private PanneauControle panneauControle;  // Ajout du champ PanneauControle
+    private int windowWidth=WIDTH_VIEW, windowHeight=HEIGHT_VIEW;
 
     /**
      * Constructeur de la vue de la partie
      */
     public ViewPartie(ViewClient viewClient, Partie partieModel) {
-        this.setPreferredSize(new Dimension(WIDTH_VIEW, HEIGHT_VIEW));
-        this.partieModel = partieModel;
-        // Initialisation de PanneauControle
-        this.panneauControle = new PanneauControle();
+        int width = getWidth();  // Largeur de la fenêtre
+        int height = getHeight();  // Hauteur de la fenêtre
 
+        this.setPreferredSize(new Dimension(width, height));
+
+
+        this.partieModel = partieModel;
+        this.panneauControle = new PanneauControle(width,  height);
         this.setLayout(new BorderLayout());
         this.panneauControle.setOpaque(false);
-
         this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updatePanneauControlePosition();
+            }
+        });
 
     }
+    private void updatePanneauControlePosition() {
+        // Redimensionner et déplacer le panneau de contrôle à droite de la fenêtre
+        int width = getWidth();  // Largeur de la fenêtre
+        int height = getHeight();  // Hauteur de la fenêtre
+        panneauControle.updatePosition(width, height);
 
+    }
     // Méthode pour obtenir PanneauControle
     public PanneauControle getPanneauControle() {
         return panneauControle;
     }
+
 
     /**
      * Convertit un point du modèle en un point de la vue
      * @param pointModele
      * @return
      */
-    public Point pointModelToView(Point pointModele) {
+    public static Point pointModelToView(Point pointModele) {
         return new Point(pointModele.x * RATIO_X, (Position.HEIGHT + 2 * Position.MARGIN - pointModele.y) * RATIO_Y);
     }
 
@@ -100,6 +123,7 @@ public class ViewPartie extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        AffineTransform originalTransform = g2.getTransform();
         g2.translate(offsetDraggingX, offsetDraggingY);
         g2.translate(this.offsetCampX, this.offsetCampY);
         g2.scale(scaleFactor,scaleFactor);
@@ -115,6 +139,7 @@ public class ViewPartie extends JPanel {
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
         }
+        g2.setTransform(originalTransform);
     }
 
     /**
@@ -153,6 +178,7 @@ public class ViewPartie extends JPanel {
         int height = Position.HEIGHT_VIKINGS * RATIO_Y;
         g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
 
+
     }
 
     public void drawWarriors(ArrayList<Warrior> warriors, Graphics2D g2) {
@@ -168,6 +194,7 @@ public class ViewPartie extends JPanel {
             int width = Position.WIDTH_VIKINGS * RATIO_X;
             int height = Position.HEIGHT_VIKINGS * RATIO_Y;
             g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+
         }
     }
 
@@ -205,4 +232,5 @@ public class ViewPartie extends JPanel {
     public double getScaleFactor() {
         return scaleFactor;
     }
+
 }

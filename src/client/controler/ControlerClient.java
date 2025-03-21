@@ -12,6 +12,7 @@ import java.awt.event.*;
 public class ControlerClient extends MouseAdapter implements ActionListener, MouseListener {
     private ThreadCommunicationClient threadCommunicationClient;
     private ViewClient view;
+    private Client client;
 
     public ControlerClient(ViewClient view) {
         this.view = view;
@@ -24,11 +25,13 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
         if (e.getSource() == this.view.getConnectButton()){
             this.view.changeCard("2");
             // On écoute le serveur.// norlement je recupere les infos saisie dans les field
-            this.threadCommunicationClient = new ThreadCommunicationClient(new Client(this.view.getIp(), this.view.getPort()), this.view);
+            this.client=new Client(this.view.getIp(), this.view.getPort());
+            this.threadCommunicationClient = new ThreadCommunicationClient(client, this.view);
             this.threadCommunicationClient.start();
         }
 
     }
+
 
     public ThreadCommunicationClient getThreadCommunicationClient() {
         return threadCommunicationClient;

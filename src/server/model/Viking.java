@@ -9,9 +9,8 @@ public abstract class Viking extends Entity implements Moveable {
     protected Camp camp; // Référence au camp
     protected static float coeffStrength = 1.0f; // Coefficient appliqué à tous les Vikings
 
-    public Viking(float health, Point position, int campId/*, Camp camp*/) {
+    public Viking(float health, Point position, int campId) {
         super(health, position, campId);
-        /*this.camp = camp;*/
     }
 
     @Override
