@@ -1,4 +1,4 @@
-package network;
+package network.packets;
 
 /**
  * the packet that will announe to the client his camp id

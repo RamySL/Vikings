@@ -1,5 +1,6 @@
-package network;
+package network.server;
 
+import network.packets.*;
 import server.model.*;
 
 import com.google.gson.Gson;

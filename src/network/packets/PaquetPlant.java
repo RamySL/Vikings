@@ -1,7 +1,7 @@
-package network;
+package network.packets;
 
 import com.google.gson.Gson;
-import server.model.*;
+import network.client.Client;
 
 public class PaquetPlant {
     private String resource;

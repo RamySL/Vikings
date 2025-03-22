@@ -3,7 +3,6 @@ package main;
 import client.controler.ControlerClient;
 import client.controler.ControlerParty;
 import client.view.ViewClient;
-import server.controler.ControlerServer;
 import server.view.Server;
 
 import javax.swing.*;
@@ -11,11 +10,11 @@ import javax.swing.*;
 public class Monoplayer {
     public static void main(String[] args) {
         // mettez le nombre de joueur que vous voulez
-        int nbJR = 1;
+        int nbJR = 4;
         new Thread(() -> {
             Server serverView = new Server();
             // Simulate button click to start the server
-            network.Server server = new network.Server(1234,nbJR);
+            network.server.Server server = new network.server.Server(1234,nbJR);
             // lance un thread avec la méthode launch
             new Thread(() -> server.launch()).start();
         }).start();

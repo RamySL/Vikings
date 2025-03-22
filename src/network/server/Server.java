@@ -1,6 +1,7 @@
-package network;
+package network.server;
 
 import com.google.gson.Gson;
+import network.packets.FormatPacket;
 import server.model.Camp;
 import server.model.Partie;
 

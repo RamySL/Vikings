@@ -1,7 +1,7 @@
 package client.controler;
 
-import network.ThreadCommunicationClient;
-import network.Client;
+import network.client.ThreadCommunicationClient;
+import network.client.Client;
 import client.view.ViewClient;
 
 import java.awt.event.*;

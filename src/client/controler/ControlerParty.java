@@ -4,8 +4,11 @@ import client.controler.event.EventBus;
 import client.controler.event.PlantEvent;
 import client.controler.event.PlantListener;
 import client.view.*;
-import network.*;
 import com.google.gson.Gson;
+import network.packets.FormatPacket;
+import network.packets.PaquetClick;
+import network.packets.PaquetPlant;
+
 import java.awt.event.*;
 
 /**

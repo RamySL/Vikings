@@ -1,9 +1,9 @@
-package network;
+package network.server;
 
+import network.packets.FormatPacket;
 import server.model.Camp;
 import server.model.Farmer;
 import server.model.Field;
-import server.model.Position;
 
 import java.awt.Point;
 

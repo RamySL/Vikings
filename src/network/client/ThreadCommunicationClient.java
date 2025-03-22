@@ -1,5 +1,9 @@
-package network;
+package network.client;
 
+import network.packets.FarmerFieldWrapper;
+import network.packets.PacketCampId;
+import network.packets.PacketOpenPanelControl;
+import network.packets.PacketWrapper;
 import server.model.*;
 import client.view.ThreadRepaint;
 import client.view.ViewClient;

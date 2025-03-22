@@ -1,4 +1,4 @@
-package network;
+package network.packets;
 
 /**
  * Met en forme de PacketWrapper un paquet pour l'envoyer au serveur.

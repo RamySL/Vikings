@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
  * du serveur. Lance le thread du serveur quand l'utilisateur clique sur le bouton.
  */
 public class ControlerServer implements ActionListener {
-    private network.Server server;
+    private network.server.Server server;
     private Server view;
 
     public ControlerServer(Server view) {
@@ -26,7 +26,7 @@ public class ControlerServer implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.view.getConnectButton()){
             // norlement je recupere les infos saisie dans les field
-            this.server = new network.Server(this.view.getPort(),this.view.getNbPlayers());
+            this.server = new network.server.Server(this.view.getPort(),this.view.getNbPlayers());
             // lance un thread avec la méthode launch
             new Thread(() -> this.server.launch()).start();
         }

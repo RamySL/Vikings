@@ -1,4 +1,4 @@
-package network;
+package network.packets;
 
 import com.google.gson.JsonElement;
 
@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
  * Dans type on met le nom de la classe du paquet et dans content le contenu du paquet.
  */
 public class PacketWrapper {
-    protected String type;
-    protected JsonElement content;
+    public String type;
+    public JsonElement content;
 
 }

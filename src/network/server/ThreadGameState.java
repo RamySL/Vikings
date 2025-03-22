@@ -1,4 +1,4 @@
-package network;
+package network.server;
 
 /**
  * Thread qui envoie l'état du jeu à tous les clients chaque 100ms<p>
