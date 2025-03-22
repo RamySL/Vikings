@@ -37,18 +37,16 @@ public class ViewPartie extends JPanel {
     private PanneauControle panneauControle;  // Ajout du champ PanneauControle
     private int windowWidth=WIDTH_VIEW, windowHeight=HEIGHT_VIEW;
 
+
     /**
      * Constructeur de la vue de la partie
      */
     public ViewPartie(ViewClient viewClient, Partie partieModel) {
-        int width = getWidth();  // Largeur de la fenêtre
-        int height = getHeight();  // Hauteur de la fenêtre
 
-        this.setPreferredSize(new Dimension(width, height));
-
+        this.setPreferredSize(new Dimension(windowWidth, windowHeight));
 
         this.partieModel = partieModel;
-        this.panneauControle = new PanneauControle(width,  height);
+        this.panneauControle = new PanneauControle(windowWidth,  windowHeight);
         this.setLayout(new BorderLayout());
         this.panneauControle.setOpaque(false);
         this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
@@ -131,10 +129,10 @@ public class ViewPartie extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // draw the x and y axes in black and thick
-        g2.setColor(Color.BLACK);
-        g2.setStroke(new BasicStroke(2));
-        g2.drawLine(0, 0, 1000, 0);
-        g2.drawLine(0, 0, 0, 1000);
+//        g2.setColor(Color.BLACK);
+//        g2.setStroke(new BasicStroke(2));
+//        g2.drawLine(0, 0, 1000, 0);
+//        g2.drawLine(0, 0, 0, 1000);
 
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
@@ -147,11 +145,20 @@ public class ViewPartie extends JPanel {
      * @param g2
      */
     private void drawCamp(Camp camp, Graphics2D g2) {
-        g2.setColor(Color.BLUE);
-
         Point topLeftModel = Position.MAP_CAMPS_POSITION.get(camp.getId());
         Point topLeftView = pointModelToView(topLeftModel);
         // redundant calculation (can be stock in a map for each camp)
+
+        // si l'id du camp correspend à l'id du camp du client alors drawRect avec un trait noir très épais sinon
+        // drawRect avec un trait bleu normal
+
+        if (camp.getId() == camp_id) {
+            g2.setStroke(new BasicStroke(5));
+            g2.setColor(Color.BLACK);
+        } else {
+            g2.setStroke(new BasicStroke(1));
+            g2.setColor(Color.BLUE);
+        }
         g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
 
         drawWarriors(camp.getWarriors(), g2);
