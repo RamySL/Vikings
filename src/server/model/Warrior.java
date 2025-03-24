@@ -8,8 +8,8 @@ public class Warrior extends Viking {
     private static final float ATTACK_POWER = 20.0f; // Puissance d'attaque d'un guerrier
     private static final float DEFENSE_FACTOR = 0.5f; // Réduction des dégâts en défense
 
-    public Warrior(float health, Point position, int camp/*, Camp campInstance*/) {
-        super(health, position, camp/*, campInstance*/);
+    public Warrior(float health, Point position, int camp) {
+        super(health, position, camp);
     }
 
     /**

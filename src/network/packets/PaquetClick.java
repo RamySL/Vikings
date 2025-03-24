@@ -1,4 +1,4 @@
-package network;
+package network.packets;
 
 /**
  * Paquet de mouvement envoyé par le client lorsque il bouge la souris pour déplacer le mouton.

@@ -1,4 +1,4 @@
-package network;
+package network.packets;
 
 public class PacketOpenPanelControl {
     private String message;

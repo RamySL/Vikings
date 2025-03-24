@@ -10,13 +10,11 @@ public abstract class Livestock extends Entity implements Moveable {
     protected boolean isHealthy;
     protected boolean isPregnant = false;
     protected int gestationTime = 5000; // 5 secondes de gestation (simulation)
-    protected Camp camp; // Référence au camp
 
-    public Livestock(float health, Point position, int campId, int age/*, Camp camp*/) {
+    public Livestock(float health, Point position, int campId, int age) {
         super(health, position, campId);
         this.age = age;
         this.isHealthy = true;
-        /*this.camp = camp;*/
     }
     public void move(Point destination) {
         this.position = destination;

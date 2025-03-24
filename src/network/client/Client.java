@@ -1,4 +1,4 @@
-package network;
+package network.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,8 +7,6 @@ import java.net.Socket;
 
 /**
  * Créer un client qui se connecte au serveur déterminé par l'adresse et le port.<p>
- * ? Peut etre enlver la creation de la socket du constructeur et la mettre dans une methode comme ça le constructeur
- * ne prend pas de param.
  */
 public class Client {
 

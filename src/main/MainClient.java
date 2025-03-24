@@ -21,7 +21,7 @@ public class MainClient {
         frame.setVisible(true);
 
         // print the number of threads
-        System.out.println("Number of threads: " + Thread.activeCount());
-        System.out.println("Number of threads: " + Thread.getAllStackTraces().size());
+//        System.out.println("Number of threads: " + Thread.activeCount());
+//        System.out.println("Number of threads: " + Thread.getAllStackTraces().size());
     }
 }

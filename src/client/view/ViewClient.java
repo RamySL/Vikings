@@ -1,5 +1,6 @@
 package client.view;
 
+import client.controler.ControlerClient;
 import server.model.Partie;
 
 
@@ -20,6 +21,8 @@ public class ViewClient extends JPanel {
     private Start start;
     private ViewWaiting viewWaiting;
     private ViewPartie viewPartie;
+    private ControlerClient controlerClient;
+    private JButton connectButton;
 
     public ViewClient() {
         this.setPreferredSize(new Dimension(ViewPartie.WIDTH_VIEW, ViewPartie.HEIGHT_VIEW));
@@ -35,6 +38,7 @@ public class ViewClient extends JPanel {
         this.add(this.viewPartie, "3");
 
         this.cardLayout.show(this, "1");
+
 
 
     }
@@ -78,6 +82,9 @@ public class ViewClient extends JPanel {
     public int getPort(){
         return this.start.getPort();
     }
+
+
+
 
 
 
