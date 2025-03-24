@@ -47,7 +47,6 @@ public class ThreadCommunicationServer extends Thread{
         // print the THread id
         String msg;
         while (true) {
-            System.out.println("Thread id: " + this.threadId());
             msg = this.receiveMessage();
             System.out.println(client.getInetAddress() + " : " + msg);
             reactMessage(msg);

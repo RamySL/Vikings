@@ -162,7 +162,7 @@ public class ViewPartie extends JPanel {
         g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
 
         drawWarriors(camp.getWarriors(), g2);
-        drawSheap(camp.getSheap(), g2);
+        //drawSheap(camp.getSheap(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawFields(camp.getFields(), g2);
     }
