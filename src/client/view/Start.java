@@ -74,7 +74,7 @@ public class Start extends JPanel {
             JPanel panelPort = new JPanel();
             panelPort.setOpaque(false);
             panelPort.setLayout(new FlowLayout(FlowLayout.CENTER));
-            this.fieldPort = new JTextField("1234");
+            this.fieldPort = new JTextField("50123");
             this.fieldPort.setPreferredSize(new Dimension(60,30));
             JLabel labelPort = new JLabel("Port du serveur");
             labelPort.setFont(FontPerso.mvBoli(20));

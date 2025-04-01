@@ -8,7 +8,9 @@ import com.google.gson.Gson;
 import network.packets.FormatPacket;
 import network.packets.PaquetClick;
 import network.packets.PaquetPlant;
+import server.model.Position;
 
+import java.awt.*;
 import java.awt.event.*;
 
 /**
@@ -38,8 +40,17 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         String contentPaquet = gson.toJson(new PaquetClick(e.getX(),e.getY(),
                 this.viewPartie.getTotalOffset().x, this.viewPartie.getTotalOffset().y, this.viewPartie.getScaleFactor()));
 
-        // ! ! je pense sans le get c'est mieux
-        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetClick",contentPaquet));
+        // !!! je pense sans le get c'est mieux
+        //this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetClick",contentPaquet));
+        Point model = Position.viewToModel(new Point(e.getX(),e.getY()), this.viewPartie.getTotalOffset(), this.viewPartie.getScaleFactor());
+        if (Position.isInCamp(this.viewPartie.getCamp_id(), model.x, model.y)) {
+            // On envoie le paquet au serveur
+            System.out.println("Click in the camp");
+        } else {
+            System.out.println("Click outside the camp");
+        }
+
+
     }
 
 
@@ -61,21 +72,35 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        // 1 if the mouse wheel was toward the user, -1 if the  wheel was rotated away from the user
-        int rotation_direction = e.getWheelRotation();
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-        double scaleFactor = 1.1;
-        // zoom out (rotation towards the user)
-        //this.viewPartie.addToOffset(mouseX-lastMousePosX, mouseY-lastMousePosY);
-        lastMousePosX = mouseX;
-        lastMousePosY = mouseY;
-        if(rotation_direction>0){
-            this.viewPartie.multiplyScale(1/scaleFactor);
-        }else{
-            // zoom in (rotation away from the user)
-            this.viewPartie.multiplyScale(scaleFactor);
-        }
+        double zoomFactor = 1.1;
+        int viewX = e.getX();
+        int viewY = e.getY();
+
+        Point totalOffset = viewPartie.getTotalOffset();
+        double currentScale = viewPartie.getScaleFactor();
+
+        // Onn convertit les coordonnées de la souris en coordonnées du repère actuel (avec total offset et scale)
+        double modelX = (viewX - totalOffset.x) / currentScale;
+        double modelY = (viewY - totalOffset.y) / currentScale;
+
+
+        int rotation = e.getWheelRotation();
+        // rotation > 0 = zoom out, rotation < 0 = zoom in
+        double scaleChange = (rotation > 0) ? 1 / zoomFactor : zoomFactor;
+        viewPartie.multiplyScale(scaleChange);
+        double newScale = viewPartie.getScaleFactor();
+
+        // Calcule du montatant de la nouvelle translation pour garder le point qui était sous la souris
+        // au même endroit après le zoom
+        int newTotalOffsetX = (int) (viewX - modelX * newScale);
+        int newTotalOffsetY = (int) (viewY - modelY * newScale);
+
+        int offsetCampX = viewPartie.getOffsetCampX();
+        int offsetCampY = viewPartie.getOffsetCampY();
+        int newOffsetDraggingX = newTotalOffsetX - offsetCampX;
+        int newOffsetDraggingY = newTotalOffsetY - offsetCampY;
+
+        viewPartie.setOffset(newOffsetDraggingX, newOffsetDraggingY);
 
     }
     @Override

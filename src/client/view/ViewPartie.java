@@ -27,6 +27,7 @@ public class ViewPartie extends JPanel {
     public static final Point POINT_ANCRE = new Point(Position.MARGIN*RATIO_X,Position.MARGIN*RATIO_Y);
     // the amount that will be used to translate swing coordinates when draging
     private int offsetDraggingX = 0, offsetDraggingY = 0;
+    // the amount that will be used to translate swing coordinates when zooming relativeley to the mouse
     // the offset to use when translating to show the client camp on the screen
     private int offsetCampX, offsetCampY;
     // scale factor for handeling the zoom
@@ -49,7 +50,7 @@ public class ViewPartie extends JPanel {
         this.panneauControle = new PanneauControle(windowWidth,  windowHeight);
         this.setLayout(new BorderLayout());
         this.panneauControle.setOpaque(false);
-        this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
+        //this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -58,6 +59,32 @@ public class ViewPartie extends JPanel {
         });
 
     }
+
+    /**
+     * !! a lot of redundant calculations for the drawing !!
+     * @param g the <code>Graphics</code> object to protect
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.translate(offsetDraggingX, offsetDraggingY);
+        g2.translate(this.offsetCampX, this.offsetCampY);
+        g2.scale(scaleFactor,scaleFactor);
+        // L'anti-aliasing
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // draw the x and y axes in black and thick
+//        g2.setColor(Color.BLACK);
+//        g2.setStroke(new BasicStroke(2));
+//        g2.drawLine(0, 0, 1000, 0);
+//        g2.drawLine(0, 0, 0, 1000);
+
+        for (Camp camp : partieModel.getCamps()) {
+            drawCamp(camp, g2);
+        }
+    }
+
     private void updatePanneauControlePosition() {
         // Redimensionner et déplacer le panneau de contrôle à droite de la fenêtre
         int width = getWidth();  // Largeur de la fenêtre
@@ -69,7 +96,6 @@ public class ViewPartie extends JPanel {
     public PanneauControle getPanneauControle() {
         return panneauControle;
     }
-
 
     /**
      * Convertit un point du modèle en un point de la vue
@@ -89,7 +115,6 @@ public class ViewPartie extends JPanel {
         offsetDraggingX += x;
         offsetDraggingY += y;
     }
-
     /**
      * multiply the current scaling by the one passed in parms
      * @param scaleFactor
@@ -111,33 +136,6 @@ public class ViewPartie extends JPanel {
         Point offset = new Point(POINT_ANCRE.x - pointTopLeft.x, POINT_ANCRE.y - pointTopLeft.y);
         this.offsetCampX = offset.x;
         this.offsetCampY = offset.y;
-    }
-
-    /**
-     * !! a lot of redundant calculations for the drawing !!
-     * @param g the <code>Graphics</code> object to protect
-     */
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        AffineTransform originalTransform = g2.getTransform();
-        g2.translate(offsetDraggingX, offsetDraggingY);
-        g2.translate(this.offsetCampX, this.offsetCampY);
-        g2.scale(scaleFactor,scaleFactor);
-        // L'anti-aliasing
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // draw the x and y axes in black and thick
-//        g2.setColor(Color.BLACK);
-//        g2.setStroke(new BasicStroke(2));
-//        g2.drawLine(0, 0, 1000, 0);
-//        g2.drawLine(0, 0, 0, 1000);
-
-        for (Camp camp : partieModel.getCamps()) {
-            drawCamp(camp, g2);
-        }
-        g2.setTransform(originalTransform);
     }
 
     /**
@@ -227,6 +225,16 @@ public class ViewPartie extends JPanel {
     }
 
     /**
+     * set the offset to the one passed in parms
+     * @param x
+     * @param y
+     */
+    public void setOffset(int x, int y) {
+        offsetDraggingX = x;
+        offsetDraggingY = y;
+    }
+
+    /**
      *
      * @return the total offset used to translate view coordinates (dragging + camp position offset)
      */
@@ -238,6 +246,18 @@ public class ViewPartie extends JPanel {
 
     public double getScaleFactor() {
         return scaleFactor;
+    }
+
+    public int getOffsetCampX() {
+        return offsetCampX;
+    }
+
+    public int getOffsetCampY() {
+        return offsetCampY;
+    }
+
+    public int getCamp_id() {
+        return camp_id;
     }
 
 }
