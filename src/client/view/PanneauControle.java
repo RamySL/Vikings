@@ -31,6 +31,13 @@ public class PanneauControle extends JPanel {
         slidingMenu.updatePosition(posMenuX, menuHeight);
     }
 
+
+
+
+
+
+
+
     public void updateSlidingMenuVisibility(boolean isFarmerOnField) {
         if (isFarmerOnField) {
             slidingMenu.toggleVisible();
@@ -47,9 +54,31 @@ public class PanneauControle extends JPanel {
 
     public void elseWhereClicked() {
         slidingMenu.toggleHide();
+        slidingMenu.hideInfos();
+        slidingMenu.elseWhereClicked();
     }
 
     public SlidingMenu getSlidingMenu() {
         return slidingMenu;
     }
+
+    public void setVisibility(boolean visible) {
+        if (visible) {
+            System.out.println("est visibme");
+            slidingMenu.toggleVisible();
+        } else {
+            slidingMenu.toggleHide();
+        }
+    }
+
+    public void showInfos(String entity, float health) {
+        slidingMenu.showInfos(entity, health);
+    }
+    public void showInfos(String entity) {
+        slidingMenu.showInfos(entity);
+    }
+    public void showInfos(String entity, String ressource) {
+        slidingMenu.showInfos(entity, ressource);
+    }
+
 }

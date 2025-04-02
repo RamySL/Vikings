@@ -9,6 +9,8 @@ import client.view.ThreadRepaint;
 import client.view.ViewClient;
 import com.google.gson.Gson;
 
+import java.util.Objects;
+
 
 /**
  * Thread qui écouter ce que le serveur envoie et actualise l'interface graphique du client
@@ -68,11 +70,40 @@ public class ThreadCommunicationClient extends Thread {
                 break;
             case "PacketOpenPanelControl":
                 PacketOpenPanelControl pCtrl = gson.fromJson(wrapper.content, PacketOpenPanelControl.class);
+                this.view.getViewPartie().getPanneauControle().setVisibility(true);
+                String entityType = pCtrl.getEntityType();
+
+                float health;
+                if (Objects.equals(entityType, "Farmer")) {
+                    health= pCtrl.getHealth();
+                    System.out.println("Entity Type: " + entityType + ", Health: " + health);
+                    this.view.getViewPartie().getPanneauControle().showInfos(entityType, health);
+                }
+                else if (Objects.equals(entityType, "Warrior")) {
+                    health = pCtrl.getHealth();
+                    System.out.println("Entity Type: " + entityType + ", Health: " + health);
+                    this.view.getViewPartie().getPanneauControle().showInfos(entityType, health);
+                }
+                else if (Objects.equals(entityType, "Field")){
+                    boolean isPlanted = pCtrl.isPlanted();
+                    if (isPlanted){
+                        String ressource = pCtrl.getRessource();
+                        System.out.println("Entity Type: " + entityType + ", ressource: " + ressource);
+                        this.view.getViewPartie().getPanneauControle().showInfos(entityType, ressource);
+                    }
+                    else {
+                        System.out.println("Entity Type"+entityType);
+                        this.view.getViewPartie().getPanneauControle().showInfos(entityType);
+                    }
+
+                }
+
                 break;
             case "ClicSurAutreChose":
                 //System.out.println("Received ClicSurAutreChose message, hiding Plant button.");
                 // Le joueur a cliqué sur autre chose que le bouton Planter, donc on cache le bouton Planter
                 this.view.getViewPartie().getPanneauControle().elseWhereClicked();
+                System.out.println("elswhereClicked");
                 break;
             case "PacketCampId":
                 PacketCampId pCampId = gson.fromJson(wrapper.content, PacketCampId.class);

@@ -1,20 +1,18 @@
 package client.controler;
 
-import client.controler.event.EventBus;
-import client.controler.event.PlantEvent;
-import client.controler.event.PlantListener;
+import client.controler.event.*;
 import client.view.*;
 import com.google.gson.Gson;
 import network.packets.FormatPacket;
 import network.packets.PaquetClick;
-import network.packets.PaquetPlant;
+import network.packets.*;
 
 import java.awt.event.*;
 
 /**
  * Controler of the party
  */
-public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener, PlantListener {
+public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener, PlantListener, EatListenner {
 
     private ControlerClient controlerClient;
     private ViewPartie viewPartie;
@@ -30,6 +28,7 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         this.viewPartie.addMouseMotionListener(this);
         this.viewPartie.addMouseWheelListener(this);
         EventBus.getInstance().subscribe("PlantEvent", this::handlePlantEvent);
+        EventBus.getInstance().subscribe("EatEvent", this::handleEatEvent);
     }
 
     @Override
@@ -95,6 +94,25 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         String contentPaquet = gson.toJson(new PaquetPlant(resource, farmerX, farmerY, fieldX, fieldY));
         this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetPlant", contentPaquet));
     }
+
+    @Override
+    public void onEat(EatEvent event) {
+        sendEatPacketToServer(event.getVikingX(), event.getVikingY(), event.getAnimalX(), event.getAnimalY());
+    }
+
+    private void handleEatEvent(Object event) {
+        if (event instanceof EatEvent) {
+            EatEvent eatEvent = (EatEvent) event;
+            sendEatPacketToServer(eatEvent.getVikingX(), eatEvent.getVikingY(), eatEvent.getAnimalX(), eatEvent.getAnimalY());
+        }
+    }
+
+    public void sendEatPacketToServer(int vikingX, int vikingY, int animalX, int animalY) {
+        Gson gson = new Gson();
+        String contentPaquet = gson.toJson(new PaquetEat(vikingX, vikingY, animalX, animalY));
+        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetEat", contentPaquet));
+    }
+
 
 
 

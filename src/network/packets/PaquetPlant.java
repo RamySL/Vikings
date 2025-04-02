@@ -37,13 +37,5 @@ public class PaquetPlant {
 
 
 
-    public void sendPlantPacketToServer(Client client) {
-        System.out.println("heyyyyyyyyyy");
-        PacketWrapper packetWrapper = new PacketWrapper();
-        packetWrapper.type = "PaquetPlant";
-        packetWrapper.content = new Gson().toJsonTree(this);
 
-        String jsonPacket = new Gson().toJson(packetWrapper);
-
-    }
 }

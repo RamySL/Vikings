@@ -46,8 +46,8 @@ public class Camp {
     public void init() {
         // Ajout des guerriers
         Point topLeftCamp =  Position.MAP_CAMPS_POSITION.get(this.id);
-        Warrior v1 = new Warrior(100,new Point(topLeftCamp.x + 10,topLeftCamp.y - 10), this.id/*,this*/);
-        Warrior v2 = new Warrior(100,new Point(topLeftCamp.x + 30,topLeftCamp.y - 10), this.id/*,this*/);
+        Warrior v1 = new Warrior(50,new Point(topLeftCamp.x + 10,topLeftCamp.y - 10), this.id/*,this*/);
+        Warrior v2 = new Warrior(50,new Point(topLeftCamp.x + 30,topLeftCamp.y - 10), this.id/*,this*/);
 
         Farmer f1 = new Farmer(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 30), this.id/*,this*/);
         Farmer f2 = new Farmer(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 30), this.id/*,this*/);

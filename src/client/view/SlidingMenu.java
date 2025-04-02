@@ -19,6 +19,7 @@ public class SlidingMenu extends JPanel {
     private boolean isVisible;
     private JButton plantButton;
     private JComboBox<String> plantComboBox;
+    private JLabel healthLabel, entityLabel, ressourceLabel;
     private int farmerX, farmerY, fieldX, fieldY;
     int posMenuY, widthMenu, windowWidth, windowHeight;
     private List<PlantListener> plantListeners = new ArrayList<>();
@@ -77,10 +78,10 @@ public class SlidingMenu extends JPanel {
    }
 
 
-    public void toggle() {
-        if (isVisible) {
+    public void toggle(boolean visible) {
+        if (isVisible && !visible) {
             targetX = windowWidth+widthMenu;
-        } else {
+        } else if (!isVisible && visible) {
             targetX = windowWidth;
         }
         isVisible = !isVisible;
@@ -150,4 +151,41 @@ public class SlidingMenu extends JPanel {
        PlantEvent event = new PlantEvent(selectedResource, this.farmerX, this.farmerY, this.fieldX, this.fieldY);
        EventBus.getInstance().publish("PlantEvent", event);
    }
+    public void showInfos(String entity, float health) {
+        showInfos(entity);
+        if (healthLabel == null ) {
+            healthLabel = new JLabel();
+            healthLabel.setBounds(50, 150, 100, 40);
+            add(healthLabel);
+        }
+        healthLabel.setText("Santé: " + health);
+        healthLabel.setVisible(true);
+    }
+    public void showInfos(String entity){
+        if (entityLabel == null) {
+            entityLabel=new JLabel();
+            entityLabel.setBounds(50, 100, 100, 40);
+            add(entityLabel);
+        }
+        entityLabel.setText(entity);
+        entityLabel.setVisible(true);
+    }
+    public void showInfos(String entity, String ressource) {
+        showInfos(entity);
+        if (ressourceLabel == null ) {
+            ressourceLabel = new JLabel();
+            ressourceLabel.setBounds(30, 150, 100, 40);
+            add(ressourceLabel);
+        }
+        ressourceLabel.setText("Ressource: " + ressource);
+        ressourceLabel.setVisible(true);
+    }
+    public void hideInfos(){
+        if (healthLabel != null) {
+            healthLabel.setVisible(false);
+        }
+        if (entityLabel != null) {
+            entityLabel.setVisible(false);
+        }
+    }
 }

@@ -30,6 +30,7 @@ public class FarmerFieldWrapper {
     public int getFieldY() {
         return fieldY;
     }
+
     public boolean getIsPlanted() {
         return isPlanted;
     }

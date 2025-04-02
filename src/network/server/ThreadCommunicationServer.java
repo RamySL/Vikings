@@ -91,6 +91,8 @@ public class ThreadCommunicationServer extends Thread{
                 fieldSelected=DetermineSelectedField(fieldX, fieldY);
                 fieldSelected.plant(ressource);
                 break;
+            case "PaquetEat" :
+                break;
             case "PaquetClick":
                 PaquetClick paquet = gson.fromJson(wrapper.content, PaquetClick.class);
                 Point viewPoint = new Point(paquet.getX(), paquet.getY());
@@ -100,30 +102,48 @@ public class ThreadCommunicationServer extends Thread{
                 if  (Position.isInCamp(this.camp.getId(), modelPoint.x, modelPoint.y)) {
                     System.out.println("Click in camp");
                     if (firstClick) {
+                        this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                         warriorSelected = DetermineSelectedWarrior(modelPoint.x, modelPoint.y);
                         if (warriorSelected == null) {
                             farmerSelected = DetermineSelectedFarmer(modelPoint.x, modelPoint.y);
                             if (farmerSelected != null) {
                                 System.out.println("Farmer selected at position: " + farmerSelected.getPosition());
+                                this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Farmer", farmerSelected.getHealth()))));
                                 firstClick = false;
                                 FarmerPositionChecker checker = new FarmerPositionChecker(this, camp, farmerSelected, 10);
                                 checker.start();
                             }
+                            fieldSelected= DetermineSelectedField(modelPoint.x, modelPoint.y);
+                            if (fieldSelected != null) {
+                                System.out.println("Field selected at position: " + fieldSelected.getPosition());
+                                if (fieldSelected.isPlanted()){
+                                    this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Field", fieldSelected.isPlanted(), fieldSelected.getResource()))));
+                                }
+                                else{
+                                    this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Field", fieldSelected.isPlanted()))));
+                                }
+                            }
                         } else {
                             System.out.println("Warrior selected at position: " + warriorSelected.getPosition());
+                            this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Warrior", warriorSelected.getHealth()))));
                             firstClick = false;
                         }
                         // Et on envoi un message pour ouvrir le panneau (pas encore implementé)
-                        this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl())));
-                        this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
+                        //this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl())));
+
+                        if (fieldSelected == null && farmerSelected == null && warriorSelected == null) {
+                            this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
+                        }
                     } else {
                         // On déplace l'entité vers le click
                         if (warriorSelected != null) {
                             System.out.println("Moving warrior to position: " + modelPoint.x + ", " + modelPoint.y + " in model ");
                             warriorSelected.move(new Point(modelPoint.x, modelPoint.y));
+                            this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                         } else if (farmerSelected != null) {
                             System.out.println("Moving farmer to position: " + modelPoint.x + ", " + modelPoint.y + " in model ");
                             farmerSelected.move(new Point(modelPoint.x, modelPoint.y));
+                            this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                         }
                         firstClick = true;
 
@@ -172,8 +192,10 @@ public class ThreadCommunicationServer extends Thread{
         return null;
     }
 
+
     public Field DetermineSelectedField(int x, int y){
         for (Field field : this.camp.getFields()) {
+            System.out.println(field.getPosition().x + ", " + field.getPosition().y);
             Point topLeft = new Point(field.getPosition().x - Position.WIDTH_FIELD/2, field.getPosition().y+Position.HEIGHT_FIELD/2);
             if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_FIELD && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_FIELD) {
                 return field;
