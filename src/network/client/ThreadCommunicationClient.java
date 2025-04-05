@@ -1,5 +1,6 @@
 package network.client;
 
+import network.VikingAdapter;
 import network.packets.FarmerFieldWrapper;
 import network.packets.PacketCampId;
 import network.packets.PacketOpenPanelControl;
@@ -17,10 +18,12 @@ public class ThreadCommunicationClient extends Thread {
     private Client client;
     private boolean gameStarted = false;
     private ViewClient view;
+    private Gson gson;
 
     public ThreadCommunicationClient(Client client, ViewClient view) {
         this.client = client;
         this.view = view;
+        gson = VikingAdapter.getGson();
     }
 
     @Override
@@ -31,9 +34,8 @@ public class ThreadCommunicationClient extends Thread {
         }
     }
 
-
     public void reactMessage(String msg) {
-        Gson gson = new Gson();
+
         PacketWrapper wrapper = gson.fromJson(msg, PacketWrapper.class);
         switch (wrapper.type) {
             case "Partie":

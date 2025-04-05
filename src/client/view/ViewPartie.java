@@ -1,17 +1,12 @@
 package client.view;
 
-import client.controler.ControlerClient;
-import client.controler.ControlerParty;
 import server.model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
-import java.awt.geom.AffineTransform;
 
 /**
  * Vue de la partie, Dessine tous les éléments du modèle
@@ -33,6 +28,7 @@ public class ViewPartie extends JPanel {
     // scale factor for handeling the zoom
     private double scaleFactor=1.0;
     private int camp_id;
+    private Camp camp;
 
     private Partie partieModel;
     private PanneauControle panneauControle;  // Ajout du champ PanneauControle
@@ -71,14 +67,15 @@ public class ViewPartie extends JPanel {
         g2.translate(offsetDraggingX, offsetDraggingY);
         g2.translate(this.offsetCampX, this.offsetCampY);
         g2.scale(scaleFactor,scaleFactor);
+
         // L'anti-aliasing
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // draw the x and y axes in black and thick
-//        g2.setColor(Color.BLACK);
-//        g2.setStroke(new BasicStroke(2));
-//        g2.drawLine(0, 0, 1000, 0);
-//        g2.drawLine(0, 0, 0, 1000);
+        g2.setColor(Color.BLACK);
+        g2.setStroke(new BasicStroke(2));
+        g2.drawLine(0, 0, 1000, 0);
+        g2.drawLine(0, 0, 0, 1000);
 
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
@@ -98,12 +95,23 @@ public class ViewPartie extends JPanel {
     }
 
     /**
-     * Convertit un point du modèle en un point de la vue
+     * Convertit un point du modèle en un point de la vue, sans ajouter les transaltions et mise à l'echelle<p>
+     * Attend que en plus des transformation aportée par le RATIO_X et RATIO_Y, il faut rajouter les autres transformations
      * @param pointModele
      * @return
      */
     public static Point pointModelToView(Point pointModele) {
         return new Point(pointModele.x * RATIO_X, (Position.HEIGHT + 2 * Position.MARGIN - pointModele.y) * RATIO_Y);
+    }
+
+    public void clickToView(Point click) {
+        //Point res = new Point(pointModele.x * RATIO_X, (Position.HEIGHT + 2 * Position.MARGIN - pointModele.y) * RATIO_Y);
+        // translae de la quantité totale de translation
+        Point totalOffset = this.getTotalOffset();
+        click.translate(-totalOffset.x, -totalOffset.y);
+        // scale
+        click.x = (int) (click.x / this.getScaleFactor());
+        click.y = (int) (click.y / this.getScaleFactor());
     }
 
     /**
@@ -219,6 +227,7 @@ public class ViewPartie extends JPanel {
 
     public void setPartie(Partie partieModel) {
         this.partieModel = partieModel;
+        this.camp = partieModel.getCamp(this.camp_id);
         this.revalidate();
         this.repaint();
 
@@ -260,4 +269,11 @@ public class ViewPartie extends JPanel {
         return camp_id;
     }
 
+    public Partie getPartieModel() {
+        return partieModel;
+    }
+
+    public Camp getCamp() {
+        return camp;
+    }
 }

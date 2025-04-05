@@ -21,8 +21,6 @@ public class ThreadCommunicationServer extends Thread{
     private PrintWriter out;
     private BufferedReader in;
     private Camp camp;
-    private boolean firstClick = true;
-    private Warrior warriorSelected;
     private Farmer farmerSelected;
     private Field fieldSelected;
     private Gson gson = new Gson();
@@ -91,71 +89,15 @@ public class ThreadCommunicationServer extends Thread{
                 fieldSelected=DetermineSelectedField(fieldX, fieldY);
                 fieldSelected.plant(ressource);
                 break;
-            case "PaquetClick":
-                PaquetClick paquet = gson.fromJson(wrapper.content, PaquetClick.class);
-                Point viewPoint = new Point(paquet.getX(), paquet.getY());
-                Point translation = new Point(paquet.getTranslationX(), paquet.getTranslationY());
-                Point modelPoint = Position.viewToModel(viewPoint, translation, paquet.getScale());
-                // On verifie si le click est sur le camp du client
-                if  (Position.isInCamp(this.camp.getId(), modelPoint.x, modelPoint.y)) {
-                    System.out.println("Click in camp");
-                    if (firstClick) {
-                        warriorSelected = DetermineSelectedWarrior(modelPoint.x, modelPoint.y);
-                        if (warriorSelected == null) {
-                            farmerSelected = DetermineSelectedFarmer(modelPoint.x, modelPoint.y);
-                            if (farmerSelected != null) {
-                                System.out.println("Farmer selected at position: " + farmerSelected.getPosition());
-                                firstClick = false;
-                                FarmerPositionChecker checker = new FarmerPositionChecker(this, camp, farmerSelected, 10);
-                                checker.start();
-                            }
-                        } else {
-                            System.out.println("Warrior selected at position: " + warriorSelected.getPosition());
-                            firstClick = false;
-                        }
-                        // Et on envoi un message pour ouvrir le panneau (pas encore implementé)
-                        this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl())));
-                        this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
-                    } else {
-                        // On déplace l'entité vers le click
-                        if (warriorSelected != null) {
-                            System.out.println("Moving warrior to position: " + modelPoint.x + ", " + modelPoint.y + " in model ");
-                            warriorSelected.move(new Point(modelPoint.x, modelPoint.y));
-                        } else if (farmerSelected != null) {
-                            System.out.println("Moving farmer to position: " + modelPoint.x + ", " + modelPoint.y + " in model ");
-                            farmerSelected.move(new Point(modelPoint.x, modelPoint.y));
-                        }
-                        firstClick = true;
-
-                    }
-                } else {
-                    // click sur camp ennemie à traiter
-                    this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
-                }
+            case "PacketMovement":
+                PacketMovement packetMovement = gson.fromJson(wrapper.content, PacketMovement.class);
+                Viking v = this.camp.getVikingByID(packetMovement.getId());
+                v.move(Position.viewToModel(packetMovement.getDst(),packetMovement.getTranslation(),packetMovement.getScale()));
                 break;
         }
     }
 
-    /**
-     * takes model coordinates and returns the warrior that is at that position
-     * @param x
-     * @param y
-     * @return
-     */
-    public Warrior DetermineSelectedWarrior(int x, int y) {
-        System.out.println("Determining selected warrior");
-        System.out.println("x: " + x + " y: " + y);
 
-        for (Warrior warrior : this.camp.getWarriors()) {
-            // top left point of the warrior
-            Point topLeft = new Point(warrior.getPosition().x - Position.WIDTH_VIKINGS/2, warrior.getPosition().y+Position.HEIGHT_VIKINGS/2);
-            System.out.println("Top left point of warrior: " + topLeft);
-            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_VIKINGS && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_VIKINGS) {
-                return warrior;
-            }
-        }
-        return null;
-    }
     /**
      * takes model coordinates and returns the farmer that is at that position
      * @param x

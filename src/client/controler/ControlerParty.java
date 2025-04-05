@@ -6,9 +6,9 @@ import client.controler.event.PlantListener;
 import client.view.*;
 import com.google.gson.Gson;
 import network.packets.FormatPacket;
-import network.packets.PaquetClick;
+import network.packets.PacketMovement;
 import network.packets.PaquetPlant;
-import server.model.Position;
+import server.model.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -23,7 +23,10 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
     // last coordinates registered of the mouse click
     private int lastMouseClickX, lastMouseClickY;
     // intialy scaling is relative to (0,0)
-    private int lastMousePosX=0, lastMousePosY=0;
+    private boolean isFirstClick = true;
+    private int selectedEntityID = -1; // ID of the selected entity
+    private String selectedEntityType = null; // "Warrior" or "Farmer"
+    Gson gson = new Gson();
 
     public ControlerParty(ControlerClient controlerClient, ViewPartie viewPartie) {
         this.controlerClient = controlerClient;
@@ -36,23 +39,72 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Gson gson = new Gson();
-        String contentPaquet = gson.toJson(new PaquetClick(e.getX(),e.getY(),
-                this.viewPartie.getTotalOffset().x, this.viewPartie.getTotalOffset().y, this.viewPartie.getScaleFactor()));
+        // on convertit les coordonnées de la souris en coordonnées du repère actuel de la vue(avec total offset et scale)
+        System.out.println("Click original : " + e.getX() + " " + e.getY() );
+        Point clickOriginal = new Point(e.getX(), e.getY());
+        Point clickView = (Point) clickOriginal.clone();
+        Point totalOffset = viewPartie.getTotalOffset();
+        double scale = viewPartie.getScaleFactor();
 
-        // !!! je pense sans le get c'est mieux
-        //this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetClick",contentPaquet));
-        Point model = Position.viewToModel(new Point(e.getX(),e.getY()), this.viewPartie.getTotalOffset(), this.viewPartie.getScaleFactor());
-        if (Position.isInCamp(this.viewPartie.getCamp_id(), model.x, model.y)) {
-            // On envoie le paquet au serveur
-            System.out.println("Click in the camp");
+        this.viewPartie.clickToView(clickView);
+
+        // Check if the click is within the client's camp
+        if (this.isInCamp(this.viewPartie.getCamp_id(), clickView.x, clickView.y)) {
+            if (isFirstClick) {
+                // First click: Select entity
+                Viking viking = determineSelectedViking(clickView.x, clickView.y);
+                // pas de viking il faut regarder si une ressource a été selectionné
+                if(viking == null){
+                    System.out.println("Click sur camp : Pas de vikings slectionné");
+                }else {
+                    System.out.println("Click sur camp : Viking slectionné");
+                    selectedEntityID = viking.getId();
+                    isFirstClick = false;
+                }
+
+            } else {
+                // Second click: Send movement command
+                String content = gson.toJson(new PacketMovement(this.selectedEntityID ,clickOriginal,totalOffset,scale ));
+                this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PacketMovement",content));
+                isFirstClick = true;
+                selectedEntityID = -1;
+                selectedEntityType = null;
+            }
         } else {
-            System.out.println("Click outside the camp");
+            // Click outside camp: Reset
+            System.out.println("Click outside camp");
+            isFirstClick = true;
+            selectedEntityID = -1;
+            selectedEntityType = null;
         }
-
+    }
+    /**
+     * Un méthode générique qui permet de déterminer si un click est sur Viking (la classe mere de Farmer et Warrior).
+     * elle prend des coordonnées de vue
+     *
+     */
+    public Viking determineSelectedViking(int x, int y) {
+        for (Viking viking : this.viewPartie.getCamp().getVikings()) {
+            // getPosition rend le top left point of the viking
+            Point viewPos = ViewPartie.pointModelToView(viking.getPosition());
+            viewPos = new Point(viewPos.x - (Position.WIDTH_VIKINGS / 2) * ViewPartie.RATIO_X, viewPos.y - (Position.HEIGHT_VIKINGS / 2) * ViewPartie.RATIO_Y);
+            System.out.println("Click : " + x + " " + y);
+            System.out.println("Viking : " + viking.getId() + " " + viewPos.x + " " + viewPos.y);
+            if (x >= viewPos.x && x <= viewPos.x + Position.WIDTH_VIKINGS*ViewPartie.RATIO_X
+                    && y >= viewPos.y && y <= viewPos.y + Position.HEIGHT_VIKINGS*ViewPartie.RATIO_Y) {
+                return viking;
+            }
+        }
+        return null;
 
     }
 
+    public boolean isInCamp(int campId, int clickX, int clickY){
+        // Si on clone pas on est entrain de modifier le modèle
+        Point camp = ViewPartie.pointModelToView(Position.MAP_CAMPS_POSITION.get(campId));
+        return clickX >= camp.x && clickX <= camp.x + (Position.WIDTH*ViewPartie.RATIO_X) &&
+                clickY >= camp.y && clickY <= camp.y + (Position.HEIGHT*ViewPartie.RATIO_Y);
+    }
 
 
     @Override

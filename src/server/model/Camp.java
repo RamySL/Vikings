@@ -16,11 +16,11 @@ import java.util.List;
 public class Camp {
     //public static int lastId = 0;
     private final int id;
+    private ArrayList<Viking> vikings;
     private ArrayList<Warrior> warriors;
     private ArrayList<Field> fields;
     private ArrayList<Farmer> farmers;
     private float strength; // Force du camp
-    //private ArrayList<Viking> vikings; // Liste des Vikings (Warrior et Farmer)
     private ArrayList<Sheap> sheap;
     private ArrayList<Wheat> wheats;
 
@@ -30,6 +30,7 @@ public class Camp {
         warriors = new ArrayList<>();
         fields = new ArrayList<>();
         farmers = new ArrayList<>();
+        vikings = new ArrayList<>();
         this.id = id;
         this.strength = 0;
         //vikings = new ArrayList<>();
@@ -52,16 +53,11 @@ public class Camp {
         Farmer f1 = new Farmer(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 30), this.id/*,this*/);
         Farmer f2 = new Farmer(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 30), this.id/*,this*/);
 
-
-        //vikings.add(v1);
-        //vikings.add(v2);
-        //vikings.add(v3);
-       // vikings.add(f1);
-       // vikings.add(f2);
-
-
         warriors.add(v1);
         warriors.add(v2);
+
+        vikings.add(v1);
+        vikings.add(v2);
         ;
         Sheap s1 = new Sheap(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6/*,this*/);
         Sheap s2 = new Sheap(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5/*,this*/);
@@ -84,7 +80,32 @@ public class Camp {
         // add farmer
         farmers.add(f1);
         farmers.add(f2);
+
+        vikings.add(f1);
+        vikings.add(f2);
+
+        this.setEntitiesId();
     }
+
+    //une méthode qui boucle sur les vikings, wheat, sheap et fields et leur attributs un id unique
+    // elle intialise un compteur à 0 quj s'incrémente à chaque tour de boucle sur une entité,
+    // pour chaque entité pour former son id on multiplie par 10 le id du camp et on rajoute le compteur
+    public void setEntitiesId(){
+        int i = 0;
+        for (Viking viking : vikings) {
+            viking.setId(id * 10 + i);
+            i++;
+        }
+        for (Farmer farmer : farmers) {
+            farmer.setId(id * 10 + i);
+            i++;
+        }
+        for (Sheap sheap : sheap) {
+            sheap.setId(id * 10 + i);
+            i++;
+        }
+    }
+
 
     public List<Point> getFieldPositions() {
         List<Point> positions = new ArrayList<>();
@@ -261,6 +282,19 @@ public void decreaseStrength(float amount) {
     }
     public Point getPosition() {
         return Position.MAP_CAMPS_POSITION.get(this.id);
+    }
+
+    public ArrayList<Viking> getVikings() {
+        return vikings;
+    }
+
+    public Viking getVikingByID(int id){
+        for (Viking viking : vikings) {
+            if (viking.getId() == id) {
+                return viking;
+            }
+        }
+        return null;
     }
 }
 

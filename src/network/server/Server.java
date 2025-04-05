@@ -1,6 +1,7 @@
 package network.server;
 
 import com.google.gson.Gson;
+import network.VikingAdapter;
 import network.packets.FormatPacket;
 import server.model.Camp;
 import server.model.Partie;
@@ -84,7 +85,7 @@ public class Server {
      * Envoie l'état de la partie à tous les clients connectés
      */
     public void broadcastGameState() {
-        Gson gson = new Gson();
+        Gson gson = VikingAdapter.getGson();
         String content = gson.toJson(partie);
         broadcast(FormatPacket.format("Partie",content));
     }
