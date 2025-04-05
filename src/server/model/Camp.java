@@ -33,7 +33,6 @@ public class Camp {
         vikings = new ArrayList<>();
         this.id = id;
         this.strength = 0;
-        //vikings = new ArrayList<>();
         sheap = new ArrayList<>();
         wheats = new ArrayList<>();
         CampManager.addCamp(this);
@@ -58,6 +57,13 @@ public class Camp {
 
         vikings.add(v1);
         vikings.add(v2);
+
+        // add farmer
+        farmers.add(f1);
+        farmers.add(f2);
+
+        vikings.add(f1);
+        vikings.add(f2);
         ;
         Sheap s1 = new Sheap(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6/*,this*/);
         Sheap s2 = new Sheap(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5/*,this*/);
@@ -70,21 +76,13 @@ public class Camp {
         Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70,topLeftCamp.y - 50), this.id, 0);
         wheats.add(v);
 
-//        Field fi1 = new Field(new Point(10, 100), this.id);
-//        Field fi2 = new Field(new Point(30, 100), this.id);
         Field fi1 = new Field(new Point(topLeftCamp.x + 15,topLeftCamp.y - 100), this.id);
         Field fi2 = new Field(new Point(topLeftCamp.x + 50,topLeftCamp.y - 100), this.id);
         fields.add(fi1);
         fields.add(fi2);
 
-        // add farmer
-        farmers.add(f1);
-        farmers.add(f2);
-
-        vikings.add(f1);
-        vikings.add(f2);
-
         this.setEntitiesId();
+
     }
 
     //une méthode qui boucle sur les vikings, wheat, sheap et fields et leur attributs un id unique
@@ -96,14 +94,7 @@ public class Camp {
             viking.setId(id * 10 + i);
             i++;
         }
-        for (Farmer farmer : farmers) {
-            farmer.setId(id * 10 + i);
-            i++;
-        }
-        for (Sheap sheap : sheap) {
-            sheap.setId(id * 10 + i);
-            i++;
-        }
+
     }
 
 
