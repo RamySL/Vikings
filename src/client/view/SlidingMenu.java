@@ -11,6 +11,16 @@ import client.controler.event.PlantListener;
 import server.model.*;
 import client.controler.event.EventBus;
 
+/**
+ * SlidingMenu is a JPanel that slides in and out of view, providing a menu for planting crops.
+ * It contains buttons and combo boxes for user interaction.
+ * The menu can be toggled visible or hidden, and it updates its position based on the farmer's location.
+ * It also handles the visibility of the plant button and combo box based on the farmer's state.
+ * It can show information about the selected entity and its health.
+ * It uses a timer to animate the sliding effect.
+ * It also listens for plant events and updates the UI accordingly.
+ * It is a subclass of JPanel and implements the ActionListener interface.
+ */
 public class SlidingMenu extends JPanel {
     private Timer timer;
     private int targetX;
@@ -20,10 +30,21 @@ public class SlidingMenu extends JPanel {
     private JButton plantButton;
     private JComboBox<String> plantComboBox;
     private JLabel healthLabel, entityLabel, ressourceLabel;
+    private JProgressBar healthBar;
     private int farmerX, farmerY, fieldX, fieldY;
     int posMenuY, widthMenu, windowWidth, windowHeight;
     private List<PlantListener> plantListeners = new ArrayList<>();
 
+    /**
+     * Constructor for SlidingMenu.
+     * Initializes the menu with the specified position and size.
+     * Sets up the plant button and combo box, and adds action listeners for user interaction.
+     *
+     * @param x      The x-coordinate of the window.
+     * @param y      The y-coordinate of the menu.
+     * @param width  The width of the menu.
+     * @param height The height of the menu.
+     */
     public SlidingMenu(int x, int y, int width, int height) {
         this.posMenuY=y;
         this.widthMenu=width;
@@ -70,6 +91,13 @@ public class SlidingMenu extends JPanel {
         timer = new Timer(1, e -> slide());
     }
 
+    /**
+     * Updates the position of the menu based on the window size.
+     * Sets the bounds of the menu to be at the right edge of the window.
+     *
+     * @param windowWidth  The width of the window.
+     * @param windowHeight The height of the window.
+     */
    public void updatePosition(int windowWidth, int windowHeight) {
        this.windowWidth = windowWidth;
        this.windowHeight = windowHeight;
@@ -77,7 +105,13 @@ public class SlidingMenu extends JPanel {
        this.setBounds(windowWidth  , this.posMenuY, this.widthMenu, windowHeight);  // Position X = largeur de la fenêtre - largeur du menu
    }
 
-
+    /**
+     * Toggles the visibility of the menu.
+     * If the menu is currently visible, it will slide out of view.
+     * If it is hidden, it will slide into view.
+     *
+     * @param visible true to show the menu, false to hide it.
+     */
     public void toggle(boolean visible) {
         if (isVisible && !visible) {
             targetX = windowWidth+widthMenu;
@@ -88,6 +122,10 @@ public class SlidingMenu extends JPanel {
         timer.start();
     }
 
+    /**
+     * Slides the menu in or out of view based on the targetX position.
+     * It updates the position of the menu gradually until it reaches the targetX.
+     */
     private void slide() {
         int currentX = getX();
         if (currentX != targetX) {
@@ -99,17 +137,36 @@ public class SlidingMenu extends JPanel {
             timer.stop();
         }
     }
+    /**
+     * Toggles the visibility of the menu to show or hide it.
+     * It sets the targetX position and starts the timer for sliding animation.
+     */
     public void toggleVisible(){
         targetX = windowWidth;
         isVisible =true;
         timer.start();
     }
+    /**
+     * Hides the menu by setting the targetX position to the right edge of the window.
+     * It starts the timer for sliding animation.
+     */
     public void toggleHide(){
         targetX = windowWidth+widthMenu;
         isVisible =false;
         timer.start();
     }
-
+    /**
+     * Updates the visibility of the plant button based on the farmer's position and field status.
+     * If the farmer is on a field and the field is not planted, the button becomes visible.
+     * If the farmer is not on a field, the button is hidden.
+     *
+     * @param isFarmerOnField true if the farmer is on a field, false otherwise.
+     * @param farmerX        The x-coordinate of the farmer.
+     * @param farmerY        The y-coordinate of the farmer.
+     * @param fieldX         The x-coordinate of the field.
+     * @param fieldY         The y-coordinate of the field.
+     * @param isFieldPlanted true if the field is already planted, false otherwise.
+     */
     public void updatePlantButtonVisibility(boolean isFarmerOnField, int farmerX, int farmerY, int fieldX, int fieldY, boolean isFieldPlanted) {
         this.isFarmerOnField = isFarmerOnField;
         this.farmerX = farmerX;
@@ -127,23 +184,52 @@ public class SlidingMenu extends JPanel {
             //System.out.println("Plant button hidden");
         }
     }
+    /**
+     * Hides the plant button and combo box when clicking elsewhere on the screen.
+     * It sets their visibility to false.
+     */
     public void elseWhereClicked() {
         plantComboBox.setVisible(false);
         plantButton.setVisible(false);
     }
+    /**
+     * Sets the visibility of the farmer on the field.
+     * If the farmer is on a field, the plant button becomes visible.
+     * If the farmer is not on a field, the button is hidden.
+     *
+     * @param isFarmerOnField true if the farmer is on a field, false otherwise.
+     * @param farmer          The farmer object.
+     * @param field           The field object.
+     */
     public void setFarmerOnField(boolean isFarmerOnField, Farmer farmer, Field field) {
         this.isFarmerOnField = isFarmerOnField;
         refreshVisibility();
     }
+    /**
+     * Refreshes the visibility of the plant button based on the farmer's state.
+     * If the farmer is on a field, the button becomes visible.
+     * If the farmer is not on a field, the button is hidden.
+     */
     public void refreshVisibility() {
         plantButton.setVisible(isFarmerOnField);
     }
 
-
+    /**
+     * Adds a PlantListener to the list of listeners.
+     * This allows other classes to listen for plant events.
+     *
+     * @param listener The PlantListener to be added.
+     */
     public void addPlantListener(PlantListener listener) {
         plantListeners.add(listener);
     }
 
+    /**
+     * Handles the selection of a resource from the combo box.
+     * It creates a PlantEvent with the selected resource and publishes it to the EventBus.
+     *
+     * @param selectedResource The selected resource from the combo box.
+     */
    private void handleComboBoxSelection(String selectedResource) {
        //System.out.println("Selected resource: " + selectedResource);
 
@@ -151,16 +237,31 @@ public class SlidingMenu extends JPanel {
        PlantEvent event = new PlantEvent(selectedResource, this.farmerX, this.farmerY, this.fieldX, this.fieldY);
        EventBus.getInstance().publish("PlantEvent", event);
    }
+    /**
+     * Shows information about the selected entity and its health.
+     * It updates the labels and progress bar to display the entity's name and health.
+     *
+     * @param entity The name of the entity.
+     * @param health The health of the entity.
+     */
     public void showInfos(String entity, float health) {
         showInfos(entity);
-        if (healthLabel == null ) {
-            healthLabel = new JLabel();
-            healthLabel.setBounds(50, 150, 100, 40);
-            add(healthLabel);
+        if (healthBar == null){
+            healthBar = new JProgressBar();
+            healthBar.setBounds(50,150,100,40);
+            add(healthBar);
         }
-        healthLabel.setText("Santé: " + health);
-        healthLabel.setVisible(true);
+        healthBar.setStringPainted(true);
+        healthBar.setValue((int) health);
+        healthBar.setVisible(true);
+
     }
+    /**
+     * Shows information about the selected entity.
+     * It updates the label to display the entity's name.
+     *
+     * @param entity The name of the entity.
+     */
     public void showInfos(String entity){
         if (entityLabel == null) {
             entityLabel=new JLabel();
@@ -170,6 +271,13 @@ public class SlidingMenu extends JPanel {
         entityLabel.setText(entity);
         entityLabel.setVisible(true);
     }
+    /**
+     * Shows information about the selected entity and its resource.
+     * It updates the labels to display the entity's name and resource.
+     *
+     * @param entity   The name of the entity.
+     * @param ressource The resource associated with the entity.
+     */
     public void showInfos(String entity, String ressource) {
         showInfos(entity);
         if (ressourceLabel == null ) {
@@ -180,12 +288,20 @@ public class SlidingMenu extends JPanel {
         ressourceLabel.setText("Ressource: " + ressource);
         ressourceLabel.setVisible(true);
     }
+    /**
+     * Hides the health bar and labels when clicking elsewhere on the screen.
+     * It sets their visibility to false.
+     */
     public void hideInfos(){
-        if (healthLabel != null) {
-            healthLabel.setVisible(false);
+        if (healthBar != null) {
+            healthBar.setVisible(false);
         }
         if (entityLabel != null) {
             entityLabel.setVisible(false);
         }
+        if (ressourceLabel != null) {
+            ressourceLabel.setVisible(false);
+        }
+        plantButton.setVisible(false);
     }
 }

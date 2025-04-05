@@ -14,11 +14,13 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
     private ViewClient view;
     private Client client;
 
+
     public ControlerClient(ViewClient view) {
         this.view = view;
         this.view.getViewPartie().addMouseListener(this);
         this.view.getConnectButton().addActionListener(this);
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
