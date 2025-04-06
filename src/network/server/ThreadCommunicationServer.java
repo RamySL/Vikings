@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Le thread que le serveur va lancer pour chaque connexion avec un client pour comminuquer avec lui
@@ -93,6 +95,28 @@ public class ThreadCommunicationServer extends Thread{
                 PacketMovement packetMovement = gson.fromJson(wrapper.content, PacketMovement.class);
                 Viking v = this.camp.getVikingByID(packetMovement.getId());
                 v.move(Position.viewToModel(packetMovement.getDst(),packetMovement.getTranslation(),packetMovement.getScale()));
+                break;
+            case "PacketAttack":
+                // On vérifie si l'attaque est valide
+                PacketAttack packetAttack = gson.fromJson(wrapper.content, PacketAttack.class);
+                int[] NbVikings = packetAttack.getNbVikings();
+                int nbVRequired = Arrays.stream(NbVikings).sum();
+                if(this.camp.getWarriorsInCamp().size() < nbVRequired) {
+                    System.out.println("Not enough vikings to attack");
+                    return;
+                }else{
+                    Camp enemy = this.server.getPartie().getCamp(packetAttack.getIdCamp());
+                    Point[] dsts =  Arrays.stream(packetAttack.getIdRessources()).mapToObj(id -> enemy.getFieldById(id).getPosition())
+                            .toArray(Point[]::new);
+                    for (int i = 0; i<NbVikings.length; i++){
+                        camp.attack(NbVikings[i], enemy.getId(), dsts[i]);
+                    }
+                }
+
+
+                // position
+
+                Point campToAtt =  this.server.getPartie().getCamp(packetAttack.getIdCamp()).getPosition();
                 break;
         }
     }

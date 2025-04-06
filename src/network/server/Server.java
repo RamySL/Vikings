@@ -111,4 +111,8 @@ public class Server {
             e.printStackTrace();
         }
     }
+
+    public Partie getPartie() {
+        return partie;
+    }
 }

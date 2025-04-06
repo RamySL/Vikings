@@ -4,6 +4,7 @@ package server.model;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -23,6 +24,9 @@ public class Camp {
     private float strength; // Force du camp
     private ArrayList<Sheap> sheap;
     private ArrayList<Wheat> wheats;
+    // map entre les camp attaqué par les vikings de ce camp et les vikings qui l'attaquent
+    private HashMap<Integer, ArrayList<Warrior>> vikingsAttack = new HashMap<>();
+    private ArrayList<Warrior> warriorsInCamp = new ArrayList<>();
 
     // Constructeur
     public Camp(int id) {
@@ -54,9 +58,14 @@ public class Camp {
 
         warriors.add(v1);
         warriors.add(v2);
+        warriorsInCamp.add(v1);
+        warriorsInCamp.add(v2);
 
         vikings.add(v1);
         vikings.add(v2);
+
+        System.out.println("Vikings added to the camp: " + vikings.get(0));
+        System.out.println("Vikings added to the camp: " + warriors.get(0));
 
         // add farmer
         farmers.add(f1);
@@ -85,19 +94,45 @@ public class Camp {
 
     }
 
-    //une méthode qui boucle sur les vikings, wheat, sheap et fields et leur attributs un id unique
-    // elle intialise un compteur à 0 quj s'incrémente à chaque tour de boucle sur une entité,
-    // pour chaque entité pour former son id on multiplie par 10 le id du camp et on rajoute le compteur
+    /**
+     * Set the id of the entities in the camp.
+     */
     public void setEntitiesId(){
         int i = 0;
         for (Viking viking : vikings) {
             viking.setId(id * 10 + i);
             i++;
         }
+        for (Field field : fields) {
+            field.setId(id * 10 + i);
+            i++;
+        }
 
     }
 
+    /**
+     * envoi n warrior pour attquer le camp avec l'id id
+     * Précondition:  le nombre de guerriers soit suffisant
+     * @param n
+     * @param id
+     */
+    public void attack(int n, int id, Point dst) {
 
+        for (int i = 0; i < n; i++) {
+            Warrior warrior = this.warriors.get(i);
+            warrior.move(dst);
+            // add the warrior to the vikingsAttack
+            if (this.vikingsAttack.containsKey(id)) {
+                this.vikingsAttack.get(id).add(warrior);
+            } else {
+                ArrayList<Warrior> warriors = new ArrayList<>();
+                warriors.add(warrior);
+                this.vikingsAttack.put(id, warriors);
+            }
+            warriorsInCamp.remove(i);
+        }
+
+    }
     public List<Point> getFieldPositions() {
         List<Point> positions = new ArrayList<>();
         for (Field field : fields) {
@@ -108,7 +143,7 @@ public class Camp {
 
     public Field getFieldById(int fieldId) {
         for (Field field : fields) {
-            if (field.getCampId() == fieldId) {
+            if (field.getId() == fieldId) {
                 return field;
             }
         }
@@ -279,6 +314,10 @@ public void decreaseStrength(float amount) {
         return vikings;
     }
 
+    public ArrayList<Warrior> getWarriorsInCamp() {
+        return warriorsInCamp;
+    }
+
     public Viking getVikingByID(int id){
         for (Viking viking : vikings) {
             if (viking.getId() == id) {
@@ -287,5 +326,6 @@ public void decreaseStrength(float amount) {
         }
         return null;
     }
+
 }
 
