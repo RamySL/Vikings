@@ -162,17 +162,17 @@ public class ViewPartie extends JPanel {
         g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
 
         drawWarriors(camp.getWarriors(), g2);
-        //drawSheap(camp.getSheap(), g2);
+        drawSheep(camp.getSheep(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawFields(camp.getFields(), g2);
     }
 
-    private void drawSheap(ArrayList<Sheap> sheap, Graphics2D g2) {
-        for (Sheap l : sheap) {
+    private void drawSheep(ArrayList<Sheep> sheep, Graphics2D g2) {
+        for (Sheep l : sheep) {
                 g2.setColor(Color.YELLOW);
                 Point pointView = pointModelToView(l.getPosition());
-                int width = Position.WIDTH_SHEAP * RATIO_X;
-                int height = Position.HEIGHT_SHEAP * RATIO_Y;
+                int width = Position.WIDTH_SHEEP * RATIO_X;
+                int height = Position.HEIGHT_SHEEP * RATIO_Y;
                 g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
 
         }
@@ -221,8 +221,8 @@ public class ViewPartie extends JPanel {
 
     public void setPartie(Partie partieModel) {
         this.partieModel = partieModel;
-        this.revalidate();
-        this.repaint();
+        //this.revalidate();
+        //this.repaint();
 
     }
 

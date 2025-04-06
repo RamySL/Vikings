@@ -6,10 +6,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.controler.event.PlantEvent;
-import client.controler.event.PlantListener;
+import client.controler.event.*;
 import server.model.*;
-import client.controler.event.EventBus;
 
 /**
  * SlidingMenu is a JPanel that slides in and out of view, providing a menu for planting crops.
@@ -24,14 +22,14 @@ import client.controler.event.EventBus;
 public class SlidingMenu extends JPanel {
     private Timer timer;
     private int targetX;
-    private boolean isFarmerOnField;
+    private boolean isFarmerOnField, isFarmerNearSheep;
     private boolean isFieldPlanted;
     private boolean isVisible;
-    private JButton plantButton;
+    private JButton plantButton, harvestButton, eatButton, exitMenu;
     private JComboBox<String> plantComboBox;
-    private JLabel healthLabel, entityLabel, ressourceLabel;
+    private JLabel entityLabel, ressourceLabel;
     private JProgressBar healthBar;
-    private int farmerX, farmerY, fieldX, fieldY;
+    private int farmerX, farmerY, fieldX, fieldY, sheepX, sheepY;
     int posMenuY, widthMenu, windowWidth, windowHeight;
     private List<PlantListener> plantListeners = new ArrayList<>();
 
@@ -59,6 +57,21 @@ public class SlidingMenu extends JPanel {
         plantButton.setVisible(false);
         add(plantButton);
 
+        eatButton = new JButton("Eat");
+        eatButton.setBounds(50, 50, 100, 40);
+        eatButton.setVisible(false);
+        add(eatButton);
+
+        harvestButton = new JButton("Harvest");
+        harvestButton.setBounds(50, 50, 100, 40);
+        harvestButton.setVisible(false);
+        add(harvestButton);
+
+        exitMenu = new JButton("Exit");
+        exitMenu.setBounds(50, 250, 100, 40);
+        exitMenu.setVisible(false);
+        add(exitMenu);
+
         String[] vegetals = {"Wheat", "Corn", "Mais"};
         plantComboBox = new JComboBox<>(vegetals);
         plantComboBox.setBounds(50, 100, 100, 40);
@@ -70,20 +83,34 @@ public class SlidingMenu extends JPanel {
         plantButton.addActionListener(e -> {
             plantButton.setVisible(false);  // Cacher le bouton lorsque "Planter" est cliqué
             plantComboBox.setVisible(true);  // Afficher le JComboBox pour choisir un végétal
-            System.out.println("Le choix du végétal est maintenant visible");
         });
+        // Action du bouton "Récolter"
+        harvestButton.addActionListener(e -> {
+            harvestButton.setVisible(false);  // Cacher le bouton lorsque "Récolter" est cliqué
+            handleHarvestButtonClicked();
+        });
+        // Action du bouton "Manger"
+        eatButton.addActionListener(e -> {
+            eatButton.setVisible(false);  // Cacher le bouton lorsque "Manger" est cliqué
+            handleEatButtonClicked();
+        });
+
+        // Action du bouton "Quitter"
+        exitMenu.addActionListener(e -> {
+            toggleHide();
+            handleExitButtonClicked();
+        });
+
         // Ajouter un ActionListener au JComboBox pour récupérer la sélection
         plantComboBox.addActionListener(e -> {
             if (e.getSource() == plantComboBox) {
                 String selectedVegetal = (String) plantComboBox.getSelectedItem(); // Récupérer le végétal choisi
-                System.out.println("Végétal choisi: " + selectedVegetal);
 
                 // Appeler la méthode pour traiter la sélection
                 handleComboBoxSelection(selectedVegetal);
 
                 // Cacher le JComboBox après sélection
                 plantComboBox.setVisible(false);
-                System.out.println("Le JComboBox a été caché après la sélection");
             }
         });
 
@@ -131,8 +158,6 @@ public class SlidingMenu extends JPanel {
         if (currentX != targetX) {
             int step = (targetX - currentX) / 10;
             setLocation(currentX + step, getY());
-            revalidate();
-            repaint();
         } else {
             timer.stop();
         }
@@ -167,7 +192,7 @@ public class SlidingMenu extends JPanel {
      * @param fieldY         The y-coordinate of the field.
      * @param isFieldPlanted true if the field is already planted, false otherwise.
      */
-    public void updatePlantButtonVisibility(boolean isFarmerOnField, int farmerX, int farmerY, int fieldX, int fieldY, boolean isFieldPlanted) {
+    public void updateButtonVisibility(boolean isFarmerOnField, int farmerX, int farmerY, int fieldX, int fieldY, boolean isFieldPlanted) {
         this.isFarmerOnField = isFarmerOnField;
         this.farmerX = farmerX;
         this.farmerY = farmerY;
@@ -178,10 +203,27 @@ public class SlidingMenu extends JPanel {
         if (isFarmerOnField) {
             if (!isFieldPlanted) {
                 plantButton.setVisible(true);
-                //System.out.println("Plant button visible at farmer position (" + farmerX + ", " + farmerY + ") and field position (" + fieldX + ", " + fieldY + ")");
-            }} else {
+                harvestButton.setVisible(false);
+            } else {
+                plantButton.setVisible(false);
+                harvestButton.setVisible(true);
+            }
+        } else {
             plantButton.setVisible(false);
-            //System.out.println("Plant button hidden");
+            harvestButton.setVisible(false);
+        }
+    }
+    public void updateButtonVisibility(boolean isFarmerNearSheep, int farmerX, int farmerY, int sheepX, int sheepY) {
+        this.isFarmerNearSheep = isFarmerNearSheep;
+        this.farmerX = farmerX;
+        this.farmerY = farmerY;
+        this.sheepX = sheepX;
+        this.sheepY = sheepY;
+        // If the farmer is near a sheep, the button becomes visible
+        if (isFarmerNearSheep) {
+            eatButton.setVisible(true);
+        } else {
+            eatButton.setVisible(false);
         }
     }
     /**
@@ -191,6 +233,9 @@ public class SlidingMenu extends JPanel {
     public void elseWhereClicked() {
         plantComboBox.setVisible(false);
         plantButton.setVisible(false);
+        eatButton.setVisible(false);
+        harvestButton.setVisible(false);
+        exitMenu.setVisible(false);
     }
     /**
      * Sets the visibility of the farmer on the field.
@@ -237,6 +282,22 @@ public class SlidingMenu extends JPanel {
        PlantEvent event = new PlantEvent(selectedResource, this.farmerX, this.farmerY, this.fieldX, this.fieldY);
        EventBus.getInstance().publish("PlantEvent", event);
    }
+
+   private void handleEatButtonClicked() {
+       // Créer et publier l'événement
+       EatEvent event = new EatEvent(this.farmerX, this.farmerY, this.sheepX, this.sheepY);
+       EventBus.getInstance().publish("EatEvent", event);
+    }
+
+    private void handleHarvestButtonClicked(){
+        HarvestEvent event = new HarvestEvent(this.farmerX, this.farmerY, this.fieldX, this.fieldY);
+        EventBus.getInstance().publish("HarvestEvent", event);
+    }
+
+    private void handleExitButtonClicked(){
+        ExitEvent event = new ExitEvent("Exit");
+        EventBus.getInstance().publish("ExitEvent", event);
+    }
     /**
      * Shows information about the selected entity and its health.
      * It updates the labels and progress bar to display the entity's name and health.
@@ -270,6 +331,7 @@ public class SlidingMenu extends JPanel {
         }
         entityLabel.setText(entity);
         entityLabel.setVisible(true);
+        exitMenu.setVisible(true);
     }
     /**
      * Shows information about the selected entity and its resource.
@@ -302,6 +364,6 @@ public class SlidingMenu extends JPanel {
         if (ressourceLabel != null) {
             ressourceLabel.setVisible(false);
         }
-        plantButton.setVisible(false);
     }
+
 }

@@ -1,9 +1,7 @@
 package network.server;
 
 import network.packets.FormatPacket;
-import server.model.Camp;
-import server.model.Farmer;
-import server.model.Field;
+import server.model.*;
 
 import java.awt.Point;
 
@@ -22,6 +20,7 @@ public class FarmerPositionChecker extends Thread {
     private final Farmer farmer;
     private final double distanceTolerance;
     private boolean previousNearFieldState;
+    private boolean previousNearSheepState;
 
     /**
      * Constructor for the FarmerPositionChecker class.
@@ -36,6 +35,7 @@ public class FarmerPositionChecker extends Thread {
         this.farmer = farmer;
         this.distanceTolerance = distanceTolerance;
         this.previousNearFieldState = false;
+        this.previousNearSheepState = false;
     }
 
     /**
@@ -46,6 +46,7 @@ public class FarmerPositionChecker extends Thread {
     public void run() {
         while (true) {
             checkFarmerNearField();
+            checkFarmerNearSheep();
             try {
                 Thread.sleep(CHECK_INTERVAL_MS);
             } catch (InterruptedException e) {
@@ -68,10 +69,8 @@ public class FarmerPositionChecker extends Thread {
                    farmer.getPosition().x, farmer.getPosition().y,
                    nearestField.getPosition().x, nearestField.getPosition().y, nearestField.isPlanted());
            if (nearField) {
-               //System.out.println("Farmer is near a field with margin, sending message to client.");
                communicationServer.sendMessage(FormatPacket.format("FarmerNearField", message ));
            } else {
-               //System.out.println("Farmer is not near a field, sending message to client.");
                communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField", message ));
            }
            previousNearFieldState = nearField;
@@ -107,6 +106,58 @@ public class FarmerPositionChecker extends Thread {
             }
         }
         return nearestField;
+    }
+
+    /**
+     * Checks if the farmer is near a sheep and sends a message to the communication server if the state has changed.
+     * It uses the distance tolerance to determine if the farmer is near a sheep.
+     * @param farmer The farmer whose position is being checked.
+     * @return the nearest sheep to the farmer.
+     */
+    private Sheep getNearestSheep(Farmer farmer) {
+        Point farmerPosition = farmer.getPosition();
+        double minDistance = Double.MAX_VALUE;
+        Sheep nearestSheep = null;
+        for (Sheep sheep : camp.getSheep()) {
+            double distance = farmerPosition.distance(sheep.getPosition());
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestSheep = sheep;
+            }
+        }
+        return nearestSheep;
+    }
+
+    /**
+     * Checks if the farmer is near a sheep with a specified margin.
+     * @param farmer The farmer whose position is being checked.
+     * @param margin The distance margin for determining if the farmer is near a sheep.
+     * @param sheep The sheep to check against.
+     * @return True if the farmer is near the sheep, false otherwise.
+     */
+    private boolean isNearSheepWithMargin(Farmer farmer, double margin, Sheep sheep) {
+        double distanceToSheep = farmer.getPosition().distance(sheep.getPosition());
+        return distanceToSheep <= margin;
+    }
+
+    /**
+     * Checks if the farmer is near a sheep and sends a message to the communication server if the state has changed.
+     * It uses the distance tolerance to determine if the farmer is near a sheep.
+     */
+    private void checkFarmerNearSheep() {
+        Sheep nearestSheep = getNearestSheep(farmer);
+        boolean nearSheep = isNearSheepWithMargin(farmer, distanceTolerance, nearestSheep);
+        if (nearSheep != previousNearSheepState) {
+            String message = String.format("{\"farmerX\": %d, \"farmerY\": %d, \"sheepX\": %d, \"sheepY\": %d}",
+                    farmer.getPosition().x, farmer.getPosition().y,
+                    nearestSheep.getPosition().x, nearestSheep.getPosition().y);
+            if (nearSheep) {
+                communicationServer.sendMessage(FormatPacket.format("FarmerNearSheep", message ));
+            } else {
+                communicationServer.sendMessage(FormatPacket.format("FarmerNotNearSheep", message ));
+            }
+            previousNearSheepState = nearSheep;
+        }
     }
 
 }

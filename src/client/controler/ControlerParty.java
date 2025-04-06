@@ -12,7 +12,7 @@ import java.awt.event.*;
 /**
  * Controler of the party
  */
-public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener, PlantListener, EatListenner {
+public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner, ExitListenner {
 
     private ControlerClient controlerClient;
     private ViewPartie viewPartie;
@@ -29,6 +29,8 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         this.viewPartie.addMouseWheelListener(this);
         EventBus.getInstance().subscribe("PlantEvent", this::handlePlantEvent);
         EventBus.getInstance().subscribe("EatEvent", this::handleEatEvent);
+        EventBus.getInstance().subscribe("HarvestEvent", this::handleHarvestEvent);
+        EventBus.getInstance().subscribe("ExitEvent", this::handleExitEvent);
     }
 
     @Override
@@ -113,6 +115,40 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetEat", contentPaquet));
     }
 
+    @Override
+    public void onHarvest(HarvestEvent event) {
+        sendHarvestPacketToServer(event.getFarmerX(), event.getFarmerY(), event.getFieldX(), event.getFieldY());
+    }
+    private void handleHarvestEvent(Object event) {
+        if (event instanceof HarvestEvent) {
+            HarvestEvent harvestEvent = (HarvestEvent) event;
+            sendHarvestPacketToServer(harvestEvent.getFarmerX(), harvestEvent.getFarmerY(), harvestEvent.getFieldX(), harvestEvent.getFieldY());
+        }
+    }
+    public void sendHarvestPacketToServer(int farmerX, int farmerY, int fieldX, int fieldY) {
+        Gson gson = new Gson();
+        String contentPaquet = gson.toJson(new PaquetHarvest(farmerX, farmerY, fieldX, fieldY));
+        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetHarvest", contentPaquet));
+
+
+    }
+
+    @Override
+    public void onExit(ExitEvent event) {
+        sendExitPacketToServer();
+
+    }
+    private void handleExitEvent(Object event) {
+        if (event instanceof ExitEvent) {
+            ExitEvent exitEvent = (ExitEvent) event;
+            sendExitPacketToServer();
+        }
+    }
+    public void sendExitPacketToServer() {
+        Gson gson = new Gson();
+        String contentPaquet = gson.toJson(new PaquetExit("exit"));
+        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetExit", contentPaquet));
+    }
 
 
 

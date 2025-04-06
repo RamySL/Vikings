@@ -40,6 +40,7 @@ public class EatEvent {
      * @return The x coordinate of the animal.
      */
     public int getAnimalX() {
+        System.out.println("getAnimalX() called " +animalX) ;
         return animalX;
     }
 
@@ -47,6 +48,7 @@ public class EatEvent {
      * @return The y coordinate of the animal.
      */
     public int getAnimalY() {
+        System.out.println("getAnimalY() called " +animalY) ;
         return animalY;
     }
 }

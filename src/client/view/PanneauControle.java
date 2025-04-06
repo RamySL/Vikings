@@ -66,13 +66,20 @@ public class PanneauControle extends JPanel {
      * @param fieldX The x-coordinate of the field.
      * @param fieldY The y-coordinate of the field.
      * @param isFieldPlanted True if the field is planted, false otherwise.
-     * @see SlidingMenu#updatePlantButtonVisibility(boolean, int, int, int, int, boolean)
+     * @see SlidingMenu#updateButtonVisibility(boolean, int, int, int, int, boolean)
      */
     public void setFarmerOnField(boolean isFarmerOnField, int farmerX, int farmerY, int fieldX, int fieldY, boolean isFieldPlanted) {
         updateSlidingMenuVisibility(isFarmerOnField);
-        slidingMenu.updatePlantButtonVisibility(isFarmerOnField, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
+        slidingMenu.updateButtonVisibility(isFarmerOnField, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
     }
 
+    public void setFarmerNearSheep(boolean isFarmerNearSheep, int farmerX, int farmerY, int sheepX, int sheepY) {
+        if (isFarmerNearSheep) {
+            updateSlidingMenuVisibility(true);
+        }
+
+        slidingMenu.updateButtonVisibility(isFarmerNearSheep, farmerX, farmerY, sheepX, sheepY);
+    }
     /**
      * Handles the event when the user clicks on the "elseWhere" button in the SlidingMenu.
      * This method toggles the visibility of the SlidingMenu and hides the information panel.
@@ -103,7 +110,6 @@ public class PanneauControle extends JPanel {
      */
     public void setVisibility(boolean visible) {
         if (visible) {
-            System.out.println("est visibme");
             slidingMenu.toggleVisible();
         } else {
             slidingMenu.toggleHide();
@@ -115,15 +121,26 @@ public class PanneauControle extends JPanel {
      * @param entity The name of the entity.
      * @param health The health of the entity.
      * @see SlidingMenu#showInfos(String, float)
-     * @see SlidingMenu#showInfos(String)
-     * @see SlidingMenu#showInfos(String, String)
      */
     public void showInfos(String entity, float health) {
         slidingMenu.showInfos(entity, health);
     }
+
+    /**
+     * Shows information about the given entity in the SlidingMenu.
+     * @param entity The name of the entity.
+     * @see SlidingMenu#showInfos(String)
+     */
     public void showInfos(String entity) {
         slidingMenu.showInfos(entity);
     }
+
+    /**
+     * Shows information about the given entity and resource in the SlidingMenu.
+     * @param entity The name of the entity.
+     * @param ressource The resource associated with the entity.
+     * @see SlidingMenu#showInfos(String, String)
+     */
     public void showInfos(String entity, String ressource) {
         slidingMenu.showInfos(entity, ressource);
     }

@@ -28,6 +28,7 @@ public class FarmerFieldWrapper {
         this.isPlanted=isPlanted;
     }
 
+
     /**
      * Getters for the coordinates of the farmer and the field.
      * @return The x or y coordinate of the farmer or field.

@@ -23,15 +23,15 @@ public abstract class Viking extends Entity implements Moveable {
      * La vérification de proximité est gérée par un thread extérieur.
      * La force gagnée est égale à la santé de l'animal multipliée par le coeffStrength global des Vikings.
      */
-    public void eat(Sheap animal) {
-        System.out.println("Le Viking mange un mouton !");
+    public void eat(Sheep animal) {
+
 
         // Calcul de la force gagnée (santé * coeffStrength partagé par tous les Vikings)
         float strengthGained = animal.getHealth() * coeffStrength;
         camp.increaseStrength(strengthGained);
 
         // Supprime l'animal du camp
-        camp.removeSheap(animal);
+        camp.removeSheep(animal);
 
         System.out.println("Force du camp augmentée de " + strengthGained);
     }

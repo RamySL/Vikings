@@ -20,8 +20,7 @@ public class Camp {
     private ArrayList<Field> fields;
     private ArrayList<Farmer> farmers;
     private float strength; // Force du camp
-    //private ArrayList<Viking> vikings; // Liste des Vikings (Warrior et Farmer)
-    private ArrayList<Sheap> sheap;
+    private ArrayList<Sheep> sheep;
     private ArrayList<Wheat> wheats;
 
     // Constructeur
@@ -33,7 +32,7 @@ public class Camp {
         this.id = id;
         this.strength = 0;
         //vikings = new ArrayList<>();
-        sheap = new ArrayList<>();
+        sheep = new ArrayList<>();
         wheats = new ArrayList<>();
         CampManager.addCamp(this);
         init();
@@ -46,11 +45,11 @@ public class Camp {
     public void init() {
         // Ajout des guerriers
         Point topLeftCamp =  Position.MAP_CAMPS_POSITION.get(this.id);
-        Warrior v1 = new Warrior(50,new Point(topLeftCamp.x + 10,topLeftCamp.y - 10), this.id/*,this*/);
-        Warrior v2 = new Warrior(50,new Point(topLeftCamp.x + 30,topLeftCamp.y - 10), this.id/*,this*/);
+        Warrior v1 = new Warrior(50,new Point(topLeftCamp.x + 10,topLeftCamp.y - 10), this.id);
+        Warrior v2 = new Warrior(50,new Point(topLeftCamp.x + 30,topLeftCamp.y - 10), this.id);
 
-        Farmer f1 = new Farmer(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 30), this.id/*,this*/);
-        Farmer f2 = new Farmer(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 30), this.id/*,this*/);
+        Farmer f1 = new Farmer(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 30), this.id);
+        Farmer f2 = new Farmer(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 30), this.id);
 
 
         //vikings.add(v1);
@@ -63,10 +62,10 @@ public class Camp {
         warriors.add(v1);
         warriors.add(v2);
         ;
-        Sheap s1 = new Sheap(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6/*,this*/);
-        Sheap s2 = new Sheap(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5/*,this*/);
-        sheap.add(s1);
-        sheap.add(s2);
+        Sheep s1 = new Sheep(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6);
+        Sheep s2 = new Sheep(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5);
+        sheep.add(s1);
+        sheep.add(s2);
 
 
         // Ajout des cultures
@@ -145,8 +144,8 @@ public class Camp {
     /**
      * Ajoute un animal d'élevage au camp.
      */
-    public void addSheap(Sheap l) {
-        sheap.add(l);
+    public void addSheep(Sheep l) {
+        sheep.add(l);
         System.out.println("Un nouvel animal a été ajouté au camp !");
     }
 
@@ -167,9 +166,9 @@ public class Camp {
     /**
      * Supprime un animal du camp.
      */
-    public void removeSheap(Sheap l) {
-        // remove the sheap from the sheap list
-        sheap.remove(l);
+    public void removeSheep(Sheep l) {
+        // remove the sheep from the sheep list
+        sheep.remove(l);
     }
 
     /**
@@ -194,8 +193,8 @@ public class Camp {
     /**
      * Déplace le bétail de façon aléatoire.
      */
-    public void moveSheap() {
-        for (Sheap l : sheap) {
+    public void moveSheep() {
+        for (Sheep l : sheep) {
             l.move(new Point(l.getPosition().x + 5, l.getPosition().y));
         }
     }
@@ -203,8 +202,8 @@ public class Camp {
     /**
      * Retourne la liste des animaux du camp.
      */
-    public ArrayList<Sheap> getSheap() {
-        return sheap;
+    public ArrayList<Sheep> getSheep() {
+        return sheep;
     }
 
     /**
@@ -250,10 +249,10 @@ public void decreaseStrength(float amount) {
     // declare the toString method
     @Override
     public String toString() {
-        // return the list of warriors, sheap and wheats
+        // return the list of warriors, sheep and wheats
         return "Camp{" +
                 /*"vikings=" + vikings +*/
-                ", sheap=" + sheap +
+                ", sheep=" + sheep +
                 ", wheats=" + wheats +
                 ", fields= " + fields +
                 ", strength=" + strength +
@@ -262,5 +261,6 @@ public void decreaseStrength(float amount) {
     public Point getPosition() {
         return Position.MAP_CAMPS_POSITION.get(this.id);
     }
+
 }
 

@@ -1,9 +1,6 @@
 package network.client;
 
-import network.packets.FarmerFieldWrapper;
-import network.packets.PacketCampId;
-import network.packets.PacketOpenPanelControl;
-import network.packets.PacketWrapper;
+import network.packets.*;
 import server.model.*;
 import client.view.ThreadRepaint;
 import client.view.ViewClient;
@@ -13,12 +10,23 @@ import java.util.Objects;
 
 
 /**
- * Thread qui écouter ce que le serveur envoie et actualise l'interface graphique du client
+ * ThreadCommunicationClient is a class that handles the communication between the client and the server.
+ * It receives messages from the server and updates the view accordingly.
+ * This class is responsible for processing the messages received from the server and updating the view.
+ * It runs in a separate thread to ensure that the client can continue to receive messages while the user interacts with the UI.
+ * It uses the Gson library to parse JSON messages and update the view.
+ * It also handles the visibility of the control panel and updates the farmer and sheep positions.
+ * It is a crucial part of the client-side implementation of the game.
+ * It extends the Thread class to run in a separate thread.
  */
 public class ThreadCommunicationClient extends Thread {
     private Client client;
     private boolean gameStarted = false;
     private ViewClient view;
+    private int sheepX, sheepY, farmerX, farmerY, fieldX, fieldY;
+    private boolean isFieldPlanted;
+    private  FarmerSheepWrapper farmerSheepWrapper;
+    private FarmerFieldWrapper farmerFieldWrapper;
 
     public ThreadCommunicationClient(Client client, ViewClient view) {
         this.client = client;
@@ -48,25 +56,38 @@ public class ThreadCommunicationClient extends Thread {
                 }
                 break;
             case "FarmerNearField":
-                //System.out.println("Received FarmerNearField message, showing Plant button.");
-                FarmerFieldWrapper farmerFieldWrapper = gson.fromJson(wrapper.content, FarmerFieldWrapper.class);
-                int farmerX = farmerFieldWrapper.getFarmerX();
-                int farmerY = farmerFieldWrapper.getFarmerY();
-                int fieldX = farmerFieldWrapper.getFieldX();
-                int fieldY = farmerFieldWrapper.getFieldY();
-                boolean isFieldPlanted = farmerFieldWrapper.getIsPlanted();
-                this.view.getViewPartie().getPanneauControle().setFarmerOnField(true, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
-                break;
-            case "FarmerNotNearField":
-                //System.out.println("Received FarmerNotNearField message, hiding Plant button.");
                 farmerFieldWrapper = gson.fromJson(wrapper.content, FarmerFieldWrapper.class);
                 farmerX = farmerFieldWrapper.getFarmerX();
                 farmerY = farmerFieldWrapper.getFarmerY();
                 fieldX = farmerFieldWrapper.getFieldX();
                 fieldY = farmerFieldWrapper.getFieldY();
                 isFieldPlanted = farmerFieldWrapper.getIsPlanted();
-                // Le fermier n'est pas sur un champ, donc on cache le bouton Planter
+                this.view.getViewPartie().getPanneauControle().setFarmerOnField(true, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
+                break;
+            case "FarmerNotNearField":
+                farmerFieldWrapper = gson.fromJson(wrapper.content, FarmerFieldWrapper.class);
+                farmerX = farmerFieldWrapper.getFarmerX();
+                farmerY = farmerFieldWrapper.getFarmerY();
+                fieldX = farmerFieldWrapper.getFieldX();
+                fieldY = farmerFieldWrapper.getFieldY();
+                isFieldPlanted = farmerFieldWrapper.getIsPlanted();
                 this.view.getViewPartie().getPanneauControle().setFarmerOnField(false, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
+                break;
+            case "FarmerNearSheep":
+                farmerSheepWrapper = gson.fromJson(wrapper.content, FarmerSheepWrapper.class);
+                farmerX = farmerSheepWrapper.getFarmerX();
+                farmerY = farmerSheepWrapper.getFarmerY();
+                sheepX = farmerSheepWrapper.getSheepX();
+                sheepY = farmerSheepWrapper.getSheepY();
+                this.view.getViewPartie().getPanneauControle().setFarmerNearSheep(true, farmerX, farmerY, sheepX, sheepY);
+                break;
+            case "FarmerNotNearSheep":
+                farmerSheepWrapper = gson.fromJson(wrapper.content, FarmerSheepWrapper.class);
+                farmerX = farmerSheepWrapper.getFarmerX();
+                farmerY = farmerSheepWrapper.getFarmerY();
+                sheepX = farmerSheepWrapper.getSheepX();
+                sheepY = farmerSheepWrapper.getSheepY();
+                this.view.getViewPartie().getPanneauControle().setFarmerNearSheep(false, farmerX, farmerY, sheepX, sheepY);
                 break;
             case "PacketOpenPanelControl":
                 PacketOpenPanelControl pCtrl = gson.fromJson(wrapper.content, PacketOpenPanelControl.class);
@@ -76,23 +97,27 @@ public class ThreadCommunicationClient extends Thread {
                 float health;
                 if (Objects.equals(entityType, "Farmer")) {
                     health= pCtrl.getHealth();
-                    System.out.println("Entity Type: " + entityType + ", Health: " + health);
+                    this.view.getViewPartie().getPanneauControle().showInfos(entityType, health);
+                }
+                else if (Objects.equals(entityType, "Sheep")) {
+                    health = pCtrl.getHealth();
+                    this.view.getViewPartie().getPanneauControle().showInfos(entityType, health);
+                }
+                else if (Objects.equals(entityType, "Cow")) {
+                    health = pCtrl.getHealth();
                     this.view.getViewPartie().getPanneauControle().showInfos(entityType, health);
                 }
                 else if (Objects.equals(entityType, "Warrior")) {
                     health = pCtrl.getHealth();
-                    System.out.println("Entity Type: " + entityType + ", Health: " + health);
                     this.view.getViewPartie().getPanneauControle().showInfos(entityType, health);
                 }
                 else if (Objects.equals(entityType, "Field")){
                     boolean isPlanted = pCtrl.isPlanted();
                     if (isPlanted){
                         String ressource = pCtrl.getRessource();
-                        System.out.println("Entity Type: " + entityType + ", ressource: " + ressource);
                         this.view.getViewPartie().getPanneauControle().showInfos(entityType, ressource);
                     }
                     else {
-                        System.out.println("Entity Type"+entityType);
                         this.view.getViewPartie().getPanneauControle().showInfos(entityType);
                     }
 
@@ -100,10 +125,7 @@ public class ThreadCommunicationClient extends Thread {
 
                 break;
             case "ClicSurAutreChose":
-                //System.out.println("Received ClicSurAutreChose message, hiding Plant button.");
-                // Le joueur a cliqué sur autre chose que le bouton Planter, donc on cache le bouton Planter
                 this.view.getViewPartie().getPanneauControle().elseWhereClicked();
-                System.out.println("elswhereClicked");
                 break;
             case "PacketCampId":
                 PacketCampId pCampId = gson.fromJson(wrapper.content, PacketCampId.class);
@@ -113,6 +135,7 @@ public class ThreadCommunicationClient extends Thread {
                 System.out.println("Invalid message format");
         }
     }
+
 
     public Client getClient() {
         return client;

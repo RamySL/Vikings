@@ -20,9 +20,6 @@ public abstract class Livestock extends Entity implements Moveable {
         this.position = destination;
     }
 
-    public Point getPosition(){
-        return this.position ;
-    }
     /*public void accouche() {
         if (!isPregnant) {
             isPregnant = true;
@@ -36,7 +33,7 @@ public abstract class Livestock extends Entity implements Moveable {
                 }
 
                 Livestock baby = this instanceof Cow ? new Cow(100, this.position, this.campId, 0/*, camp*//*) :
-                                new Sheap(100, this.position, this.campId,0/*,camp*//*);
+                                new Sheep(100, this.position, this.campId,0/*,camp*//*);
 
                 /*camp.addLivestock(baby);
                 isPregnant = false;

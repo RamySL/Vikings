@@ -18,7 +18,7 @@ public class Farmer extends Viking {
     public void plant() {
         // Vérifie s'il y a déjà du blé à proximité (évite la superposition)
         for (Vegetable v : camp.getWheats()) {
-            if (position.distance(v.getPosition()) < 5) {
+            if (position.distance(v.getPosition()) < 30) {
                 System.out.println("Un blé est déjà planté ici !");
                 return;
             }
@@ -66,7 +66,7 @@ public class Farmer extends Viking {
      * La logique d'affichage du bouton dépend du thread de détection de proximité.
      */
     public void feed() {
-        for (Livestock l : camp.getSheap()) {
+        for (Livestock l : camp.getSheep()) {
             System.out.println("Le fermier nourrit " + (l instanceof Cow ? "une vache" : "un mouton") + " !");
             l.health += 10;
             if (l.health > 100) l.health = 100; // Limite à 100
@@ -87,10 +87,6 @@ public class Farmer extends Viking {
         System.out.println("Pas de culture disponible !");
     }
 
-    @Override
-    public Point getPosition() {
-        return this.position;
-    }
 
     public Camp getCamp() {
         // Assuming you have a way to get the camp by ID

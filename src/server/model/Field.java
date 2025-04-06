@@ -45,6 +45,7 @@ public class Field {
             String harvestedResource = this.resource;
             this.resource = "";
             this.isPlanted = false;
+            System.out.println("ressource " + harvestedResource + " récoltée");
             return harvestedResource;
         }
         return null;

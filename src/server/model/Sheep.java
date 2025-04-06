@@ -1,6 +1,5 @@
 package server.model;
 
-import javax.swing.text.Position;
 import java.awt.*;
 
 public class Sheep extends Livestock{
