@@ -78,6 +78,11 @@ public class Start extends JPanel {
         return Integer.parseInt(this.gameConfig.fieldNbPlayers.getText());
     }
 
+    // !!! sert juste pour le MonoPlayer à enlever pour la fin
+    public JTextField getFieldNbPlayers() {
+        return this.gameConfig.fieldNbPlayers;
+    }
+
     /**
      * La partie au centre qui contient les textfields pour le port du serveur et configuration du jeu.
      */
@@ -113,7 +118,7 @@ public class Start extends JPanel {
 
             // Configuration du port
             JLabel labelPort = createLabel("Port du serveur");
-            fieldPort = createTextField("1234");
+            fieldPort = createTextField("12340");
 
             gbc.gridx = 0;
             gbc.gridy = 0;

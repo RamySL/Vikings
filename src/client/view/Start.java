@@ -129,7 +129,7 @@ public class Start extends JPanel {
 
             // Configuration du port
             JLabel labelPort = createLabel("Port du serveur");
-            fieldPort = createTextField("50123");
+            fieldPort = createTextField("12340");
 
             gbc.gridx = 0;
             gbc.gridy = 1;

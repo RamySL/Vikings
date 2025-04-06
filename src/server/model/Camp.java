@@ -66,9 +66,6 @@ public class Camp {
         vikings.add(v1);
         vikings.add(v2);
 
-        System.out.println("Vikings added to the camp: " + vikings.get(0));
-        System.out.println("Vikings added to the camp: " + warriors.get(0));
-
         // add farmer
         farmers.add(f1);
         farmers.add(f2);

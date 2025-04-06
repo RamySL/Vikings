@@ -72,5 +72,10 @@ public class Server extends JPanel {
         }
     }
 
+    public JTextField getFieldNbPlayers() {
+        return this.start.getFieldNbPlayers();
+    }
+
+
 }
 
