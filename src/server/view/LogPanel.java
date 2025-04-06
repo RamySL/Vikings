@@ -45,7 +45,7 @@ public class LogPanel extends JPanel {
         StyleConstants.setForeground(sentStyle, new Color(0, 0, 200)); // Bleu
 
         infoStyle = logTextPane.addStyle("Info", null);
-        StyleConstants.setForeground(infoStyle, new Color(128, 0, 0)); // Rouge foncé
+        StyleConstants.setForeground(infoStyle, new Color(222, 122, 0)); // Rouge foncé
         StyleConstants.setBold(infoStyle, true);
 
         JScrollPane logScrollPane = new JScrollPane(logTextPane);
@@ -117,25 +117,6 @@ public class LogPanel extends JPanel {
         playersModel.addElement(username + " (" + ip + ")");
     }
 
-    // Supprimer un joueur de la liste
-    public void removePlayer(String username) {
-        for (int i = 0; i < playersModel.size(); i++) {
-            if (playersModel.get(i).startsWith(username + " (")) {
-                playersModel.remove(i);
-                break;
-            }
-        }
-    }
-
-    // Mettre à jour l'adresse du serveur
-    public void updateServerAddress(String address) {
-        addressLabel.setText("Adresse: " + address);
-    }
-
-    // Mettre à jour le port du serveur
-    public void updateServerPort(int port) {
-        portLabel.setText("Port: " + port);
-    }
 
     // Obtenir un timestamp pour les logs
     private String getTimestamp() {

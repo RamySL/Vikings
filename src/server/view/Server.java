@@ -47,5 +47,30 @@ public class Server extends JPanel {
         return this.start.getNbPlayers();
     }
 
+    public void addPlayer(String playerName, String ip){
+        this.logPanel.addPlayer(playerName, ip);
+    }
+
+    // Ajouter un message de paquet reçu
+    public void logReceivedPacket(String from, String message) {
+        if (this.logPanel != null) {
+            this.logPanel.logReceivedPacket(from, message);
+        }
+    }
+
+    // Ajouter un message de paquet envoyé
+    public void logSentPacket(String to, String message) {
+        if (this.logPanel != null) {
+            this.logPanel.logSentPacket(to, message);
+        }
+    }
+
+    // log infos
+    public void logInfo(String message) {
+        if (this.logPanel != null) {
+            this.logPanel.logInfo(message);
+        }
+    }
+
 }
 

@@ -25,6 +25,8 @@ public class ThreadCommunicationServer extends Thread{
     private Farmer farmerSelected;
     private Field fieldSelected;
     private Gson gson = new Gson();
+    // username concat avec IP
+    private String usernameIP;
 
     public ThreadCommunicationServer(Server server, Socket client, Camp camp) {
         this.camp=camp;
@@ -36,7 +38,7 @@ public class ThreadCommunicationServer extends Thread{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.sendMessage(FormatPacket.format("PacketCampIdNbPlayers", gson.toJson(new PacketCampIdNbPlayers(camp.getId(), server.getNbJoueurs()))));
+        this.sendMessage(FormatPacket.format("PacketCampIdNbPlayers", gson.toJson(new PacketCampIdNbPlayers(camp.getId(), server.getNbJoueurs()))), false);
 
     }
 
@@ -56,12 +58,13 @@ public class ThreadCommunicationServer extends Thread{
      * Envoie un message au client
      * @param message
      */
-    public void sendMessage(String message) {
+    public void sendMessage(String message, boolean gameState) {
+        if(!gameState){
+            this.server.logSentPacket(this.usernameIP, message);
+        }
         this.out.println(message);
         this.out.flush();
     }
-
-
 
     /**
      * Réagit sur le modèle selon le message reçu de la part du client
@@ -79,7 +82,8 @@ public class ThreadCommunicationServer extends Thread{
             case "PacketUsername":
                 PacketUsername packetUsername = gson.fromJson(wrapper.content, PacketUsername.class);
                 String username = packetUsername.getUsername();
-                System.out.println("Received username: " + username);
+                this.usernameIP = username + ": " + client.getInetAddress().getHostAddress();
+                this.server.addPlayerToServerView(username, this.client.getInetAddress().getHostAddress());
                 this.camp.setUsername(username);
                 // ce
                 this.server.broadcastUsernames();
@@ -159,12 +163,13 @@ public class ThreadCommunicationServer extends Thread{
      * @return
      */
     public String receiveMessage() {
-        String res = "";
+        String res;
         try {
             res = in.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.server.logReceivedPacket(this.usernameIP, res);
         return res;
     }
 

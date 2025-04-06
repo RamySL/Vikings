@@ -46,10 +46,10 @@ public class FarmerPositionChecker extends Thread {
                    nearestField.getPosition().x, nearestField.getPosition().y, nearestField.isPlanted());
            if (nearField) {
                //System.out.println("Farmer is near a field with margin, sending message to client.");
-               communicationServer.sendMessage(FormatPacket.format("FarmerNearField", message ));
+               communicationServer.sendMessage(FormatPacket.format("FarmerNearField", message ), false);
            } else {
                //System.out.println("Farmer is not near a field, sending message to client.");
-               communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField", message ));
+               communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField", message ), false);
            }
            previousNearFieldState = nearField;
        }

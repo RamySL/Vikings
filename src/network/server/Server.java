@@ -22,6 +22,7 @@ public class Server {
     private int nbJoueurs;
     private Partie partie;
     private Gson gson = VikingAdapter.getGson();
+    private server.view.Server serverView;
 
     /**
      * Lance le serveur sur le port donné et attend le nombre de joueur donné pour lancer la partie
@@ -53,17 +54,15 @@ public class Server {
 
        while (nbJoueursConnectes<nbJoueurs) {
            try {
-               System.out.println("En attente de connexion");
                clientSoket =  socket.accept();
-               System.out.println("Connexion établie avec " + clientSoket.getInetAddress());
                // On créer un camp pour le client connecté
                Camp camp = new Camp(nbJoueursConnectes);
-               System.out.println("Camp créé : " + camp);
                camps[nbJoueursConnectes] = camp;
                nbJoueursConnectes++;
                threadCommunicationServer = new ThreadCommunicationServer(this, clientSoket, camp);
                this.clients.add(threadCommunicationServer);
                threadCommunicationServer.start();
+
            } catch (IOException e) {
                System.out.println("Erreur lors de la connexion");
                throw new RuntimeException(e);
@@ -86,19 +85,18 @@ public class Server {
      * Envoie l'état de la partie à tous les clients connectés
      */
     public void broadcastGameState() {
-        System.out.println("Envoi de l'état de la partie à tous les clients");
         String content = gson.toJson(partie);
-        broadcast(FormatPacket.format("Partie",content));
+        broadcast(FormatPacket.format("Partie",content), true);
     }
 
     /**
      * Envoie un message à tous les clients connectés
      * @param message
      */
-    public void broadcast(String message) {
+    public void broadcast(String message, boolean gameState) {
         //System.out.println("thread id: " + Thread.currentThread().threadId());
         for (ThreadCommunicationServer client : this.clients) {
-            client.sendMessage(message);
+            client.sendMessage(message, gameState);
         }
     }
 
@@ -117,7 +115,7 @@ public class Server {
         PacketConnectedPlayers packetConnectedPlayers = new PacketConnectedPlayers(usernames, ips);
         // prépare le packet et envoie le packet en broadcast
         String content = new Gson().toJson(packetConnectedPlayers);
-        broadcast(FormatPacket.format("PacketConnectedPlayers", content));
+        broadcast(FormatPacket.format("PacketConnectedPlayers", content), false);
     }
 
 
@@ -137,5 +135,26 @@ public class Server {
 
     public int getNbJoueurs() {
         return nbJoueurs;
+    }
+
+    public void setServerView(server.view.Server serverView) {
+        this.serverView = serverView;
+        this.serverView.logInfo("Les paquets d'état courant de la partie ne sont pas affichées, pour ne pas surcharger les logs, " +
+                "l'état de la partie est envoyé toutes les 100ms dès que tous les joueurs sont connectés.");
+    }
+
+    // add player to server view
+    public void addPlayerToServerView(String username, String ip) {
+        this.serverView.addPlayer(username, ip);
+    }
+
+    // add log sent packet
+    public void logSentPacket(String to, String message) {
+        this.serverView.logSentPacket(to, message);
+    }
+
+    // add log received packet
+    public void logReceivedPacket(String from, String message) {
+        this.serverView.logReceivedPacket(from, message);
     }
 }

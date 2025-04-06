@@ -175,27 +175,6 @@ public class ViewWaiting extends JPanel {
     }
 
     /**
-     * Supprime un joueur de la liste des joueurs connectés.
-     * @param username Pseudo du joueur à supprimer
-     */
-    public void removePlayer(String username) {
-        for (int i = 0; i < connectedPlayers.size(); i++) {
-            if (connectedPlayers.get(i).getUsername().equals(username)) {
-                connectedPlayers.remove(i);
-                currentPlayers--;
-                break;
-            }
-        }
-
-        // Mise à jour du label d'attente
-        waitingLabel.setText(String.format("En attente de joueurs (%d/%d)", currentPlayers, maxPlayers));
-        waitingLabel.setForeground(new Color(255, 215, 0)); // Or
-
-        // Mise à jour de la liste des joueurs
-        updatePlayersList();
-    }
-
-    /**
      * Met à jour la liste des joueurs affichée.
      */
     private void updatePlayersList() {

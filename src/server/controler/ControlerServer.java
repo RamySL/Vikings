@@ -38,6 +38,7 @@ ControlerServer implements ActionListener {
             } catch (UnknownHostException ex) {
                 throw new RuntimeException(ex);
             }
+            this.server.setServerView(this.view);
             // lance un thread avec la méthode launch
             new Thread(() -> this.server.launch()).start();
         }
