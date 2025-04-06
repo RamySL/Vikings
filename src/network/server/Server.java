@@ -115,4 +115,8 @@ public class Server {
     public Partie getPartie() {
         return partie;
     }
+
+    public int getNbJoueurs() {
+        return nbJoueurs;
+    }
 }

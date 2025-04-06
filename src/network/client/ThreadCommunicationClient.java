@@ -1,10 +1,8 @@
 package network.client;
 
+import client.controler.ControlerClient;
 import network.VikingAdapter;
-import network.packets.FarmerFieldWrapper;
-import network.packets.PacketCampId;
-import network.packets.PacketOpenPanelControl;
-import network.packets.PacketWrapper;
+import network.packets.*;
 import server.model.*;
 import client.view.ThreadRepaint;
 import client.view.ViewClient;
@@ -24,6 +22,8 @@ public class ThreadCommunicationClient extends Thread {
         this.client = client;
         this.view = view;
         gson = VikingAdapter.getGson();
+        // send PacketUsername to the server
+        this.client.sendMessage(FormatPacket.format("PacketUsername", gson.toJson(new PacketUsername(this.client.getUsername()))));
     }
 
     @Override
@@ -76,9 +76,13 @@ public class ThreadCommunicationClient extends Thread {
                 // Le joueur a cliqué sur autre chose que le bouton Planter, donc on cache le bouton Planter
                 this.view.getViewPartie().getPanneauControle().elseWhereClicked();
                 break;
-            case "PacketCampId":
-                PacketCampId pCampId = gson.fromJson(wrapper.content, PacketCampId.class);
+            case "PacketCampIdNbPlayers":
+                PacketCampIdNbPlayers pCampId = gson.fromJson(wrapper.content, PacketCampIdNbPlayers.class);
+                this.view.setViewWaiting(pCampId.getNbPlayers());
                 this.view.getViewPartie().setOffsetCampID(pCampId.getCampId());
+                synchronized (ControlerClient.lock) {
+                    ControlerClient.lock.notify();
+                }
                 break;
             default:
                 System.out.println("Invalid message format");

@@ -13,8 +13,10 @@ public class Client {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private String username;
 
-    public Client(String host, int port) {
+    public Client(String host, int port, String username) {
+        this.username = username;
         try {
             this.socket = new Socket(host,port);
         } catch (IOException e) {
@@ -75,5 +77,8 @@ public class Client {
         return socket;
     }
 
+    public String getUsername() {
+        return username;
+    }
 }
 

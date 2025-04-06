@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -37,8 +36,7 @@ public class ThreadCommunicationServer extends Thread{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        //we send the camp id to the client
-        this.sendMessage(FormatPacket.format("PacketCampId", gson.toJson(new PacketCampId(camp.getId()))));
+        this.sendMessage(FormatPacket.format("PacketCampIdNbPlayers", gson.toJson(new PacketCampIdNbPlayers(camp.getId(), server.getNbJoueurs()))));
 
     }
 
@@ -78,6 +76,12 @@ public class ThreadCommunicationServer extends Thread{
         }
 
         switch (wrapper.type) {
+            case "PacketUsername":
+                PacketUsername packetUsername = gson.fromJson(wrapper.content, PacketUsername.class);
+                String username = packetUsername.getUsername();
+                System.out.println("Received username: " + username);
+                this.camp.setUsername(username);
+                break;
             case "PaquetPlant":
                 PaquetPlant paquetPlant = gson.fromJson(wrapper.content, PaquetPlant.class);
                 String ressource= paquetPlant.getResource();

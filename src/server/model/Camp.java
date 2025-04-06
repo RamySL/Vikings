@@ -27,6 +27,8 @@ public class Camp {
     // map entre les camp attaqué par les vikings de ce camp et les vikings qui l'attaquent
     private HashMap<Integer, ArrayList<Warrior>> vikingsAttack = new HashMap<>();
     private ArrayList<Warrior> warriorsInCamp = new ArrayList<>();
+    // username du joueur qui détient ce camp
+    private String username;
 
     // Constructeur
     public Camp(int id) {
@@ -281,16 +283,16 @@ public class Camp {
     public int getId() {
         return id;
     }
-/**
- * Diminue la force du camp lorsqu'il est attaqué.
- */
-public void decreaseStrength(float amount) {
-    this.strength -= amount;
-    if (this.strength < 0) {
-        this.strength = 0;
+    /**
+     * Diminue la force du camp lorsqu'il est attaqué.
+     */
+    public void decreaseStrength(float amount) {
+        this.strength -= amount;
+        if (this.strength < 0) {
+            this.strength = 0;
+        }
+        System.out.println("La force du camp " + id + " a diminué à : " + strength);
     }
-    System.out.println("La force du camp " + id + " a diminué à : " + strength);
-}
 
 
 
@@ -327,5 +329,8 @@ public void decreaseStrength(float amount) {
         return null;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }
 

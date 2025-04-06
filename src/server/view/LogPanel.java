@@ -147,35 +147,4 @@ public class LogPanel extends JPanel {
         logTextPane.setCaretPosition(doc.getLength());
     }
 
-    // Exemple d'utilisation
-    public static void main(String[] args) {
-        try {
-            String localAddress = InetAddress.getLocalHost().getHostAddress();
-
-            JFrame frame = new JFrame("Serveur de jeu - Logs");
-            LogPanel logPanel = new LogPanel(localAddress, 8080);
-
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.getContentPane().add(logPanel);
-            frame.setSize(800, 600);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-
-            // Exemple de logs
-            logPanel.logInfo("Serveur démarré sur " + localAddress + ":8080");
-            logPanel.addPlayer("Joueur1", "192.168.1.10");
-            logPanel.logReceivedPacket("192.168.1.10", "CONNECT username=Joueur1");
-            logPanel.logSentPacket("192.168.1.10", "CONNECT_ACK id=1");
-
-            logPanel.addPlayer("Joueur2", "192.168.1.11");
-            logPanel.logReceivedPacket("192.168.1.11", "CONNECT username=Joueur2");
-            logPanel.logSentPacket("192.168.1.11", "CONNECT_ACK id=2");
-
-            logPanel.logReceivedPacket("192.168.1.10", "MOVE x=100 y=200");
-            logPanel.logSentPacket("192.168.1.11", "PLAYER_MOVED id=1 x=100 y=200");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
