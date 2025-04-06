@@ -81,6 +81,8 @@ public class ThreadCommunicationServer extends Thread{
                 String username = packetUsername.getUsername();
                 System.out.println("Received username: " + username);
                 this.camp.setUsername(username);
+                // ce
+                this.server.broadcastUsernames();
                 break;
             case "PaquetPlant":
                 PaquetPlant paquetPlant = gson.fromJson(wrapper.content, PaquetPlant.class);
@@ -170,5 +172,7 @@ public class ThreadCommunicationServer extends Thread{
         return camp;
     }
 
-
+    public Socket getClient() {
+        return client;
+    }
 }

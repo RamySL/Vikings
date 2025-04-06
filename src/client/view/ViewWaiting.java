@@ -2,6 +2,7 @@ package client.view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
@@ -145,8 +146,9 @@ public class ViewWaiting extends JPanel {
     public void addPlayer(String username, String ip) {
         // Création d'un nouvel objet PlayerInfo
         PlayerInfo playerInfo = new PlayerInfo(username, ip);
+
         connectedPlayers.add(playerInfo);
-        currentPlayers++;
+        currentPlayers ++ ;
 
         // Mise à jour du label d'attente
         waitingLabel.setText(String.format("En attente de joueurs (%d/%d)", currentPlayers, maxPlayers));
@@ -158,6 +160,17 @@ public class ViewWaiting extends JPanel {
         if (currentPlayers >= maxPlayers) {
             waitingLabel.setText("Tous les joueurs sont connectés ! La partie va bientôt commencer...");
             waitingLabel.setForeground(new Color(50, 205, 50)); // Vert
+        }
+    }
+
+    /**
+     * une méthode addPlayers qui prend String[] usernames et String[] ips et utilise addPlayer pour chaque joueur.
+     */
+    public void addPlayers(String[] usernames, String[] ips) {
+        connectedPlayers = new ArrayList<>();
+        currentPlayers = 0;
+        for (int i = 0; i < usernames.length; i++) {
+            addPlayer(usernames[i], ips[i]);
         }
     }
 
@@ -344,29 +357,4 @@ public class ViewWaiting extends JPanel {
         waitingLabel.setText(String.format("En attente de joueurs (%d/%d)", currentPlayers, maxPlayers));
     }
 
-    // Méthode pour tester l'apparence
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Test Waiting Room UI");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-
-        ViewWaiting waitingView = new ViewWaiting(4);
-        frame.add(waitingView);
-        frame.setVisible(true);
-
-        // Simulation de connexions de joueurs
-        Timer timer = new Timer(1500, e -> {
-            String[] usernames = {"Thor", "Odin", "Freya", "Loki"};
-            String[] ips = {"192.168.1.101", "192.168.1.102", "192.168.1.103", "192.168.1.104"};
-
-            int index = waitingView.currentPlayers;
-            if (index < usernames.length) {
-                waitingView.addPlayer(usernames[index], ips[index]);
-            } else {
-                ((Timer)e.getSource()).stop();
-            }
-        });
-        timer.start();
-    }
 }

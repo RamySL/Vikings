@@ -38,13 +38,35 @@ public class ThreadCommunicationClient extends Thread {
 
         PacketWrapper wrapper = gson.fromJson(msg, PacketWrapper.class);
         switch (wrapper.type) {
+            case "PacketCampIdNbPlayers":
+                PacketCampIdNbPlayers pCampId = gson.fromJson(wrapper.content, PacketCampIdNbPlayers.class);
+                this.view.setViewWaiting(pCampId.getNbPlayers());
+                this.view.getViewPartie().setOffsetCampID(pCampId.getCampId());
+                synchronized (ControlerClient.lock) {
+                    ControlerClient.lock.notify();
+                }
+                break;
+
+            case "PacketConnectedPlayers":
+                PacketConnectedPlayers packetConnectedPlayers = gson.fromJson(wrapper.content, PacketConnectedPlayers.class);
+                String[] usernames = packetConnectedPlayers.getPseudos();
+                String[] ips = packetConnectedPlayers.getIps();
+                this.view.addConnectedPlayers(usernames, ips);
+                break;
+
             case "Partie":
                 Partie game = gson.fromJson(wrapper.content, Partie.class);
                 this.view.actualisePartie(game);
                 if (!gameStarted) {
-                    this.view.changeCard("3");
                     new ThreadRepaint(this.view.getViewPartie()).start();
                     gameStarted = true;
+                    // un petit délai d'attente avant de changer vers la vue de la partie
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    this.view.changeCard("3");
                 }
                 break;
             case "FarmerNearField":
@@ -75,14 +97,6 @@ public class ThreadCommunicationClient extends Thread {
                 //System.out.println("Received ClicSurAutreChose message, hiding Plant button.");
                 // Le joueur a cliqué sur autre chose que le bouton Planter, donc on cache le bouton Planter
                 this.view.getViewPartie().getPanneauControle().elseWhereClicked();
-                break;
-            case "PacketCampIdNbPlayers":
-                PacketCampIdNbPlayers pCampId = gson.fromJson(wrapper.content, PacketCampIdNbPlayers.class);
-                this.view.setViewWaiting(pCampId.getNbPlayers());
-                this.view.getViewPartie().setOffsetCampID(pCampId.getCampId());
-                synchronized (ControlerClient.lock) {
-                    ControlerClient.lock.notify();
-                }
                 break;
             default:
                 System.out.println("Invalid message format");

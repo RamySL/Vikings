@@ -46,6 +46,7 @@ public class ViewClient extends JPanel {
      * @param cardName
      */
     public void changeCard(String cardName){
+
         this.cardLayout.show(this, cardName);
     }
 
@@ -88,6 +89,10 @@ public class ViewClient extends JPanel {
     public void setViewWaiting(int maxPlayers) {
         this.viewWaiting = new ViewWaiting(maxPlayers);
         this.add(this.viewWaiting, "2");
+    }
+
+    public void addConnectedPlayers(String[] usernames, String[] ips) {
+        this.viewWaiting.addPlayers(usernames, ips);
     }
 }
 

@@ -3,6 +3,7 @@ package network.server;
 import com.google.gson.Gson;
 import network.VikingAdapter;
 import network.packets.FormatPacket;
+import network.packets.PacketConnectedPlayers;
 import server.model.Camp;
 import server.model.Partie;
 
@@ -20,6 +21,7 @@ public class Server {
     private ArrayList<ThreadCommunicationServer> clients;
     private int nbJoueurs;
     private Partie partie;
+    private Gson gson = VikingAdapter.getGson();
 
     /**
      * Lance le serveur sur le port donné et attend le nombre de joueur donné pour lancer la partie
@@ -54,7 +56,6 @@ public class Server {
                System.out.println("En attente de connexion");
                clientSoket =  socket.accept();
                System.out.println("Connexion établie avec " + clientSoket.getInetAddress());
-
                // On créer un camp pour le client connecté
                Camp camp = new Camp(nbJoueursConnectes);
                System.out.println("Camp créé : " + camp);
@@ -85,7 +86,7 @@ public class Server {
      * Envoie l'état de la partie à tous les clients connectés
      */
     public void broadcastGameState() {
-        Gson gson = VikingAdapter.getGson();
+        System.out.println("Envoi de l'état de la partie à tous les clients");
         String content = gson.toJson(partie);
         broadcast(FormatPacket.format("Partie",content));
     }
@@ -99,6 +100,24 @@ public class Server {
         for (ThreadCommunicationServer client : this.clients) {
             client.sendMessage(message);
         }
+    }
+
+    /**
+     * Une méthodes pour broadcast les usernames et ips des joueurs
+     */
+    public void broadcastUsernames() {
+        // creer un String[] usernames à partir des camps et String[] ips
+        String[] usernames = new String[this.clients.size()];
+        String[] ips = new String[this.clients.size()];
+        for (int i = 0; i < this.clients.size(); i++) {
+            usernames[i] = this.clients.get(i).getCamp().getUsername();
+            ips[i] = this.clients.get(i).getClient().getInetAddress().toString();
+        }
+        // creer un PacketConnectedPlayers
+        PacketConnectedPlayers packetConnectedPlayers = new PacketConnectedPlayers(usernames, ips);
+        // prépare le packet et envoie le packet en broadcast
+        String content = new Gson().toJson(packetConnectedPlayers);
+        broadcast(FormatPacket.format("PacketConnectedPlayers", content));
     }
 
 
