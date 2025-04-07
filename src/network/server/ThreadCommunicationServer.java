@@ -80,7 +80,11 @@ public class ThreadCommunicationServer extends Thread{
         }
         if (wrapper.type.equals("PaquetExit")) {
             System.out.println("PaquetExit received");
-            firstClick = true;
+            this.firstClick = true;
+            this.warriorSelected = null;
+            this.farmerSelected = null;
+            this.fieldSelected = null;
+            this.sheepSelected = null;
             return;
         }
 
@@ -161,15 +165,6 @@ public class ThreadCommunicationServer extends Thread{
                             this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                         }
                     } else {
-                        // On déplace l'entité vers le click
-                        /*if (warriorSelected != null) {
-                            warriorSelected.move(new Point(modelPoint.x, modelPoint.y));
-                            this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
-                        } else if (farmerSelected != null) {
-                            farmerSelected.move(new Point(modelPoint.x, modelPoint.y));
-                            this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
-                        }
-                        firstClick = true;*/
                         if (warriorSelected != null) {
                             if (currentMovementThread != null && currentMovementThread.isAlive()) {
                                 currentMovementThread.stopMovement();
@@ -243,10 +238,11 @@ public class ThreadCommunicationServer extends Thread{
      * @return field
      */
     public Field DetermineSelectedField(int x, int y){
+        System.out.println("DetermineSelectedField "+ x + " " + y);
         for (Field field : this.camp.getFields()) {
-            System.out.println(field.getPosition().x + ", " + field.getPosition().y);
             Point topLeft = new Point(field.getPosition().x - Position.WIDTH_FIELD/2, field.getPosition().y+Position.HEIGHT_FIELD/2);
-            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_FIELD && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_FIELD) {
+            System.out.println("topLeft "+ topLeft.x + " " + topLeft.y);
+            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_FIELD && y>=topLeft.y && y>=topLeft.y-Position.HEIGHT_FIELD) {
                 return field;
             }
         }

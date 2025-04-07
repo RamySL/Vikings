@@ -53,28 +53,28 @@ public class SlidingMenu extends JPanel {
         setBounds(windowWidth+widthMenu, posMenuY, widthMenu, windowHeight); // Initial position outside the view
 
         plantButton = new JButton("Plant");
-        plantButton.setBounds(50, 50, 100, 40);
+        plantButton.setBounds(50, 200, 100, 40);
         plantButton.setVisible(false);
         add(plantButton);
 
         eatButton = new JButton("Eat");
-        eatButton.setBounds(50, 50, 100, 40);
+        eatButton.setBounds(50, 200, 100, 40);
         eatButton.setVisible(false);
         add(eatButton);
 
         harvestButton = new JButton("Harvest");
-        harvestButton.setBounds(50, 50, 100, 40);
+        harvestButton.setBounds(50, 200, 100, 40);
         harvestButton.setVisible(false);
         add(harvestButton);
 
         exitMenu = new JButton("Exit");
-        exitMenu.setBounds(50, 250, 100, 40);
+        exitMenu.setBounds(50, 300, 100, 40);
         exitMenu.setVisible(false);
         add(exitMenu);
 
         String[] vegetals = {"Wheat", "Corn", "Mais"};
         plantComboBox = new JComboBox<>(vegetals);
-        plantComboBox.setBounds(50, 100, 100, 40);
+        plantComboBox.setBounds(50, 200, 100, 40);
         plantComboBox.setVisible(false);
         add(plantComboBox);
         // Initialiser le JComboBox avec des végétaux à planter
@@ -169,6 +169,7 @@ public class SlidingMenu extends JPanel {
     public void toggleVisible(){
         targetX = windowWidth;
         isVisible =true;
+        exitMenu.setVisible(true);
         timer.start();
     }
     /**
@@ -277,7 +278,8 @@ public class SlidingMenu extends JPanel {
      */
    private void handleComboBoxSelection(String selectedResource) {
        //System.out.println("Selected resource: " + selectedResource);
-
+       System.out.println("Farmer position: (" + this.farmerX + ", " + this.farmerY + ")");
+       System.out.println(" Field position: (" + this.fieldX + ", " + this.fieldY + ")");
        // Créer et publier l'événement
        PlantEvent event = new PlantEvent(selectedResource, this.farmerX, this.farmerY, this.fieldX, this.fieldY);
        EventBus.getInstance().publish("PlantEvent", event);
@@ -309,7 +311,7 @@ public class SlidingMenu extends JPanel {
         showInfos(entity);
         if (healthBar == null){
             healthBar = new JProgressBar();
-            healthBar.setBounds(50,150,100,40);
+            healthBar.setBounds(50,100,100,40);
             add(healthBar);
         }
         healthBar.setStringPainted(true);
@@ -326,7 +328,7 @@ public class SlidingMenu extends JPanel {
     public void showInfos(String entity){
         if (entityLabel == null) {
             entityLabel=new JLabel();
-            entityLabel.setBounds(50, 100, 100, 40);
+            entityLabel.setBounds(50, 50, 100, 40);
             add(entityLabel);
         }
         entityLabel.setText(entity);
@@ -344,7 +346,7 @@ public class SlidingMenu extends JPanel {
         showInfos(entity);
         if (ressourceLabel == null ) {
             ressourceLabel = new JLabel();
-            ressourceLabel.setBounds(30, 150, 100, 40);
+            ressourceLabel.setBounds(30, 100, 100, 40);
             add(ressourceLabel);
         }
         ressourceLabel.setText("Ressource: " + ressource);
