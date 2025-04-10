@@ -53,4 +53,9 @@ public class Warrior extends Viking {
             System.out.println("Un guerrier a subi des dégâts, santé restante : " + this.health);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Warrior";
+    }
 }

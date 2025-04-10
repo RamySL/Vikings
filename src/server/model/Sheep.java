@@ -9,18 +9,14 @@ public class Sheep extends Livestock{
         super(health, position, campId, age);
     }
 
-
-/**pareil que pour cow 
+    // String avec nom de la classe
     @Override
-    public void move(Point destination) {
-        this.position = destination;
+    public String toString() {
+        return "Sheep";
     }
 
-    @Override
-    public Point getPosition() {
-        return this.position;
-    }
-    */
 
-    
+
+
+
 }

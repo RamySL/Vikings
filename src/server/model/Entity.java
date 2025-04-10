@@ -9,7 +9,14 @@ public abstract class Entity {
     // center of the entity
     protected Point position;
     protected int campId;
+    protected int id; // id of the entity
 
+    /**
+     * Il faut s'assurer à la création que pour un camp donné tous les ids des entitées sont différents
+     * @param health
+     * @param position
+     * @param campId
+     */
     public Entity(float health, Point position, int campId) {
         this.health = health;
         this.position = position;
@@ -28,4 +35,15 @@ public abstract class Entity {
     public boolean isAlive() {
         return this.health > 0;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+
+
 }

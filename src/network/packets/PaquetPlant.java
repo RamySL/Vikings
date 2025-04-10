@@ -10,29 +10,23 @@ import network.client.Client;
  */
 public class PaquetPlant {
     private String resource;
-    private int farmerX, farmerY, fieldX, fieldY;
+    private int idFarmer;
+    private int idField;
 
     /**
      * Constructor for the PaquetPlant class.
      * @param resource The resource being planted.
-     * @param farmerX The x-coordinate of the farmer.
-     * @param farmerY The y-coordinate of the farmer.
-     * @param fieldX The x-coordinate of the field.
-     * @param fieldY The y-coordinate of the field.
+     * @param idFarmer The ID of the viking.
+     * @param idField The ID of the field.
      */
-    public PaquetPlant(String resource, int farmerX, int farmerY, int fieldX, int fieldY) {
+    public PaquetPlant(String resource, int idFarmer, int idField) {
         this.resource = resource;
-        this.farmerX=farmerX;
-        this.farmerY=farmerY;
-        this.fieldX=fieldX;
-        this.fieldY=fieldY;
+        this.idFarmer = idFarmer;
+        this.idField = idField;
     }
 
     /**
-     * Getters for the coordinates of the farmer and the field.
-     * @return
-     */
-    /**
+     * Getter for the resource being planted.
      * @return The resource being planted.
      */
     public String getResource() {
@@ -40,31 +34,18 @@ public class PaquetPlant {
     }
 
     /**
-     * @return The x coordinate of the farmer.
+     * Getter for the ID of the viking.
+     * @return The ID of the viking.
      */
-    public int getFarmerX() {
-        return farmerX;
-    }
-
-
-    /**
-     * @return The y coordinate of the farmer.
-     */
-    public int getFarmerY() {
-        return farmerY;
+    public int getIdFarmer() {
+        return idFarmer;
     }
 
     /**
-     * @return The x coordinate of the field.
+     * Getter for the ID of the field.
+     * @return The ID of the field.
      */
-    public int getFieldX() {
-        return fieldX;
-    }
-
-    /**
-     * @return The y coordinate of the field.
-     */
-    public int getFieldY() {
-        return fieldY;
+    public int getIdField() {
+        return idField;
     }
 }

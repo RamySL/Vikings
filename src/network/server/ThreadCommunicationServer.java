@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * Le thread que le serveur va lancer pour chaque connexion avec un client pour comminuquer avec lui
@@ -21,13 +22,14 @@ public class ThreadCommunicationServer extends Thread{
     private PrintWriter out;
     private BufferedReader in;
     private Camp camp;
-    private boolean firstClick = true;
-    private Warrior warriorSelected;
-    private Farmer farmerSelected;
+    private Viking vikingSelected;
     private Field fieldSelected;
-    private Sheep sheepSelected;
+    private Livestock livestockSelected;
     private Gson gson = new Gson();
     private MovementThread currentMovementThread;
+    // username concat avec IP
+    private String usernameIP;
+
 
     public ThreadCommunicationServer(Server server, Socket client, Camp camp) {
         this.camp=camp;
@@ -39,8 +41,7 @@ public class ThreadCommunicationServer extends Thread{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        //we send the camp id to the client
-        this.sendMessage(FormatPacket.format("PacketCampId", gson.toJson(new PacketCampId(camp.getId()))));
+        this.sendMessage(FormatPacket.format("PacketCampIdNbPlayers", gson.toJson(new PacketCampIdNbPlayers(camp.getId(), server.getNbJoueurs()))), false);
 
     }
 
@@ -60,12 +61,13 @@ public class ThreadCommunicationServer extends Thread{
      * Envoie un message au client
      * @param message
      */
-    public void sendMessage(String message) {
+    public void sendMessage(String message, boolean gameState) {
+        if(!gameState){
+            this.server.logSentPacket(this.usernameIP, message);
+        }
         this.out.println(message);
         this.out.flush();
     }
-
-
 
     /**
      * Réagit sur le modèle selon le message reçu de la part du client
@@ -80,202 +82,84 @@ public class ThreadCommunicationServer extends Thread{
         }
         if (wrapper.type.equals("PaquetExit")) {
             System.out.println("PaquetExit received");
-            this.firstClick = true;
-            this.warriorSelected = null;
-            this.farmerSelected = null;
+            //this.firstClick = true;
+            this.vikingSelected = null;
             this.fieldSelected = null;
-            this.sheepSelected = null;
+            this.livestockSelected = null;
             return;
         }
 
-
         switch (wrapper.type) {
+            case "PacketUsername":
+                PacketUsername packetUsername = gson.fromJson(wrapper.content, PacketUsername.class);
+                String username = packetUsername.getUsername();
+                this.usernameIP = username + ": " + client.getInetAddress().getHostAddress();
+                this.server.addPlayerToServerView(username, this.client.getInetAddress().getHostAddress());
+                this.camp.setUsername(username);
+                // ce
+                this.server.broadcastUsernames();
+                break;
             case "PaquetPlant":
                 PaquetPlant paquetPlant = gson.fromJson(wrapper.content, PaquetPlant.class);
                 String ressource= paquetPlant.getResource();
-                int farmerX = paquetPlant.getFarmerX();
-                int farmerY = paquetPlant.getFarmerY();
-                int fieldX = paquetPlant.getFieldX();
-                int fieldY = paquetPlant.getFieldY();
-
-                farmerSelected=DetermineSelectedFarmer(farmerX, farmerY);
-                fieldSelected=DetermineSelectedField(fieldX, fieldY);
+                // il ne sert à rien pour l'instant le farmer qui plante dans la méthode plant
+                //vikingSelected = this.camp.getVikingByID(paquetPlant.getIdFarmer());
+                fieldSelected= this.camp.getFieldByID(paquetPlant.getIdField());
                 fieldSelected.plant(ressource);
                 break;
             case "PaquetEat" :
                 PaquetEat paquetEat = gson.fromJson(wrapper.content, PaquetEat.class);
-                int vikingX = paquetEat.getFarmerX();
-                int vikingY = paquetEat.getFarmerY();
-                int animalX = paquetEat.getAnimalX();
-                int animalY = paquetEat.getAnimalY();
-                farmerSelected = DetermineSelectedFarmer(vikingX, vikingY);
-                sheepSelected = DetermineSelectedSheep(animalX, animalY);
-                farmerSelected.eat(sheepSelected);
+                vikingSelected = this.camp.getVikingByID(paquetEat.getIdViking());
+                livestockSelected = this.camp.getLivestockByID(paquetEat.getIdAnimal());
+                vikingSelected.eat(livestockSelected);
                 break;
             case "PaquetHarvest" :
                 PaquetHarvest paquetHarvest = gson.fromJson(wrapper.content, PaquetHarvest.class);
-                int farmerXHarvest = paquetHarvest.getFarmerX();
-                int farmerYHarvest = paquetHarvest.getFarmerY();
-                int fieldXHarvest = paquetHarvest.getFieldX();
-                int fieldYHarvest = paquetHarvest.getFieldY();
-                farmerSelected=DetermineSelectedFarmer(farmerXHarvest, farmerYHarvest);
-                fieldSelected=DetermineSelectedField(fieldXHarvest, fieldYHarvest);
+                vikingSelected = this.camp.getVikingByID(paquetHarvest.getIdFarmer());
+                fieldSelected = this.camp.getFieldByID(paquetHarvest.getIdField());
                 fieldSelected.harvest();
                 break;
-            case "PaquetClick":
-                PaquetClick paquet = gson.fromJson(wrapper.content, PaquetClick.class);
-                Point viewPoint = new Point(paquet.getX(), paquet.getY());
-                Point translation = new Point(paquet.getTranslationX(), paquet.getTranslationY());
-                Point modelPoint = Position.viewToModel(viewPoint, translation, paquet.getScale());
-                // On verifie si le click est sur le camp du client
-                if  (Position.isInCamp(this.camp.getId(), modelPoint.x, modelPoint.y)) {
-                    if (firstClick) {
-                        this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
-                        warriorSelected = DetermineSelectedWarrior(modelPoint.x, modelPoint.y);
-                        if (warriorSelected == null) {
-                            farmerSelected = DetermineSelectedFarmer(modelPoint.x, modelPoint.y);
-                            fieldSelected= DetermineSelectedField(modelPoint.x, modelPoint.y);
-                            sheepSelected = DetermineSelectedSheep(modelPoint.x, modelPoint.y);
-                            if (farmerSelected != null) {
-                                this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Farmer", farmerSelected.getHealth()))));
-                                firstClick = false;
-                                FarmerPositionChecker checker = new FarmerPositionChecker(this, camp, farmerSelected, 10);
-                                checker.start();
-                            }
-
-                            else if (fieldSelected != null) {
-                                if (fieldSelected.isPlanted()){
-                                    this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Field", fieldSelected.isPlanted(), fieldSelected.getResource()))));
-                                }
-                                else{
-                                    this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Field", fieldSelected.isPlanted()))));
-                                }
-                            }
-
-                            else if (sheepSelected != null) {
-                                this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Sheep", sheepSelected.getHealth()))));
-                            }
-                        } else {
-                            this.sendMessage(FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl("Warrior", warriorSelected.getHealth()))));
-                            firstClick = false;
-                        }
-                        // Et on envoi un message pour ouvrir le panneau (pas encore implementé)
-
-                        if (fieldSelected == null && farmerSelected == null && warriorSelected == null && sheepSelected == null) {
-                            this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
-                        }
-                    } else {
-                        if (warriorSelected != null) {
-                            if (currentMovementThread != null && currentMovementThread.isAlive()) {
-                                currentMovementThread.stopMovement();
-                                currentMovementThread = new MovementThread(warriorSelected, new Point(modelPoint.x, modelPoint.y));
-                                currentMovementThread.start();
-                            } else {
-                                currentMovementThread = new MovementThread(warriorSelected, new Point(modelPoint.x, modelPoint.y));
-                                currentMovementThread.start();
-                            }
-                            this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
-                        } else if (farmerSelected != null) {
-                            if (currentMovementThread != null && currentMovementThread.isAlive()) {
-                                currentMovementThread.stopMovement();
-                                currentMovementThread = new MovementThread(farmerSelected, new Point(modelPoint.x, modelPoint.y));
-                                currentMovementThread.start();
-                            } else {
-                                currentMovementThread = new MovementThread(farmerSelected, new Point(modelPoint.x, modelPoint.y));
-                                currentMovementThread.start();
-                            }
-                            this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
-                        }
-                        firstClick = true;
-
+            case "PacketMovement":
+                PacketMovement packetMovement = gson.fromJson(wrapper.content, PacketMovement.class);
+                Viking v = this.camp.getVikingByID(packetMovement.getId());
+                v.move(Position.viewToModel(packetMovement.getDst(),packetMovement.getTranslation(),packetMovement.getScale()));
+                break;
+            case "PacketAttack":
+                // On vérifie si l'attaque est valide
+                PacketAttack packetAttack = gson.fromJson(wrapper.content, PacketAttack.class);
+                int[] NbVikings = packetAttack.getNbVikings();
+                int nbVRequired = Arrays.stream(NbVikings).sum();
+                if(this.camp.getWarriorsInCamp().size() < nbVRequired) {
+                    System.out.println("Not enough vikings to attack");
+                    return;
+                }else{
+                    Camp enemy = this.server.getPartie().getCamp(packetAttack.getIdCamp());
+                    Point[] dsts =  Arrays.stream(packetAttack.getIdRessources()).mapToObj(id -> enemy.getFieldByID(id).getPosition())
+                            .toArray(Point[]::new);
+                    for (int i = 0; i<NbVikings.length; i++){
+                        camp.attack(NbVikings[i], enemy.getId(), dsts[i]);
                     }
-                } else {
-                    // click sur camp ennemie à traiter
-                    this.sendMessage(FormatPacket.format("ClicSurAutreChose", "{}"));
                 }
+                // position
+                //Point campToAtt =  this.server.getPartie().getCamp(packetAttack.getIdCamp()).getPosition();
                 break;
         }
     }
 
-    /**
-     * takes model coordinates and returns the warrior that is at that position
-     * @param x
-     * @param y
-     * @return
-     */
-    public Warrior DetermineSelectedWarrior(int x, int y) {
 
-        for (Warrior warrior : this.camp.getWarriors()) {
-            // top left point of the warrior
-            Point topLeft = new Point(warrior.getPosition().x - Position.WIDTH_VIKINGS/2, warrior.getPosition().y+Position.HEIGHT_VIKINGS/2);
-            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_VIKINGS && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_VIKINGS) {
-                return warrior;
-            }
-        }
-        return null;
-    }
-    /**
-     * takes model coordinates and returns the farmer that is at that position
-     * @param x
-     * @param y
-     * @return farmer
-     */
-    public Farmer DetermineSelectedFarmer(int x, int y) {
-        for (Farmer farmer : this.camp.getFarmers()) {
-            Point topLeft = new Point(farmer.getPosition().x - Position.WIDTH_VIKINGS/2, farmer.getPosition().y+Position.HEIGHT_VIKINGS/2);
-            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_VIKINGS && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_VIKINGS) {
-                return farmer;
-            }
-        }
-        return null;
-    }
-
-
-    /**
-     * takes model coordinates and returns the field that is at that position
-     * @param x
-     * @param y
-     * @return field
-     */
-    public Field DetermineSelectedField(int x, int y){
-        System.out.println("DetermineSelectedField "+ x + " " + y);
-        for (Field field : this.camp.getFields()) {
-            Point topLeft = new Point(field.getPosition().x - Position.WIDTH_FIELD/2, field.getPosition().y+Position.HEIGHT_FIELD/2);
-            System.out.println("topLeft "+ topLeft.x + " " + topLeft.y);
-            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_FIELD && y>=topLeft.y && y>=topLeft.y-Position.HEIGHT_FIELD) {
-                return field;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * takes model coordinates and returns the sheep that is at that position
-     * @param x
-     * @param y
-     * @return sheep
-     */
-    public Sheep DetermineSelectedSheep(int x, int y){
-        for (Sheep sheep : this.camp.getSheep()) {
-            Point topLeft = new Point(sheep.getPosition().x - Position.WIDTH_SHEEP/2, sheep.getPosition().y+Position.HEIGHT_SHEEP/2);
-            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_SHEEP && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_SHEEP) {
-                return sheep;
-            }
-        }
-        return null;
-    }
     /**
      * Recoit un message du client, en lisant sur le flux d'entrée de la socket.<p>
      * Cette méthode est bloquante.
      * @return
      */
     public String receiveMessage() {
-        String res = "";
+        String res;
         try {
             res = in.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.server.logReceivedPacket(this.usernameIP, res);
         return res;
     }
 
@@ -283,5 +167,7 @@ public class ThreadCommunicationServer extends Thread{
         return camp;
     }
 
-
+    public Socket getClient() {
+        return client;
+    }
 }

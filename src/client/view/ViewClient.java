@@ -30,11 +30,9 @@ public class ViewClient extends JPanel {
 
         this.start = new Start();
         this.viewPartie = new ViewPartie(this, null);
-        this.viewWaiting = new ViewWaiting();
 
         this.setLayout(this.cardLayout);
         this.add(this.start, "1");
-        this.add(this.viewWaiting, "2");
         this.add(this.viewPartie, "3");
 
         this.cardLayout.show(this, "1");
@@ -48,6 +46,7 @@ public class ViewClient extends JPanel {
      * @param cardName
      */
     public void changeCard(String cardName){
+
         this.cardLayout.show(this, cardName);
     }
 
@@ -83,12 +82,17 @@ public class ViewClient extends JPanel {
         return this.start.getPort();
     }
 
+    public String getUsername(){
+        return this.start.getUsername();
+    }
 
+    public void setViewWaiting(int maxPlayers) {
+        this.viewWaiting = new ViewWaiting(maxPlayers);
+        this.add(this.viewWaiting, "2");
+    }
 
-
-
-
-
-
+    public void addConnectedPlayers(String[] usernames, String[] ips) {
+        this.viewWaiting.addPlayers(usernames, ips);
+    }
 }
 

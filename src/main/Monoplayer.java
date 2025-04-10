@@ -3,6 +3,7 @@ package main;
 import client.controler.ControlerClient;
 import client.controler.ControlerParty;
 import client.view.ViewClient;
+import server.controler.ControlerServer;
 import server.view.Server;
 
 import javax.swing.*;
@@ -13,10 +14,11 @@ public class Monoplayer {
         int nbJR = 2;
         new Thread(() -> {
             Server serverView = new Server();
+            serverView.getFieldNbPlayers().setText(String.valueOf(nbJR));
             // Simulate button click to start the server
-            network.server.Server server = new network.server.Server(1234,nbJR);
+            new  ControlerServer (serverView);
             // lance un thread avec la méthode launch
-            new Thread(() -> server.launch()).start();
+            serverView.getConnectButton().doClick();
         }).start();
 
         for (int i = 0; i < nbJR; i++) {
@@ -33,7 +35,6 @@ public class Monoplayer {
                 clientFrame.pack();
                 clientFrame.setVisible(true);
 
-                // Simulate button click to connect the client
                 clientView.getConnectButton().doClick();
             }).start();
         }

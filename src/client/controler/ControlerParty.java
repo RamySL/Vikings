@@ -3,11 +3,17 @@ package client.controler;
 import client.controler.event.*;
 import client.view.*;
 import com.google.gson.Gson;
+import network.ModelAdapter;
 import network.packets.FormatPacket;
-import network.packets.PaquetClick;
 import network.packets.*;
+import network.packets.PacketAttack;
+import network.packets.PacketMovement;
+import network.packets.PaquetPlant;
+import server.model.*;
 
+import java.awt.*;
 import java.awt.event.*;
+import java.util.Scanner;
 
 /**
  * Controler of the party
@@ -19,7 +25,11 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
     // last coordinates registered of the mouse click
     private int lastMouseClickX, lastMouseClickY;
     // intialy scaling is relative to (0,0)
-    private int lastMousePosX=0, lastMousePosY=0;
+    private boolean isFirstClickCamp = true;
+    private boolean isFirstClickEnemyCamp = true;
+    private int selectedEntityID = -1;
+    private Camp selectedCamp = null;// ID of the selected entity
+    Gson gson = ModelAdapter.getGson();
 
     public ControlerParty(ControlerClient controlerClient, ViewPartie viewPartie) {
         this.controlerClient = controlerClient;
@@ -35,15 +45,161 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Gson gson = new Gson();
-        String contentPaquet = gson.toJson(new PaquetClick(e.getX(),e.getY(),
-                this.viewPartie.getTotalOffset().x, this.viewPartie.getTotalOffset().y, this.viewPartie.getScaleFactor()));
+        // on convertit les coordonnées de la souris en coordonnées du repère actuel de la vue(avec total offset et scale)
+        //System.out.println("Click original : " + e.getX() + " " + e.getY() );
+        Point clickOriginal = new Point(e.getX(), e.getY());
+        Point clickView = (Point) clickOriginal.clone();
+        Point totalOffset = viewPartie.getTotalOffset();
+        double scale = viewPartie.getScaleFactor();
 
-        // ! ! je pense sans le get c'est mieux
-        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetClick",contentPaquet));
+        this.viewPartie.clickToView(clickView);
+
+        Camp camp = this.determineSelectedCamp(clickView.x, clickView.y);
+
+        if(camp != null) {
+            // Check if the click is within the client's camp
+            if (camp.getId() == this.viewPartie.getCamp_id()) {
+                if (isFirstClickCamp) {
+                    // First click: Select entity
+                    Object o = determineSelectedEntity(clickView.x, clickView.y);
+                    if (o == null){
+                        this.viewPartie.panelHide();
+                    }else{
+                        // Ouverture panel
+                        if (o instanceof Entity){
+                            this.viewPartie.panelShowInfos(o.toString(), ((Entity)o).getHealth());
+                        }else if (o instanceof Field) {
+                            if(((Field)o).isPlanted()) {
+                                this.viewPartie.panelShowInfos(o.toString(), ((Field) o).getResource());
+                            }else{
+                                this.viewPartie.panelShowInfos(o.toString());
+                            }
+                        }
+
+                        if(o instanceof Viking ){
+                            System.out.println("Click sur camp : Viking slectionné");
+                            selectedEntityID = ((Viking)o).getId();
+                            isFirstClickCamp = false;
+                        }
+                    }
+
+                }else {
+                    // Second click: Send movement command
+                    String content = gson.toJson(new PacketMovement(this.selectedEntityID ,clickOriginal,totalOffset,scale ));
+                    this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PacketMovement",content));
+                    isFirstClickCamp = true;
+                }
+            }else {
+                // on annule un clique si il existait un
+                isFirstClickCamp = true;
+                if(isFirstClickEnemyCamp){
+                    // ouvrir un panneau pour demander de slect une ressource à attquer
+                    System.out.println("Ouverture du panneau pour l'ataque sur le camp : " + camp.getId());
+                    selectedCamp = camp;
+                    isFirstClickEnemyCamp = false;
+                }else {
+                    if (camp.getId() == selectedCamp.getId()) {
+                        // determiner la ressource slectionner
+                        System.out.println("deuxieme click sur le camp ennemi");
+                        Object selectedRessource = determineSelectedField(clickView.x, clickView.y);
+                        if (selectedRessource != null) {
+                            if(selectedRessource instanceof Field) {
+                                System.out.println("Click sur le champ ennemi");
+                                Scanner scanner = new Scanner(System.in);
+                                System.out.print("Combien de viking envoyer sur le champ : ");
+                                int nombreViking = Integer.parseInt(scanner.nextLine());
+                                System.out.print("Simulation boutton valider : ");
+                                String simulation = scanner.nextLine();
+                                System.out.println("Simulation : " + simulation);
+                                scanner.close();
+
+                                // on envoie le paquet d'attaque
+                                int [] ressourceID = {((Field) selectedRessource).getId()};
+                                int[] nbs = {nombreViking};
+                                String content = gson.toJson(new PacketAttack(selectedCamp.getId(), ressourceID, nbs));
+                                this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PacketAttack", content));
+
+                            }else{
+                                System.out.println("Click sur une autre ressource à traiter");
+                            }
+                        }else{
+                            System.out.println("Deuxieme Click dans le vide sur le camp ennemi");
+                        }
+                        ///  Si attaque soumise
+                        isFirstClickCamp = true;
+                    }else{
+                        // on change de camp ennemi on affiche le panneau pour l'autre camp
+                        selectedCamp = camp;
+
+                    }
+                }
+            }
+        }else{
+            // clique dans le vide
+            System.out.println("Click dans le vide");
+        }
+
+
+
+
     }
 
+    /**
+     * Un méthode générique qui permet de déterminer si un click est sur un camp.
+     * elle prend des coordonnées de vue du clique
+     *
+     */
+    public Camp determineSelectedCamp(int x, int y) {
+        for (Camp camp : this.viewPartie.getPartieModel().getCamps()) {
+            // getPosition rend le top left point of the camp
+            Point viewPos = ViewPartie.pointModelToView(camp.getPosition());
+            if (x >= viewPos.x && x <= viewPos.x + (Position.WIDTH * ViewPartie.RATIO_X)
+                    && y >= viewPos.y && y <= viewPos.y + (Position.HEIGHT * ViewPartie.RATIO_Y)) {
+                return camp;
+            }
+        }
+        return null;
+    }
 
+    /**
+     * Determine la ressource selectionnée pour l'attaque
+     * Invariant : retoune soit une Entity soit un Field
+     * @param x
+     * @param y
+     * @return
+     */
+    public Object determineSelectedField(int x, int y) {
+        // parcours que la liste des fields
+        for (Field field : this.selectedCamp.getFields()) {
+            // getPosition rend le top left point of the field
+            Point viewPos = ViewPartie.pointModelToView(field.getPosition());
+            viewPos = new Point(viewPos.x - (Position.WIDTH_FIELD / 2) * ViewPartie.RATIO_X, viewPos.y - (Position.HEIGHT_FIELD / 2) * ViewPartie.RATIO_Y);
+            if (x >= viewPos.x && x <= viewPos.x + Position.WIDTH_FIELD * ViewPartie.RATIO_X
+                    && y >= viewPos.y && y <= viewPos.y + Position.HEIGHT_FIELD * ViewPartie.RATIO_Y) {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * detecte même field
+     * @param x
+     * @param y
+     * @return
+     */
+    public Object determineSelectedEntity(int x, int y) {
+        for (Entity entity : this.viewPartie.getCamp().getEntities()) {
+            // getPosition rend le top left point of the entity
+            Point viewPos = ViewPartie.pointModelToView(entity.getPosition());
+            viewPos = new Point(viewPos.x - (Position.WIDTH_VIKINGS / 2) * ViewPartie.RATIO_X, viewPos.y - (Position.HEIGHT_VIKINGS / 2) * ViewPartie.RATIO_Y);
+            if (x >= viewPos.x && x <= viewPos.x + Position.WIDTH_VIKINGS * ViewPartie.RATIO_X
+                    && y >= viewPos.y && y <= viewPos.y + Position.HEIGHT_VIKINGS * ViewPartie.RATIO_Y) {
+                return entity;
+            }
+        }
+        return determineSelectedField(x,y);
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -62,72 +218,85 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        // 1 if the mouse wheel was toward the user, -1 if the  wheel was rotated away from the user
-        int rotation_direction = e.getWheelRotation();
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-        double scaleFactor = 1.1;
-        // zoom out (rotation towards the user)
-        //this.viewPartie.addToOffset(mouseX-lastMousePosX, mouseY-lastMousePosY);
-        lastMousePosX = mouseX;
-        lastMousePosY = mouseY;
-        if(rotation_direction>0){
-            this.viewPartie.multiplyScale(1/scaleFactor);
-        }else{
-            // zoom in (rotation away from the user)
-            this.viewPartie.multiplyScale(scaleFactor);
-        }
+        double zoomFactor = 1.1;
+        int viewX = e.getX();
+        int viewY = e.getY();
+
+        Point totalOffset = viewPartie.getTotalOffset();
+        double currentScale = viewPartie.getScaleFactor();
+
+        // Onn convertit les coordonnées de la souris en coordonnées du repère actuel (avec total offset et scale)
+        double modelX = (viewX - totalOffset.x) / currentScale;
+        double modelY = (viewY - totalOffset.y) / currentScale;
+
+
+        int rotation = e.getWheelRotation();
+        // rotation > 0 = zoom out, rotation < 0 = zoom in
+        double scaleChange = (rotation > 0) ? 1 / zoomFactor : zoomFactor;
+        viewPartie.multiplyScale(scaleChange);
+        double newScale = viewPartie.getScaleFactor();
+
+        // Calcule du montatant de la nouvelle translation pour garder le point qui était sous la souris
+        // au même endroit après le zoom
+        int newTotalOffsetX = (int) (viewX - modelX * newScale);
+        int newTotalOffsetY = (int) (viewY - modelY * newScale);
+
+        int offsetCampX = viewPartie.getOffsetCampX();
+        int offsetCampY = viewPartie.getOffsetCampY();
+        int newOffsetDraggingX = newTotalOffsetX - offsetCampX;
+        int newOffsetDraggingY = newTotalOffsetY - offsetCampY;
+
+        viewPartie.setOffset(newOffsetDraggingX, newOffsetDraggingY);
 
     }
     @Override
     public void onPlant(PlantEvent event) {
-        sendPlantPacketToServer(event.getResource(), event.getFarmerX(), event.getFarmerY(), event.getFieldX(), event.getFieldY());
+        sendPlantPacketToServer(event.getResource(),event.getIdFarmer(), event.getIdField());
     }
 
     private void handlePlantEvent(Object event) {
         if (event instanceof PlantEvent) {
             PlantEvent plantEvent = (PlantEvent) event;
-            sendPlantPacketToServer(plantEvent.getResource(), plantEvent.getFarmerX(), plantEvent.getFarmerY(), plantEvent.getFieldX(), plantEvent.getFieldY());
+            sendPlantPacketToServer(plantEvent.getResource(), plantEvent.getIdFarmer(), plantEvent.getIdField());
         }
     }
 
-    public void sendPlantPacketToServer(String resource, int farmerX, int farmerY, int fieldX, int fieldY) {
-        Gson gson = new Gson();
-        String contentPaquet = gson.toJson(new PaquetPlant(resource, farmerX, farmerY, fieldX, fieldY));
+    public void sendPlantPacketToServer(String resource, int idFarmer, int idField) {
+        String contentPaquet = gson.toJson(new PaquetPlant(resource, idFarmer, idField));
         this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetPlant", contentPaquet));
     }
 
     @Override
     public void onEat(EatEvent event) {
-        sendEatPacketToServer(event.getVikingX(), event.getVikingY(), event.getAnimalX(), event.getAnimalY());
+        sendEatPacketToServer(event.getIdViking(), event.getIdAnimal());
     }
 
     private void handleEatEvent(Object event) {
         if (event instanceof EatEvent) {
             EatEvent eatEvent = (EatEvent) event;
-            sendEatPacketToServer(eatEvent.getVikingX(), eatEvent.getVikingY(), eatEvent.getAnimalX(), eatEvent.getAnimalY());
+            sendEatPacketToServer(eatEvent.getIdViking(), eatEvent.getIdAnimal());
         }
     }
 
-    public void sendEatPacketToServer(int vikingX, int vikingY, int animalX, int animalY) {
+    public void sendEatPacketToServer(int idViking, int idAnimal) {
         Gson gson = new Gson();
-        String contentPaquet = gson.toJson(new PaquetEat(vikingX, vikingY, animalX, animalY));
+        String contentPaquet = gson.toJson(new PaquetEat(idViking, idAnimal));
         this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetEat", contentPaquet));
     }
 
     @Override
     public void onHarvest(HarvestEvent event) {
-        sendHarvestPacketToServer(event.getFarmerX(), event.getFarmerY(), event.getFieldX(), event.getFieldY());
+        sendHarvestPacketToServer(event.getIdFarmer(), event.getIdField());
     }
     private void handleHarvestEvent(Object event) {
         if (event instanceof HarvestEvent) {
             HarvestEvent harvestEvent = (HarvestEvent) event;
-            sendHarvestPacketToServer(harvestEvent.getFarmerX(), harvestEvent.getFarmerY(), harvestEvent.getFieldX(), harvestEvent.getFieldY());
+            sendHarvestPacketToServer(harvestEvent.getIdFarmer(), harvestEvent.getIdField());
         }
     }
-    public void sendHarvestPacketToServer(int farmerX, int farmerY, int fieldX, int fieldY) {
+    public void sendHarvestPacketToServer(int idFarmer, int idField) {
         Gson gson = new Gson();
-        String contentPaquet = gson.toJson(new PaquetHarvest(farmerX, farmerY, fieldX, fieldY));
+        String contentPaquet = gson.toJson(new PaquetHarvest(idFarmer, idField));
         this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetHarvest", contentPaquet));
 
 

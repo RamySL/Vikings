@@ -29,7 +29,8 @@ public class SlidingMenu extends JPanel {
     private JComboBox<String> plantComboBox;
     private JLabel entityLabel, ressourceLabel;
     private JProgressBar healthBar;
-    private int farmerX, farmerY, fieldX, fieldY, sheepX, sheepY;
+    // normalement plus générique
+    private int idField, idFarmer, idAnimal;
     int posMenuY, widthMenu, windowWidth, windowHeight;
     private List<PlantListener> plantListeners = new ArrayList<>();
 
@@ -187,18 +188,10 @@ public class SlidingMenu extends JPanel {
      * If the farmer is not on a field, the button is hidden.
      *
      * @param isFarmerOnField true if the farmer is on a field, false otherwise.
-     * @param farmerX        The x-coordinate of the farmer.
-     * @param farmerY        The y-coordinate of the farmer.
-     * @param fieldX         The x-coordinate of the field.
-     * @param fieldY         The y-coordinate of the field.
      * @param isFieldPlanted true if the field is already planted, false otherwise.
      */
-    public void updateButtonVisibility(boolean isFarmerOnField, int farmerX, int farmerY, int fieldX, int fieldY, boolean isFieldPlanted) {
+    public void updateButtonVisibility(boolean isFarmerOnField, int idFarmer, int idField, boolean isFieldPlanted) {
         this.isFarmerOnField = isFarmerOnField;
-        this.farmerX = farmerX;
-        this.farmerY = farmerY;
-        this.fieldX = fieldX;
-        this.fieldY = fieldY;
 
         // If the farmer is on a field, the button becomes visible
         if (isFarmerOnField) {
@@ -214,12 +207,11 @@ public class SlidingMenu extends JPanel {
             harvestButton.setVisible(false);
         }
     }
-    public void updateButtonVisibility(boolean isFarmerNearSheep, int farmerX, int farmerY, int sheepX, int sheepY) {
+    public void updateButtonVisibility(boolean isFarmerNearSheep, int idFramer, int idSheep) {
         this.isFarmerNearSheep = isFarmerNearSheep;
-        this.farmerX = farmerX;
-        this.farmerY = farmerY;
-        this.sheepX = sheepX;
-        this.sheepY = sheepY;
+        this.idFarmer = idFramer;
+        this.idAnimal = idSheep;
+
         // If the farmer is near a sheep, the button becomes visible
         if (isFarmerNearSheep) {
             eatButton.setVisible(true);
@@ -277,22 +269,20 @@ public class SlidingMenu extends JPanel {
      * @param selectedResource The selected resource from the combo box.
      */
    private void handleComboBoxSelection(String selectedResource) {
-       //System.out.println("Selected resource: " + selectedResource);
-       System.out.println("Farmer position: (" + this.farmerX + ", " + this.farmerY + ")");
-       System.out.println(" Field position: (" + this.fieldX + ", " + this.fieldY + ")");
+
        // Créer et publier l'événement
-       PlantEvent event = new PlantEvent(selectedResource, this.farmerX, this.farmerY, this.fieldX, this.fieldY);
+       PlantEvent event = new PlantEvent(selectedResource, this.idFarmer, this.idField);
        EventBus.getInstance().publish("PlantEvent", event);
    }
 
    private void handleEatButtonClicked() {
        // Créer et publier l'événement
-       EatEvent event = new EatEvent(this.farmerX, this.farmerY, this.sheepX, this.sheepY);
+       EatEvent event = new EatEvent(this.idFarmer, this.idAnimal);
        EventBus.getInstance().publish("EatEvent", event);
     }
 
     private void handleHarvestButtonClicked(){
-        HarvestEvent event = new HarvestEvent(this.farmerX, this.farmerY, this.fieldX, this.fieldY);
+        HarvestEvent event = new HarvestEvent(this.idFarmer, this.idField);
         EventBus.getInstance().publish("HarvestEvent", event);
     }
 

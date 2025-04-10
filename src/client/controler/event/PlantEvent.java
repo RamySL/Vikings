@@ -6,60 +6,44 @@ package client.controler.event;
  */
 public class PlantEvent {
     private String resource;
-    private int farmerX, farmerY, fieldX, fieldY;
+    private int idFarmer, IdField;
 
     /**
-     * Constructor for the PlantEvent class.
-     * @param resource The resource being planted.
-     * @param farmerX The x-coordinate of the farmer.
-     * @param farmerY The y-coordinate of the farmer.
-     * @param fieldX The x-coordinate of the field.
-     * @param fieldY The y-coordinate of the field.
+     * Constructor to create a PlantEvent with the specified resource, farmer ID, and field ID.
+     *
+     * @param resource  The type of resource being planted.
+     * @param idFarmer  The ID of the farmer involved in the event.
+     * @param idField   The ID of the field where the resource is being planted.
      */
-    public PlantEvent( String resource, int farmerX, int farmerY, int fieldX, int fieldY) {
+    public PlantEvent(String resource, int idFarmer, int idField) {
         this.resource = resource;
-        this.farmerX = farmerX;
-        this.farmerY = farmerY;
-        this.fieldX = fieldX;
-        this.fieldY = fieldY;
+        this.idFarmer = idFarmer;
+        IdField = idField;
     }
-
     /**
-     * Getters for the coordinates of the farmer and the field.
-     * @return The x or y coordinate of the farmer or field.
-     */
-    /**
-     * @return The resource being planted.
+     * Gets the type of resource being planted.
+     *
+     * @return The type of resource.
      */
     public String getResource() {
         return resource;
     }
-
     /**
-     * @return The x coordinate of the farmer.
+     * Gets the ID of the farmer involved in the event.
+     *
+     * @return The ID of the farmer.
      */
-    public int getFarmerX() {
-        return farmerX;
+    public int getIdFarmer() {
+        return idFarmer;
     }
 
     /**
-     * @return The y coordinate of the farmer.
+     * Gets the ID of the field where the resource is being planted.
+     *
+     * @return The ID of the field.
      */
-    public int getFarmerY() {
-        return farmerY;
+    public int getIdField() {
+        return IdField;
     }
 
-    /**
-     * @return The x coordinate of the field.
-     */
-    public int getFieldX() {
-        return fieldX;
-    }
-
-    /**
-     * @return The y coordinate of the field.
-     */
-    public int getFieldY() {
-        return fieldY;
-    }
 }

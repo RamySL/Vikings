@@ -6,38 +6,32 @@ package network.packets;
  * This class is used to send harvesting information from the client to the server.
  */
 public class PaquetHarvest {
-    private int farmerX, farmerY, fieldX, fieldY;
+    private int idFarmer;
+    private int idField;
 
     /**
      * Constructor for the PaquetHarvest class.
-     * @param farmerX The x-coordinate of the farmer.
-     * @param farmerY The y-coordinate of the farmer.
-     * @param fieldX The x-coordinate of the field.
-     * @param fieldY The y-coordinate of the field.
+     * @param idFarmer The ID of the viking.
+     * @param idField The ID of the field.
      */
-    public PaquetHarvest(int farmerX, int farmerY, int fieldX, int fieldY) {
-        this.farmerX = farmerX;
-        this.farmerY = farmerY;
-        this.fieldX = fieldX;
-        this.fieldY = fieldY;
+    public PaquetHarvest(int idFarmer, int idField) {
+        this.idFarmer = idFarmer;
+        this.idField = idField;
     }
 
     /**
-     * Getters for the coordinates of the farmer and the field.
+     * Getter for the ID of the viking.
+     * @return The ID of the viking.
      */
-    public int getFarmerX() {
-        return farmerX;
+    public int getIdFarmer() {
+        return idFarmer;
     }
 
-    public int getFarmerY() {
-        return farmerY;
-    }
-
-    public int getFieldX() {
-        return fieldX;
-    }
-
-    public int getFieldY() {
-        return fieldY;
+    /**
+     * Getter for the ID of the field.
+     * @return The ID of the field.
+     */
+    public int getIdField() {
+        return idField;
     }
 }

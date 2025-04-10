@@ -18,4 +18,14 @@ public class Partie {
         return camps;
     }
 
+    // gtter en foncion de l'id
+    public Camp getCamp(int id) {
+        for (Camp camp : camps) {
+            if (camp.getId() == id) {
+                return camp;
+            }
+        }
+        return null;
+    }
+
 }

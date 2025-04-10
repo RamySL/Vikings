@@ -8,6 +8,7 @@ public class Field {
     private boolean isPlanted;
     private String resource;
     private int campId;
+    private int id;
 
     public Field(Point position, int campId) {
         this.position = position;
@@ -52,7 +53,16 @@ public class Field {
     }
 
     public int getId(){
-        return 1;
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    // String avec nom de la classe
+    @Override
+    public String toString() {
+        return "Field";
     }
 
 

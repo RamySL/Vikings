@@ -13,6 +13,7 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
     private ThreadCommunicationClient threadCommunicationClient;
     private ViewClient view;
     private Client client;
+    public static  final Object lock = new Object();
 
 
     public ControlerClient(ViewClient view) {
@@ -21,17 +22,21 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
         this.view.getConnectButton().addActionListener(this);
     }
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == this.view.getConnectButton()){
-            this.view.changeCard("2");
-            // On écoute le serveur.// norlement je recupere les infos saisie dans les field
-            this.client=new Client(this.view.getIp(), this.view.getPort());
+        if (e.getSource() == this.view.getConnectButton()) {
+            this.client = new Client(this.view.getIp(), this.view.getPort(), this.view.getUsername());
             this.threadCommunicationClient = new ThreadCommunicationClient(client, this.view);
             this.threadCommunicationClient.start();
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            this.view.changeCard("2");
         }
-
     }
 
 

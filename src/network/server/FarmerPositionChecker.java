@@ -65,13 +65,14 @@ public class FarmerPositionChecker extends Thread {
        Field nearestField = getNearestField(farmer);
        boolean nearField = isNearFieldWithMargin(farmer, distanceTolerance, nearestField);
        if (nearField != previousNearFieldState) {
-           String message = String.format("{\"farmerX\": %d, \"farmerY\": %d, \"fieldX\": %d, \"fieldY\": %d, \"isPlanted\": %b}",
-                   farmer.getPosition().x, farmer.getPosition().y,
-                   nearestField.getPosition().x, nearestField.getPosition().y, nearestField.isPlanted());
+           String message = String.format("{\"idFarmer\": %d,  \"idField\": %d, \"isPlanted\": %b}",
+                   farmer.getId(),
+                   nearestField.getId(),
+                   nearestField.isPlanted());
            if (nearField) {
-               communicationServer.sendMessage(FormatPacket.format("FarmerNearField", message ));
+               communicationServer.sendMessage(FormatPacket.format("FarmerNearField", message ), false);
            } else {
-               communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField", message ));
+               communicationServer.sendMessage(FormatPacket.format("FarmerNotNearField", message ), false);
            }
            previousNearFieldState = nearField;
        }
@@ -148,13 +149,13 @@ public class FarmerPositionChecker extends Thread {
         Sheep nearestSheep = getNearestSheep(farmer);
         boolean nearSheep = isNearSheepWithMargin(farmer, distanceTolerance, nearestSheep);
         if (nearSheep != previousNearSheepState) {
-            String message = String.format("{\"farmerX\": %d, \"farmerY\": %d, \"sheepX\": %d, \"sheepY\": %d}",
-                    farmer.getPosition().x, farmer.getPosition().y,
-                    nearestSheep.getPosition().x, nearestSheep.getPosition().y);
+            String message = String.format("{\"idFarmer\": %d,  \"idSheep\": %d}",
+                    farmer.getId(),
+                    nearestSheep.getId());
             if (nearSheep) {
-                communicationServer.sendMessage(FormatPacket.format("FarmerNearSheep", message ));
+                communicationServer.sendMessage(FormatPacket.format("FarmerNearSheep", message ),false);
             } else {
-                communicationServer.sendMessage(FormatPacket.format("FarmerNotNearSheep", message ));
+                communicationServer.sendMessage(FormatPacket.format("FarmerNotNearSheep", message ),false);
             }
             previousNearSheepState = nearSheep;
         }

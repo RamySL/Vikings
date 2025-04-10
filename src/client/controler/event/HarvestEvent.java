@@ -5,48 +5,32 @@ package client.controler.event;
  * It contains the coordinates of the Farmer and the field involved in the event.
  */
 public class HarvestEvent {
-    private int farmerX, farmerY, fieldX, fieldY;
+    private int idFarmer;
+    private int idField;
 
-    /** * Constructor for the EatEvent class.
-     * @param farmerX The x-coordinate of the Farmer.
-     * @param farmerY The y-coordinate of the Farmer.
-     * @param fieldX The x-coordinate of the field.
-     * @param fieldY The y-coordinate of the field.
-     */
-    public HarvestEvent( int farmerX, int farmerY, int fieldX, int fieldY) {
-        this.farmerX = farmerX;
-        this.farmerY = farmerY;
-        this.fieldX = fieldX;
-        this.fieldY = fieldY;
-    }
-
-    /** * Getters for the coordinates of the Farmer and the field.
-     * @return The x or y coordinate of the Farmer or field.
-     */
     /**
-     * @return The x coordinate of the Farmer.
+     * Constructor for the PaquetHarvest class.
+     * @param idFarmer The ID of the viking.
+     * @param idField The ID of the field.
      */
-    public int getFarmerX() {
-        return farmerX;
-    }
-    /**
-     * @return The y coordinate of the Farmer.
-     */
-    public int getFarmerY() {
-        return farmerY;
+    public HarvestEvent(int idFarmer, int idField) {
+        this.idFarmer = idFarmer;
+        this.idField = idField;
     }
 
     /**
-     * @return The x coordinate of the field.
+     * Getter for the ID of the viking.
+     * @return The ID of the viking.
      */
-    public int getFieldX() {
-        return fieldX;
+    public int getIdFarmer() {
+        return idFarmer;
     }
 
     /**
-     * @return The y coordinate of the field.
+     * Getter for the ID of the field.
+     * @return The ID of the field.
      */
-    public int getFieldY() {
-        return fieldY;
+    public int getIdField() {
+        return idField;
     }
 }

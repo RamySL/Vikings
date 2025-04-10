@@ -61,24 +61,19 @@ public class PanneauControle extends JPanel {
      * Sets the visibility of the SlidingMenu based on whether the farmer is on the field.
      * This method also updates the visibility of the plant button in the SlidingMenu.
      * @param isFarmerOnField True if the farmer is on the field, false otherwise.
-     * @param farmerX The x-coordinate of the farmer.
-     * @param farmerY The y-coordinate of the farmer.
-     * @param fieldX The x-coordinate of the field.
-     * @param fieldY The y-coordinate of the field.
      * @param isFieldPlanted True if the field is planted, false otherwise.
-     * @see SlidingMenu#updateButtonVisibility(boolean, int, int, int, int, boolean)
      */
-    public void setFarmerOnField(boolean isFarmerOnField, int farmerX, int farmerY, int fieldX, int fieldY, boolean isFieldPlanted) {
+    public void setFarmerOnField(boolean isFarmerOnField, int idFarmer, int idField, boolean isFieldPlanted) {
         updateSlidingMenuVisibility(isFarmerOnField);
-        slidingMenu.updateButtonVisibility(isFarmerOnField, farmerX, farmerY, fieldX, fieldY, isFieldPlanted);
+        slidingMenu.updateButtonVisibility(isFarmerOnField, idFarmer, idField, isFieldPlanted);
     }
 
-    public void setFarmerNearSheep(boolean isFarmerNearSheep, int farmerX, int farmerY, int sheepX, int sheepY) {
+    public void setFarmerNearSheep(boolean isFarmerNearSheep, int idFarmer, int idSheep) {
         if (isFarmerNearSheep) {
             updateSlidingMenuVisibility(true);
         }
 
-        slidingMenu.updateButtonVisibility(isFarmerNearSheep, farmerX, farmerY, sheepX, sheepY);
+        slidingMenu.updateButtonVisibility(isFarmerNearSheep, idFarmer, idSheep);
     }
     /**
      * Handles the event when the user clicks on the "elseWhere" button in the SlidingMenu.

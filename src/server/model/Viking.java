@@ -1,6 +1,5 @@
 package server.model;
 
-import javax.swing.text.Position;
 import java.awt.*;
 
 
@@ -23,7 +22,7 @@ public abstract class Viking extends Entity implements Moveable {
      * La vérification de proximité est gérée par un thread extérieur.
      * La force gagnée est égale à la santé de l'animal multipliée par le coeffStrength global des Vikings.
      */
-    public void eat(Sheep animal) {
+    public void eat(Livestock animal) {
 
 
         // Calcul de la force gagnée (santé * coeffStrength partagé par tous les Vikings)
@@ -31,7 +30,7 @@ public abstract class Viking extends Entity implements Moveable {
         camp.increaseStrength(strengthGained);
 
         // Supprime l'animal du camp
-        camp.removeSheep(animal);
+        camp.removeLiveStock(animal);
 
         System.out.println("Force du camp augmentée de " + strengthGained);
     }

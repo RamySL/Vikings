@@ -92,11 +92,12 @@ public class Farmer extends Viking {
         // Assuming you have a way to get the camp by ID
         return CampManager.getCampById(this.campId);
     }
-    public int getId() {
-        return 1;
+
+    // String avec nom de la classe
+    @Override
+    public String toString() {
+        return "Farmer";
     }
-
-
 
 
 }
