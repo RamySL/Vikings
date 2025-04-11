@@ -330,7 +330,9 @@ public class Camp {
     }
 
     public Field getFieldByID(int id){
+        System.out.println("getFieldByID: " + id);
         for (Field field : fields) {
+            System.out.println("field id: " + field.getId());
             if (field.getId() == id) {
                 return field;
             }

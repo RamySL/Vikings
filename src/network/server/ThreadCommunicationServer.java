@@ -75,6 +75,7 @@ public class ThreadCommunicationServer extends Thread{
      */
 
     public void reactMessage(String message) {
+        System.out.println("Je vais traiter un message du camp : " + camp.getId() );
         PacketWrapper wrapper = gson.fromJson(message, PacketWrapper.class);
         if (wrapper.type == null || wrapper.content == null) {
             System.out.println("Invalid message format");
