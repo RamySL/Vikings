@@ -15,7 +15,7 @@ public class Farmer extends Viking {
      * Plante du blé à la position actuelle du fermier.
      * La vérification de proximité est gérée ailleurs (ex: un thread détecte la proximité et affiche un bouton).
      */
-    public void plant() {
+    public void plant(Camp camp) {
         // Vérifie s'il y a déjà du blé à proximité (évite la superposition)
         for (Vegetable v : camp.getWheats()) {
             if (position.distance(v.getPosition()) < 30) {
@@ -46,7 +46,7 @@ public class Farmer extends Viking {
      * Récolte du blé mûr si le fermier est à proximité d'un champ.
      * La détection de proximité est gérée par un thread externe.
      */
-    public void harvest() {
+    public void harvest(Camp camp) {
         for (Vegetable v : camp.getWheats()) {
             if (v instanceof Wheat wheat && wheat.isMature()) {
                 System.out.println("Le fermier récolte du blé !");
@@ -65,7 +65,7 @@ public class Farmer extends Viking {
      * Nourrit les animaux.
      * La logique d'affichage du bouton dépend du thread de détection de proximité.
      */
-    public void feed() {
+    public void feed(Camp camp) {
         for (Livestock l : camp.getSheep()) {
             System.out.println("Le fermier nourrit " + (l instanceof Cow ? "une vache" : "un mouton") + " !");
             l.health += 10;
@@ -78,7 +78,7 @@ public class Farmer extends Viking {
     /**
      * Arrose les cultures sans vérifier la proximité (gérée ailleurs).
      */
-    public void water() {
+    public void water(Camp camp) {
         for (Vegetable v : camp.getWheats()) {
             System.out.println("Le fermier arrose les cultures !");
             v.grow(); // Augmente la croissance

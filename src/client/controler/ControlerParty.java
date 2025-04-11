@@ -18,7 +18,7 @@ import java.util.Scanner;
 /**
  * Controler of the party
  */
-public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner, ExitListenner {
+public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner {
 
     private ControlerClient controlerClient;
     private ViewPartie viewPartie;
@@ -40,7 +40,6 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         EventBus.getInstance().subscribe("PlantEvent", this::handlePlantEvent);
         EventBus.getInstance().subscribe("EatEvent", this::handleEatEvent);
         EventBus.getInstance().subscribe("HarvestEvent", this::handleHarvestEvent);
-        EventBus.getInstance().subscribe("ExitEvent", this::handleExitEvent);
     }
 
     @Override
@@ -139,9 +138,6 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
             // clique dans le vide
             System.out.println("Click dans le vide");
         }
-
-
-
 
     }
 
@@ -303,22 +299,6 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
 
     }
 
-    @Override
-    public void onExit(ExitEvent event) {
-        sendExitPacketToServer();
-
-    }
-    private void handleExitEvent(Object event) {
-        if (event instanceof ExitEvent) {
-            ExitEvent exitEvent = (ExitEvent) event;
-            sendExitPacketToServer();
-        }
-    }
-    public void sendExitPacketToServer() {
-        Gson gson = new Gson();
-        String contentPaquet = gson.toJson(new PaquetExit("exit"));
-        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetExit", contentPaquet));
-    }
 
 
 

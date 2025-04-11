@@ -17,17 +17,17 @@ import java.util.List;
 public class Camp {
     //public static int lastId = 0;
     private final int id;
-    private ArrayList<Entity> entities;
-    private ArrayList<Warrior> warriors;
-    private ArrayList<Viking> vikings;
-    private ArrayList<Farmer> farmers;
-    private ArrayList<Field> fields;
+    private ArrayList<Entity> entities = new ArrayList<>();
+    private ArrayList<Warrior> warriors = new ArrayList<>();
+    private ArrayList<Viking> vikings = new ArrayList<>();
+    private ArrayList<Farmer> farmers = new ArrayList<>();
+    private ArrayList<Field> fields = new ArrayList<>();
     private float strength;// Force du camp
-    private ArrayList<Livestock> livestocks;
-    private ArrayList<Sheep> sheeps;
-    private ArrayList<Cow> cows;
-    private ArrayList<Vegetable> vegetables;
-    private ArrayList<Wheat> wheats;
+    private ArrayList<Livestock> livestocks = new ArrayList<>();
+    private ArrayList<Sheep> sheeps = new ArrayList<>();
+    private ArrayList<Cow> cows = new ArrayList<>();
+    private ArrayList<Vegetable> vegetables = new ArrayList<>();
+    private ArrayList<Wheat> wheats = new ArrayList<>();
     // map entre les camp attaqué par les vikings de ce camp et les vikings qui l'attaquent
     private HashMap<Integer, ArrayList<Warrior>> vikingsAttack = new HashMap<>();
     private ArrayList<Warrior> warriorsInCamp = new ArrayList<>();
@@ -36,16 +36,8 @@ public class Camp {
 
     // Constructeur
     public Camp(int id) {
-        // initialize the instance variables
-        warriors = new ArrayList<>();
-        fields = new ArrayList<>();
-        farmers = new ArrayList<>();
-        vikings = new ArrayList<>();
         this.id = id;
         this.strength = 0;
-        //vikings = new ArrayList<>();
-        sheeps = new ArrayList<>();
-        wheats = new ArrayList<>();
         CampManager.addCamp(this);
         init();
 
@@ -77,7 +69,7 @@ public class Camp {
 
         vikings.add(f1);
         vikings.add(f2);
-        ;
+
         Sheep s1 = new Sheep(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6);
         Sheep s2 = new Sheep(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5);
         sheeps.add(s1);
@@ -100,6 +92,9 @@ public class Camp {
         entities.addAll(farmers);
         entities.addAll(sheeps);
         entities.addAll(wheats);
+
+        livestocks.addAll(sheeps);
+        livestocks.addAll(cows);
 
         this.setEntitiesId();
 
@@ -162,6 +157,13 @@ public class Camp {
     public void increaseStrength(float amount) {
         this.strength += amount;
         System.out.println("Force du camp augmentée ! Nouvelle force : " + strength);
+    }
+
+    public void vikingEats(Livestock animal) {
+        // remove the livestock from the camp
+        this.removeLiveStock(animal);
+        // increase the strength of the camp
+        this.increaseStrength(animal.getHealth() * Viking.getCoeffStrength());
     }
 
     /**

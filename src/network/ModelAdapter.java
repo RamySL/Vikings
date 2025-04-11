@@ -18,6 +18,7 @@ public class ModelAdapter {
         Gson gson = new Gson();
         gsonBuilder.registerTypeAdapter(Entity.class, new EntityAdapter(gson));
         gsonBuilder.registerTypeAdapter(Viking.class, new VikingAdapter(gson));
+        gsonBuilder.registerTypeAdapter(Livestock.class, new LivestockAdapter(gson));
 
         return gsonBuilder.create();
     }
@@ -97,6 +98,41 @@ class VikingAdapter extends TypeAdapter<Viking> {
                 return gson.fromJson(jsonObj, Warrior.class);
             case "farmer":
                 return gson.fromJson(jsonObj, Farmer.class);
+            default:
+                throw new JsonParseException("Unknown type: " + type);
+        }
+    }
+}
+
+
+class LivestockAdapter extends TypeAdapter<Livestock> {
+    private Gson gson;
+
+    public LivestockAdapter(Gson gson) {
+        this.gson = gson;
+    }
+
+    @Override
+    public void write(JsonWriter out, Livestock value) throws IOException {
+        JsonObject jsonObj = gson.toJsonTree(value).getAsJsonObject();
+        if (value instanceof Sheep) {
+            jsonObj.addProperty("type", "sheep");
+        } else if (value instanceof Cow) {
+            jsonObj.addProperty("type", "cow");
+        }
+        gson.toJson(jsonObj, out);
+    }
+
+    @Override
+    public Livestock read(JsonReader in) throws IOException {
+        JsonObject jsonObj = JsonParser.parseReader(in).getAsJsonObject();
+        String type = jsonObj.get("type").getAsString();
+
+        switch (type.toLowerCase()) {
+            case "sheep":
+                return gson.fromJson(jsonObj, Sheep.class);
+            case "cow":
+                return gson.fromJson(jsonObj, Cow.class);
             default:
                 throw new JsonParseException("Unknown type: " + type);
         }

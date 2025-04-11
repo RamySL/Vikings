@@ -5,7 +5,6 @@ import java.awt.*;
 
 public abstract class Viking extends Entity implements Moveable {
 
-    protected Camp camp; // Référence au camp
     protected static float coeffStrength = 1.0f; // Coefficient appliqué à tous les Vikings
     protected transient MovementThread currentMovementThread = null; // Thread de mouvement actuel
 
@@ -31,16 +30,11 @@ public abstract class Viking extends Entity implements Moveable {
      * La vérification de proximité est gérée par un thread extérieur.
      * La force gagnée est égale à la santé de l'animal multipliée par le coeffStrength global des Vikings.
      */
-    public void eat(Livestock animal) {
-
+    public void eat(Livestock animal, Camp camp) {
 
         // Calcul de la force gagnée (santé * coeffStrength partagé par tous les Vikings)
         float strengthGained = animal.getHealth() * coeffStrength;
-        camp.increaseStrength(strengthGained);
-
-        // Supprime l'animal du camp
-        camp.removeLiveStock(animal);
-
+        camp.vikingEats(animal);
         System.out.println("Force du camp augmentée de " + strengthGained);
     }
 

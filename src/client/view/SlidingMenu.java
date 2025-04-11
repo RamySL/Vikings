@@ -95,13 +95,6 @@ public class SlidingMenu extends JPanel {
             eatButton.setVisible(false);  // Cacher le bouton lorsque "Manger" est cliqué
             handleEatButtonClicked();
         });
-
-        // Action du bouton "Quitter"
-        exitMenu.addActionListener(e -> {
-            toggleHide();
-            handleExitButtonClicked();
-        });
-
         // Ajouter un ActionListener au JComboBox pour récupérer la sélection
         plantComboBox.addActionListener(e -> {
             if (e.getSource() == plantComboBox) {
@@ -289,10 +282,6 @@ public class SlidingMenu extends JPanel {
         EventBus.getInstance().publish("HarvestEvent", event);
     }
 
-    private void handleExitButtonClicked(){
-        ExitEvent event = new ExitEvent("Exit");
-        EventBus.getInstance().publish("ExitEvent", event);
-    }
     /**
      * Shows information about the selected entity and its health.
      * It updates the labels and progress bar to display the entity's name and health.

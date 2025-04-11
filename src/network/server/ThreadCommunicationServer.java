@@ -81,14 +81,6 @@ public class ThreadCommunicationServer extends Thread{
             System.out.println("Invalid message format");
             return;
         }
-        if (wrapper.type.equals("PaquetExit")) {
-            System.out.println("PaquetExit received");
-            //this.firstClick = true;
-            this.vikingSelected = null;
-            this.fieldSelected = null;
-            this.livestockSelected = null;
-            return;
-        }
 
         switch (wrapper.type) {
             case "PacketUsername":
@@ -112,7 +104,7 @@ public class ThreadCommunicationServer extends Thread{
                 PaquetEat paquetEat = gson.fromJson(wrapper.content, PaquetEat.class);
                 vikingSelected = this.camp.getVikingByID(paquetEat.getIdViking());
                 livestockSelected = this.camp.getLivestockByID(paquetEat.getIdAnimal());
-                vikingSelected.eat(livestockSelected);
+                vikingSelected.eat(livestockSelected, camp);
                 break;
             case "PaquetHarvest" :
                 PaquetHarvest paquetHarvest = gson.fromJson(wrapper.content, PaquetHarvest.class);
