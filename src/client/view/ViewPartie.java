@@ -46,7 +46,7 @@ public class ViewPartie extends JPanel {
         this.panneauControle = new PanneauControle(windowWidth,  windowHeight);
         this.setLayout(new BorderLayout());
         this.panneauControle.setOpaque(false);
-        //this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
+        this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {

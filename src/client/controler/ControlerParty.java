@@ -27,8 +27,8 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
     // intialy scaling is relative to (0,0)
     private boolean isFirstClickCamp = true;
     private boolean isFirstClickEnemyCamp = true;
-    private int selectedEntityID = -1;
-    private Camp selectedCamp = null;// ID of the selected entity
+    private int selectedEntityID = -1;// ID of the selected entity
+    private Camp selectedCamp = null;
     Gson gson = ModelAdapter.getGson();
 
     public ControlerParty(ControlerClient controlerClient, ViewPartie viewPartie) {
@@ -57,6 +57,7 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         Camp camp = this.determineSelectedCamp(clickView.x, clickView.y);
 
         if(camp != null) {
+            selectedCamp = camp;
             // Check if the click is within the client's camp
             if (camp.getId() == this.viewPartie.getCamp_id()) {
                 if (isFirstClickCamp) {
@@ -66,6 +67,7 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
                         this.viewPartie.panelHide();
                     }else{
                         // Ouverture panel
+                        this.viewPartie.panelSetVisibility(true);
                         if (o instanceof Entity){
                             this.viewPartie.panelShowInfos(o.toString(), ((Entity)o).getHealth());
                         }else if (o instanceof Field) {
@@ -95,7 +97,6 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
                 if(isFirstClickEnemyCamp){
                     // ouvrir un panneau pour demander de slect une ressource à attquer
                     System.out.println("Ouverture du panneau pour l'ataque sur le camp : " + camp.getId());
-                    selectedCamp = camp;
                     isFirstClickEnemyCamp = false;
                 }else {
                     if (camp.getId() == selectedCamp.getId()) {

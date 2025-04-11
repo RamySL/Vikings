@@ -191,6 +191,9 @@ public class SlidingMenu extends JPanel {
      * @param isFieldPlanted true if the field is already planted, false otherwise.
      */
     public void updateButtonVisibility(boolean isFarmerOnField, int idFarmer, int idField, boolean isFieldPlanted) {
+        this.idFarmer = idFarmer;
+        this.idField = idField;
+        this.isFieldPlanted = isFieldPlanted;
         this.isFarmerOnField = isFarmerOnField;
 
         // If the farmer is on a field, the button becomes visible

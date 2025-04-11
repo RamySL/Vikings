@@ -10,6 +10,8 @@ public abstract class Livestock extends Entity implements Moveable {
     protected boolean isHealthy;
     protected boolean isPregnant = false;
     protected int gestationTime = 5000; // 5 secondes de gestation (simulation)
+    protected transient MovementThread currentMovementThread = null; // Thread de mouvement actuel
+
 
     public Livestock(float health, Point position, int campId, int age) {
         super(health, position, campId);
@@ -17,7 +19,15 @@ public abstract class Livestock extends Entity implements Moveable {
         this.isHealthy = true;
     }
     public void move(Point destination) {
-        this.position = destination;
+        currentMovementThread =  new MovementThread(this, destination);
+        currentMovementThread.start();
+    }
+
+    @Override
+    public void stop() {
+        if (currentMovementThread != null) {
+            currentMovementThread.stopMovement();
+        }
     }
 
     /*public void accouche() {

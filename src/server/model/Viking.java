@@ -7,6 +7,7 @@ public abstract class Viking extends Entity implements Moveable {
 
     protected Camp camp; // Référence au camp
     protected static float coeffStrength = 1.0f; // Coefficient appliqué à tous les Vikings
+    protected transient MovementThread currentMovementThread = null; // Thread de mouvement actuel
 
     public Viking(float health, Point position, int campId) {
         super(health, position, campId);
@@ -14,7 +15,15 @@ public abstract class Viking extends Entity implements Moveable {
 
     @Override
     public void move(Point destination) {
-        new MovementThread(this, destination).start();
+        currentMovementThread =  new MovementThread(this, destination);
+        currentMovementThread.start();
+    }
+
+    @Override
+    public void stop() {
+        if (currentMovementThread != null) {
+            currentMovementThread.stopMovement();
+        }
     }
 
     /**

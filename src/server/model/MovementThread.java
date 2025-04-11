@@ -3,54 +3,40 @@ package server.model;
 import java.awt.*;
 
 public class MovementThread extends Thread {
-    private final Viking entity;
+    private final Moveable entity;
     private Point destination;
-    private volatile boolean running = true;
 
-    public MovementThread(Viking entity, Point destination) {
+    public MovementThread(Moveable entity, Point destination) {
         this.entity = entity;
         this.destination = destination;
     }
 
     @Override
     public void run() {
-        while (running) {
-            int destinationX = destination.x;
-            int destinationY = destination.y;
-
-            while (running && (entity.getPosition().x != destinationX || entity.getPosition().y != destinationY)) {
-                if (entity.getPosition().x < destinationX) {
+            while ((entity.getPosition().x != destination.x || entity.getPosition().y != destination.y)) {
+                if (entity.getPosition().x < destination.x) {
                     entity.getPosition().x++;
-                } else if (entity.getPosition().x > destinationX) {
+                } else if (entity.getPosition().x > destination.x) {
                     entity.getPosition().x--;
                 }
 
-                if (entity.getPosition().y < destinationY) {
+                if (entity.getPosition().y < destination.y) {
                     entity.getPosition().y++;
-                } else if (entity.getPosition().y > destinationY) {
+                } else if (entity.getPosition().y > destination.y) {
                     entity.getPosition().y--;
                 }
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    // Exit the loop if the thread is interrupted
-                    running = false;
                     break;
                 }
             }
-        }
+
+
     }
 
     public void stopMovement() {
-        running = false;
         this.interrupt();
     }
 
-    public void updateDestination(Point newDestination) {
-        this.destination = newDestination;
-        if (!this.isAlive()) {
-            this.running = true;
-            this.start();
-        }
-    }
 }

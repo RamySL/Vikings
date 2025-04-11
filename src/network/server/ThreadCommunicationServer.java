@@ -122,7 +122,12 @@ public class ThreadCommunicationServer extends Thread{
             case "PacketMovement":
                 PacketMovement packetMovement = gson.fromJson(wrapper.content, PacketMovement.class);
                 Viking v = this.camp.getVikingByID(packetMovement.getId());
+                v.stop();
                 v.move(Position.viewToModel(packetMovement.getDst(),packetMovement.getTranslation(),packetMovement.getScale()));
+                if (v instanceof Farmer){
+                    FarmerPositionChecker checker = new FarmerPositionChecker(this, camp,(Farmer)v, 10);
+                    checker.start();
+                }
                 break;
             case "PacketAttack":
                 // On vérifie si l'attaque est valide

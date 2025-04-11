@@ -58,4 +58,5 @@ public class Warrior extends Viking {
     public String toString() {
         return "Warrior";
     }
+
 }
