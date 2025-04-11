@@ -63,7 +63,7 @@ public class ViewPartie extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g.create();
         g2.translate(offsetDraggingX, offsetDraggingY);
         g2.translate(this.offsetCampX, this.offsetCampY);
         g2.scale(scaleFactor,scaleFactor);
@@ -80,6 +80,8 @@ public class ViewPartie extends JPanel {
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
         }
+
+        g2.dispose();
     }
 
     private void updatePanneauControlePosition() {

@@ -229,21 +229,27 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
 
         int rotation = e.getWheelRotation();
         // rotation > 0 = zoom out, rotation < 0 = zoom in
-        double scaleChange = (rotation > 0) ? 1 / zoomFactor : zoomFactor;
-        viewPartie.multiplyScale(scaleChange);
-        double newScale = viewPartie.getScaleFactor();
+        if (rotation > 0 && viewPartie.getScaleFactor() > 0.5
+                || rotation < 0 && viewPartie.getScaleFactor() < 2.0){
 
-        // Calcule du montatant de la nouvelle translation pour garder le point qui était sous la souris
-        // au même endroit après le zoom
-        int newTotalOffsetX = (int) (viewX - modelX * newScale);
-        int newTotalOffsetY = (int) (viewY - modelY * newScale);
+            double scaleChange = (rotation > 0) ? 1 / zoomFactor : zoomFactor;
 
-        int offsetCampX = viewPartie.getOffsetCampX();
-        int offsetCampY = viewPartie.getOffsetCampY();
-        int newOffsetDraggingX = newTotalOffsetX - offsetCampX;
-        int newOffsetDraggingY = newTotalOffsetY - offsetCampY;
+            viewPartie.multiplyScale(scaleChange);
+            double newScale = viewPartie.getScaleFactor();
 
-        viewPartie.setOffset(newOffsetDraggingX, newOffsetDraggingY);
+            // Calcule du montatant de la nouvelle translation pour garder le point qui était sous la souris
+            // au même endroit après le zoom
+            int newTotalOffsetX = (int) (viewX - modelX * newScale);
+            int newTotalOffsetY = (int) (viewY - modelY * newScale);
+
+            int offsetCampX = viewPartie.getOffsetCampX();
+            int offsetCampY = viewPartie.getOffsetCampY();
+            int newOffsetDraggingX = newTotalOffsetX - offsetCampX;
+            int newOffsetDraggingY = newTotalOffsetY - offsetCampY;
+
+            viewPartie.setOffset(newOffsetDraggingX, newOffsetDraggingY);
+        }
+
 
     }
     @Override
