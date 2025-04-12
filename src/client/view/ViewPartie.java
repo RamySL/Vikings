@@ -2,6 +2,7 @@ package client.view;
 
 import server.model.*;
 
+import javax.print.attribute.standard.Sides;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -304,5 +305,9 @@ public class ViewPartie extends JPanel {
 
     public Camp getCamp() {
         return camp;
+    }
+
+    public SlidingMenu getSlidingMenu() {
+        return this.panneauControle.getSlidingMenu();
     }
 }

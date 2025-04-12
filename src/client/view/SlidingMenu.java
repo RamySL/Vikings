@@ -350,4 +350,7 @@ public class SlidingMenu extends JPanel {
         }
     }
 
+    public JButton getExitMenu() {
+        return exitMenu;
+    }
 }

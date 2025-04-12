@@ -140,4 +140,5 @@ public class PanneauControle extends JPanel {
         slidingMenu.showInfos(entity, ressource);
     }
 
+
 }

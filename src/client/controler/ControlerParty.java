@@ -18,10 +18,11 @@ import java.util.Scanner;
 /**
  * Controler of the party
  */
-public class ControlerParty extends MouseAdapter implements MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner {
+public class ControlerParty extends MouseAdapter implements ActionListener, MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner {
 
     private ControlerClient controlerClient;
     private ViewPartie viewPartie;
+    private SlidingMenu slidingMenu;
     // last coordinates registered of the mouse click
     private int lastMouseClickX, lastMouseClickY;
     // intialy scaling is relative to (0,0)
@@ -37,6 +38,8 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
         this.viewPartie.addMouseListener(this);
         this.viewPartie.addMouseMotionListener(this);
         this.viewPartie.addMouseWheelListener(this);
+        this.slidingMenu = this.viewPartie.getSlidingMenu();
+        this.slidingMenu.getExitMenu().addActionListener(this);
         EventBus.getInstance().subscribe("PlantEvent", this::handlePlantEvent);
         EventBus.getInstance().subscribe("EatEvent", this::handleEatEvent);
         EventBus.getInstance().subscribe("HarvestEvent", this::handleHarvestEvent);
@@ -304,8 +307,14 @@ public class ControlerParty extends MouseAdapter implements MouseMotionListener,
 
 
     }
-
-
-
-
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == this.slidingMenu.getExitMenu()) {
+            this.viewPartie.panelHide();
+            this.isFirstClickCamp = true;
+            this.isFirstClickEnemyCamp = true;
+            this.selectedEntityID = -1;
+            this.selectedCamp = null;
+        }
+    }
 }
