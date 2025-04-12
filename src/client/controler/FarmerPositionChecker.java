@@ -18,8 +18,8 @@ import java.awt.Point;
  */
 public class FarmerPositionChecker extends VikingPositionChecker {
 
-    public FarmerPositionChecker(ControlerParty controlerParty, Camp camp, Camp nextCamp, Farmer farmer, double distanceTolerance) {
-        super(controlerParty, camp, nextCamp, farmer, distanceTolerance);
+    public FarmerPositionChecker(ControlerParty controlerParty, Camp camp, Camp nextCamp, Farmer farmer) {
+        super(controlerParty, camp, nextCamp, farmer);
     }
 
     /**
@@ -29,6 +29,16 @@ public class FarmerPositionChecker extends VikingPositionChecker {
     @Override
     public void run() {
         while (true) {
+            if(locked) {
+                System.out.println("locked " + viking.getId());
+                synchronized (lock) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             checkFarmerNearField();
             super.checkNearSheep();
             this.update();
@@ -48,12 +58,8 @@ public class FarmerPositionChecker extends VikingPositionChecker {
      */
     private void checkFarmerNearField() {
         Field nearestField = getNearestField((Farmer) viking);
-        boolean nearField = isNearFieldWithMargin((Farmer) viking, distanceTolerance, nearestField);
-        if (nearField != previousNearFieldState) {
-
-            this.controlerParty.setFarmerNearField(nearField, viking.getId(), nearestField.getId(), nearestField.isPlanted());
-            previousNearFieldState = nearField;
-        }
+        boolean nearField = isNearFieldWithMargin((Farmer) viking, Position.DISTANCE_TOLERANCE_FIELD, nearestField);
+        this.controlerParty.setFarmerNearField(nearField, viking.getId(), nearestField.getId(), nearestField.isPlanted());
     }
     /**
      * Checks if the farmer is near a field with a specified margin.
@@ -84,6 +90,12 @@ public class FarmerPositionChecker extends VikingPositionChecker {
             }
         }
         return nearestField;
+    }
+
+    public void setStartFarmer(){
+        Field nearestField = getNearestField((Farmer)viking);
+        boolean nearField = isNearFieldWithMargin((Farmer) viking, Position.DISTANCE_TOLERANCE_SHEEP, nearestField);
+        this.controlerParty.setFarmerNearField(nearField, viking.getId(), nearestField.getId(), nearestField.isPlanted());
     }
 
 }

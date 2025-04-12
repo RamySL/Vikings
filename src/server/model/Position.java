@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class Position {
     // See the doc
-    public static final int MARGIN = 250;
+    public static final int MARGIN = 100    ;
     // width of a camp
     public static final int WIDTH = 250;
     // height of a camp

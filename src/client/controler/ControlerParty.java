@@ -13,6 +13,7 @@ import server.model.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -33,8 +34,8 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
     Gson gson = ModelAdapter.getGson();
     // pour créer qu'une seule fois les thread checker position
     public boolean firstPacketGame = true;
-    private WarriorPositionChecker warriorPositionChecker;
-    private FarmerPositionChecker farmerPositionChecker;
+    private HashMap<Integer, VikingPositionChecker> mapIdChecker = new HashMap<>();
+    private VikingPositionChecker lastThreadChecker = null;
 
     public ControlerParty(ControlerClient controlerClient, ViewPartie viewPartie) {
         this.controlerClient = controlerClient;
@@ -89,6 +90,17 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
                             }
 
                             if (o instanceof Viking) {
+                                VikingPositionChecker th = this.mapIdChecker.get(((Viking) o).getId());
+                                if (lastThreadChecker != null && lastThreadChecker != th) {
+                                    lastThreadChecker.locked = true;
+                                }
+                                lastThreadChecker = th;
+                                synchronized (th.lock){
+                                    th.locked = false;
+                                    th.lock.notify();
+
+                                }
+
                                 System.out.println("Click sur camp : Viking slectionné");
                                 selectedEntityID = ((Viking) o).getId();
                                 isFirstClickCamp = false;
@@ -340,17 +352,21 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
     public void setPartie(){
         if(firstPacketGame){
             for (Warrior warrior : this.viewPartie.getCamp().getWarriors()){
-                this.warriorPositionChecker = new WarriorPositionChecker(this, this.viewPartie.getCamp(), this.viewPartie.getCamp(),warrior, Position.DISTANCE_TOLERANCE_SHEEP);
-                this.warriorPositionChecker.start();
+                VikingPositionChecker t = new WarriorPositionChecker(this, this.viewPartie.getCamp(), this.viewPartie.getCamp(),warrior);
+                this.mapIdChecker.put(warrior.getId(),t);
+                t.start();
             }
             for (Farmer farmer : this.viewPartie.getCamp().getFarmers()){
-                this.farmerPositionChecker = new FarmerPositionChecker(this, this.viewPartie.getCamp(), this.viewPartie.getCamp(),farmer, Position.DISTANCE_TOLERANCE_FIELD);
-                this.farmerPositionChecker.start();
+                VikingPositionChecker t = new FarmerPositionChecker(this, this.viewPartie.getCamp(), this.viewPartie.getCamp(), farmer);
+                this.mapIdChecker.put(farmer.getId(), t);
+                t.start();
             }
             firstPacketGame = false;
         }else{
-            this.warriorPositionChecker.setNextCamp(this.viewPartie.getCamp());
-            this.farmerPositionChecker.setNextCamp(this.viewPartie.getCamp());
+            for (VikingPositionChecker t : this.mapIdChecker.values()){
+                t.setNextCamp(this.viewPartie.getCamp());
+            }
+
         }
     }
 }

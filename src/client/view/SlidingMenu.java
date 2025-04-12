@@ -192,11 +192,15 @@ public class SlidingMenu extends JPanel {
         // If the farmer is on a field, the button becomes visible
         if (isFarmerOnField) {
             if (!isFieldPlanted) {
-                plantButton.setVisible(true);
                 harvestButton.setVisible(false);
+                if(!plantComboBox.isVisible()){
+                    plantButton.setVisible(true);
+                }
             } else {
                 plantButton.setVisible(false);
-                harvestButton.setVisible(true);
+                if (!harvestButton.isVisible()){
+                    harvestButton.setVisible(true);
+                }
             }
         } else {
             plantButton.setVisible(false);
@@ -209,11 +213,7 @@ public class SlidingMenu extends JPanel {
         this.idAnimal = idSheep;
 
         // If the farmer is near a sheep, the button becomes visible
-        if (isFarmerNearSheep) {
-            eatButton.setVisible(true);
-        } else {
-            eatButton.setVisible(false);
-        }
+        eatButton.setVisible(isFarmerNearSheep);
     }
     /**
      * Hides the plant button and combo box when clicking elsewhere on the screen.

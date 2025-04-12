@@ -1,6 +1,7 @@
 package client.controler;
 
 import server.model.Camp;
+import server.model.Position;
 import server.model.Sheep;
 import server.model.Viking;
 
@@ -13,12 +14,11 @@ public abstract class VikingPositionChecker extends Thread{
     protected ControlerParty controlerParty;
     protected static final int CHECK_INTERVAL_MS = 500;
     protected Camp camp;
-    protected final double distanceTolerance;
-    protected boolean previousNearFieldState;
-    protected boolean previousNearSheepState;
 
     protected Viking viking;
     protected Camp nextCamp;
+    public boolean locked = true;
+    public final Object lock = new Object();
 
 
     /**
@@ -26,16 +26,13 @@ public abstract class VikingPositionChecker extends Thread{
      * @param controlerParty The controler party instance.
      * @param camp The camp instance.
      * @param viking The viking instance.
-     * @param distanceTolerance The distance tolerance for checking proximity.
      */
-    public VikingPositionChecker(ControlerParty controlerParty,  Camp camp, Camp nextCamp, Viking viking, double distanceTolerance) {
+    public VikingPositionChecker(ControlerParty controlerParty,  Camp camp, Camp nextCamp, Viking viking) {
         this.controlerParty = controlerParty;
         this.camp = camp;
         this.nextCamp = nextCamp;
         this.viking = viking;
-        this.distanceTolerance = distanceTolerance;
-        this.previousNearFieldState = false;
-        this.previousNearSheepState = false;
+
     }
 
     /**
@@ -44,7 +41,7 @@ public abstract class VikingPositionChecker extends Thread{
      * @param viking The viking whose position is being checked.
      * @return the nearest sheep to the viking.
      */
-    private Sheep getNearestSheep(Viking viking) {
+    protected Sheep getNearestSheep(Viking viking) {
         Point farmerPosition = viking.getPosition();
         double minDistance = Double.MAX_VALUE;
         Sheep nearestSheep = null;
@@ -65,7 +62,7 @@ public abstract class VikingPositionChecker extends Thread{
      * @param sheep The sheep to check against.
      * @return True if the viking is near the sheep, false otherwise.
      */
-    protected boolean isNearSheepWithMargin(Viking viking, double margin, Sheep sheep) {
+    private boolean isNearSheepWithMargin(Viking viking, double margin, Sheep sheep) {
         double distanceToSheep = viking.getPosition().distance(sheep.getPosition());
         return distanceToSheep <= margin;
     }
@@ -76,11 +73,9 @@ public abstract class VikingPositionChecker extends Thread{
      */
     protected void checkNearSheep() {
         Sheep nearestSheep = getNearestSheep(viking);
-        boolean nearSheep = isNearSheepWithMargin(viking, distanceTolerance, nearestSheep);
-        if (nearSheep != previousNearSheepState) {
-            this.controlerParty.setFarmerNearSheep(nearSheep, viking.getId(), nearestSheep.getId());
-            previousNearSheepState = nearSheep;
-        }
+        boolean nearSheep = isNearSheepWithMargin(viking, Position.DISTANCE_TOLERANCE_SHEEP, nearestSheep);
+        this.controlerParty.setFarmerNearSheep(nearSheep, viking.getId(), nearestSheep.getId());
+
     }
 
     public void update(){
@@ -90,6 +85,15 @@ public abstract class VikingPositionChecker extends Thread{
                 this.viking = viking;
             }
         }
+    }
+
+    /**
+     * On l'appel dès qu'on reprend le thread pour enlever les bouttons mit par d'autre vikings
+     */
+    public void setStart(){
+        Sheep nearestSheep = getNearestSheep(viking);
+        boolean nearSheep = isNearSheepWithMargin(viking, Position.DISTANCE_TOLERANCE_SHEEP, nearestSheep);
+        this.controlerParty.setFarmerNearSheep(nearSheep, viking.getId(), nearestSheep.getId());
     }
 
     public void setNextCamp(Camp camp){

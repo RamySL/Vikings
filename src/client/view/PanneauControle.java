@@ -64,7 +64,9 @@ public class PanneauControle extends JPanel {
      * @param isFieldPlanted True if the field is planted, false otherwise.
      */
     public void setFarmerOnField(boolean isFarmerOnField, int idFarmer, int idField, boolean isFieldPlanted) {
-        updateSlidingMenuVisibility(isFarmerOnField);
+        if(isFarmerOnField) {
+            updateSlidingMenuVisibility(true);
+        }
         slidingMenu.updateButtonVisibility(isFarmerOnField, idFarmer, idField, isFieldPlanted);
     }
 
