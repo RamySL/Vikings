@@ -1,6 +1,7 @@
 package network.client;
 
 import client.controler.ControlerClient;
+import client.controler.ControlerParty;
 import network.ModelAdapter;
 import network.packets.*;
 import server.model.*;
@@ -28,6 +29,7 @@ public class ThreadCommunicationClient extends Thread {
     private  FarmerSheepWrapper farmerSheepWrapper;
     private FarmerFieldWrapper farmerFieldWrapper;
     private Gson gson;
+    private ControlerParty controlerParty;
 
     public ThreadCommunicationClient(Client client, ViewClient view) {
         this.client = client;
@@ -35,6 +37,10 @@ public class ThreadCommunicationClient extends Thread {
         gson = ModelAdapter.getGson();
         // send PacketUsername to the server
         this.client.sendMessage(FormatPacket.format("PacketUsername", gson.toJson(new PacketUsername(this.client.getUsername()))));
+    }
+
+    public void setControlerParty(ControlerParty controlerParty) {
+        this.controlerParty = controlerParty;
     }
 
     @Override
@@ -68,6 +74,7 @@ public class ThreadCommunicationClient extends Thread {
             case "Partie":
                 Partie game = gson.fromJson(wrapper.content, Partie.class);
                 this.view.actualisePartie(game);
+                this.controlerParty.setPartie();
                 if (!gameStarted) {
                     new ThreadRepaint(this.view.getViewPartie()).start();
                     gameStarted = true;
@@ -80,34 +87,6 @@ public class ThreadCommunicationClient extends Thread {
                     this.view.changeCard("3");
                 }
                 break;
-                // les 4 prochains ne sont pas dans packets (ils sont dans FarmerPositionChecker)
-            case "FarmerNearField":
-                farmerFieldWrapper = gson.fromJson(wrapper.content, FarmerFieldWrapper.class);
-                idFarmer = farmerFieldWrapper.getIdFarmer();
-                isFieldPlanted = farmerFieldWrapper.getIsPlanted();
-                idField = farmerFieldWrapper.getIdField();
-                this.view.getViewPartie().panelSetFarmerOnField(true,idFarmer, idField, isFieldPlanted);
-                break;
-            case "FarmerNotNearField":
-                farmerFieldWrapper = gson.fromJson(wrapper.content, FarmerFieldWrapper.class);
-                idFarmer = farmerFieldWrapper.getIdFarmer();
-                idField = farmerFieldWrapper.getIdField();
-                isFieldPlanted = farmerFieldWrapper.getIsPlanted();
-                this.view.getViewPartie().panelSetFarmerOnField(false,idFarmer, idField, isFieldPlanted);
-                break;
-            case "FarmerNearSheep":
-                farmerSheepWrapper = gson.fromJson(wrapper.content, FarmerSheepWrapper.class);
-                idFarmer = farmerSheepWrapper.getIdFarmer();
-                idSheep = farmerSheepWrapper.getIdSheep();
-                this.view.getViewPartie().panelSetFarmerNearSheep(true, idFarmer, idSheep);
-                break;
-            case "FarmerNotNearSheep":
-                farmerSheepWrapper = gson.fromJson(wrapper.content, FarmerSheepWrapper.class);
-                idFarmer = farmerSheepWrapper.getIdFarmer();
-                idSheep = farmerSheepWrapper.getIdSheep();
-                this.view.getViewPartie().panelSetFarmerNearSheep(false, idFarmer, idSheep);
-                break;
-
             default:
                 System.out.println("Invalid message format");
         }

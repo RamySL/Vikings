@@ -1,5 +1,7 @@
 package client.view;
 
+import client.controler.ControlerParty;
+import client.controler.EventInitCamp;
 import server.model.*;
 
 import javax.print.attribute.standard.Sides;
@@ -7,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
@@ -226,7 +229,6 @@ public class ViewPartie extends JPanel {
 
     public void setPartie(Partie partieModel) {
         this.partieModel = partieModel;
-
         this.camp = partieModel.getCamp(this.camp_id);
         this.revalidate();
         this.repaint();
