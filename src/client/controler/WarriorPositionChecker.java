@@ -18,7 +18,6 @@ public class WarriorPositionChecker extends VikingPositionChecker{
     public void run() {
         while (true) {
             if(locked) {
-                System.out.println("locked " + viking.getId());
                 synchronized (lock) {
                     try {
                         lock.wait();

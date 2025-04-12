@@ -90,6 +90,7 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
                             }
 
                             if (o instanceof Viking) {
+                                // à chaque fois ya que le viking selectionner qui a son thread actif
                                 VikingPositionChecker th = this.mapIdChecker.get(((Viking) o).getId());
                                 if (lastThreadChecker != null && lastThreadChecker != th) {
                                     lastThreadChecker.locked = true;

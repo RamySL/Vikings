@@ -86,16 +86,10 @@ public abstract class VikingPositionChecker extends Thread{
             }
         }
     }
-
     /**
-     * On l'appel dès qu'on reprend le thread pour enlever les bouttons mit par d'autre vikings
+     * pour actualiser avec ce que le serveur envoi
+     * @param camp The next camp instance.
      */
-    public void setStart(){
-        Sheep nearestSheep = getNearestSheep(viking);
-        boolean nearSheep = isNearSheepWithMargin(viking, Position.DISTANCE_TOLERANCE_SHEEP, nearestSheep);
-        this.controlerParty.setFarmerNearSheep(nearSheep, viking.getId(), nearestSheep.getId());
-    }
-
     public void setNextCamp(Camp camp){
         this.nextCamp = camp;
     }

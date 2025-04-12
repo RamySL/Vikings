@@ -8,14 +8,7 @@ import server.model.*;
 
 import java.awt.Point;
 
-/**
- * FarmerPositionChecker is a thread that checks the position of a farmer in relation to the fields in a camp.
- * It sends messages to the communication server when the farmer is near or not near a field.
- * This class is used to monitor the farmer's position and notify the client about the status of the farmer's proximity to the fields.
- * It runs in a separate thread and checks the position at regular intervals.
- * The distance tolerance can be set to determine how close the farmer needs to be to a field to be considered "near".
- * The class also keeps track of the previous state of the farmer's proximity to avoid sending duplicate messages.
- */
+
 public class FarmerPositionChecker extends VikingPositionChecker {
 
     public FarmerPositionChecker(ControlerParty controlerParty, Camp camp, Camp nextCamp, Farmer farmer) {
@@ -30,7 +23,6 @@ public class FarmerPositionChecker extends VikingPositionChecker {
     public void run() {
         while (true) {
             if(locked) {
-                System.out.println("locked " + viking.getId());
                 synchronized (lock) {
                     try {
                         lock.wait();
@@ -92,11 +84,6 @@ public class FarmerPositionChecker extends VikingPositionChecker {
         return nearestField;
     }
 
-    public void setStartFarmer(){
-        Field nearestField = getNearestField((Farmer)viking);
-        boolean nearField = isNearFieldWithMargin((Farmer) viking, Position.DISTANCE_TOLERANCE_SHEEP, nearestField);
-        this.controlerParty.setFarmerNearField(nearField, viking.getId(), nearestField.getId(), nearestField.isPlanted());
-    }
 
 }
 
