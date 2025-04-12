@@ -12,7 +12,7 @@ import java.awt.*;
  */
 public abstract class VikingPositionChecker extends Thread{
     protected ControlerParty controlerParty;
-    protected static final int CHECK_INTERVAL_MS = 500;
+    protected static final int CHECK_INTERVAL_MS = 50;
     protected Camp camp;
 
     protected Viking viking;
