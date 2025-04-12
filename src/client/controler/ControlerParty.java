@@ -331,8 +331,8 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
 
     }
 
-    public void setFarmerNearSheep (boolean nearSheep, int idViking, int idSheep ) {
-        this.viewPartie.panelSetFarmerNearSheep(nearSheep, idViking, idSheep);
+    public void setVikingNearSheep(boolean nearSheep, int idViking, int idSheep ) {
+        this.viewPartie.panelSetVikingNearSheep(nearSheep, idViking, idSheep);
     }
 
     public void setFarmerNearField (boolean onField, int idFarmer, int idField, boolean isPlanted) {

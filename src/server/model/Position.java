@@ -23,7 +23,7 @@ public class Position {
     // distance tolerance for the farmer to be considered on the field
     public static final int DISTANCE_TOLERANCE_FIELD = WIDTH_FIELD/2;
     // distance tolerance for the viking to be considered near a sheep
-    public static final int DISTANCE_TOLERANCE_SHEEP = WIDTH_SHEEP/2 + 2;
+    public static final int DISTANCE_TOLERANCE_SHEEP = WIDTH_SHEEP/2 + WIDTH_VIKINGS/2 + 2;
 
     // map betwwen camp id and the coordinates of the top left corner of the camp
     public static final HashMap<Integer, Point> MAP_CAMPS_POSITION = new HashMap<Integer, Point>(){

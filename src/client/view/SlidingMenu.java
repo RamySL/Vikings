@@ -22,7 +22,7 @@ import server.model.*;
 public class SlidingMenu extends JPanel {
     private Timer timer;
     private int targetX;
-    private boolean isFarmerOnField, isFarmerNearSheep;
+    private boolean isFarmerOnField, isVikingNearSheep;
     private boolean isFieldPlanted;
     private boolean isVisible;
     private JButton plantButton, harvestButton, eatButton, exitMenu;
@@ -30,7 +30,8 @@ public class SlidingMenu extends JPanel {
     private JLabel entityLabel, ressourceLabel;
     private JProgressBar healthBar;
     // normalement plus générique
-    private int idField, idFarmer, idAnimal;
+    private int idField, idViking;
+    private int idAnimal;
     int posMenuY, widthMenu, windowWidth, windowHeight;
     private List<PlantListener> plantListeners = new ArrayList<>();
 
@@ -184,7 +185,7 @@ public class SlidingMenu extends JPanel {
      * @param isFieldPlanted true if the field is already planted, false otherwise.
      */
     public void updateButtonVisibility(boolean isFarmerOnField, int idFarmer, int idField, boolean isFieldPlanted) {
-        this.idFarmer = idFarmer;
+        this.idViking = idFarmer;
         this.idField = idField;
         this.isFieldPlanted = isFieldPlanted;
         this.isFarmerOnField = isFarmerOnField;
@@ -207,13 +208,12 @@ public class SlidingMenu extends JPanel {
             harvestButton.setVisible(false);
         }
     }
-    public void updateButtonVisibility(boolean isFarmerNearSheep, int idFramer, int idSheep) {
-        this.isFarmerNearSheep = isFarmerNearSheep;
-        this.idFarmer = idFramer;
+    public void updateButtonVisibility(boolean isVikingNearSheep, int idViking, int idSheep) {
+        this.isVikingNearSheep = isVikingNearSheep;
+        this.idViking = idViking;
         this.idAnimal = idSheep;
 
-        // If the farmer is near a sheep, the button becomes visible
-        eatButton.setVisible(isFarmerNearSheep);
+        eatButton.setVisible(isVikingNearSheep);
     }
     /**
      * Hides the plant button and combo box when clicking elsewhere on the screen.
@@ -267,18 +267,18 @@ public class SlidingMenu extends JPanel {
    private void handleComboBoxSelection(String selectedResource) {
 
        // Créer et publier l'événement
-       PlantEvent event = new PlantEvent(selectedResource, this.idFarmer, this.idField);
+       PlantEvent event = new PlantEvent(selectedResource, this.idViking, this.idField);
        EventBus.getInstance().publish("PlantEvent", event);
    }
 
    private void handleEatButtonClicked() {
        // Créer et publier l'événement
-       EatEvent event = new EatEvent(this.idFarmer, this.idAnimal);
+       EatEvent event = new EatEvent(this.idViking, this.idAnimal);
        EventBus.getInstance().publish("EatEvent", event);
     }
 
     private void handleHarvestButtonClicked(){
-        HarvestEvent event = new HarvestEvent(this.idFarmer, this.idField);
+        HarvestEvent event = new HarvestEvent(this.idViking, this.idField);
         EventBus.getInstance().publish("HarvestEvent", event);
     }
 

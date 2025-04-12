@@ -57,14 +57,17 @@ public abstract class VikingPositionChecker extends Thread{
 
     /**
      * Checks if the viking is near a sheep with a specified margin.
+     *
      * @param viking The viking whose position is being checked.
-     * @param margin The distance margin for determining if the viking is near a sheep.
-     * @param sheep The sheep to check against.
+     * @param sheep  The sheep to check against.
      * @return True if the viking is near the sheep, false otherwise.
      */
-    private boolean isNearSheepWithMargin(Viking viking, double margin, Sheep sheep) {
+    private boolean isNearSheepWithMargin(Viking viking, Sheep sheep) {
+        if (sheep == null) {
+            return false;
+        }
         double distanceToSheep = viking.getPosition().distance(sheep.getPosition());
-        return distanceToSheep <= margin;
+        return distanceToSheep <= (double) Position.DISTANCE_TOLERANCE_SHEEP;
     }
 
     /**
@@ -73,8 +76,12 @@ public abstract class VikingPositionChecker extends Thread{
      */
     protected void checkNearSheep() {
         Sheep nearestSheep = getNearestSheep(viking);
-        boolean nearSheep = isNearSheepWithMargin(viking, Position.DISTANCE_TOLERANCE_SHEEP, nearestSheep);
-        this.controlerParty.setFarmerNearSheep(nearSheep, viking.getId(), nearestSheep.getId());
+        boolean nearSheep = isNearSheepWithMargin(viking, nearestSheep);
+        if(nearestSheep != null) {
+            this.controlerParty.setVikingNearSheep(nearSheep, viking.getId(), nearestSheep.getId());
+        }else{
+            this.controlerParty.setVikingNearSheep(false, viking.getId(), -1);
+        }
 
     }
 

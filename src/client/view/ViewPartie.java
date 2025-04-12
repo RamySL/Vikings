@@ -1,15 +1,11 @@
 package client.view;
 
-import client.controler.ControlerParty;
-import client.controler.EventInitCamp;
 import server.model.*;
 
-import javax.print.attribute.standard.Sides;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
@@ -264,8 +260,8 @@ public class ViewPartie extends JPanel {
     }
 
     // setFarmerNearSheep(true, idFarmer, idSheep);
-    public void panelSetFarmerNearSheep(boolean isFarmerNearSheep, int idFarmer, int idSheep) {
-        this.panneauControle.setFarmerNearSheep(isFarmerNearSheep, idFarmer, idSheep);
+    public void panelSetVikingNearSheep(boolean isVikingNearSheep, int idViking, int idSheep) {
+        this.panneauControle.setVikingNearSheep(isVikingNearSheep, idViking, idSheep);
     }
 
     public void panelSetVisibility(boolean isVisible) {

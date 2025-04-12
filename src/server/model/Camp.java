@@ -114,6 +114,11 @@ public class Camp {
             i++;
         }
 
+        for (Livestock livestock : livestocks) {
+            livestock.setId(id * 10 + i);
+            i++;
+        }
+
     }
 
     /**

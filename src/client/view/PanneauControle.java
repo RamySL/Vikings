@@ -70,12 +70,12 @@ public class PanneauControle extends JPanel {
         slidingMenu.updateButtonVisibility(isFarmerOnField, idFarmer, idField, isFieldPlanted);
     }
 
-    public void setFarmerNearSheep(boolean isFarmerNearSheep, int idFarmer, int idSheep) {
-        if (isFarmerNearSheep) {
+    public void setVikingNearSheep(boolean isVikingNearSheep, int idViking, int idSheep) {
+        if (isVikingNearSheep) {
             updateSlidingMenuVisibility(true);
         }
 
-        slidingMenu.updateButtonVisibility(isFarmerNearSheep, idFarmer, idSheep);
+        slidingMenu.updateButtonVisibility(isVikingNearSheep, idViking, idSheep);
     }
     /**
      * Handles the event when the user clicks on the "elseWhere" button in the SlidingMenu.
