@@ -55,6 +55,7 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
     public void mouseClicked(MouseEvent e) {
         if (e instanceof EventInitCamp){
 
+
         }else {
             // on convertit les coordonnées de la souris en coordonnées du repère actuel de la vue(avec total offset et scale)
             //System.out.println("Click original : " + e.getX() + " " + e.getY() );

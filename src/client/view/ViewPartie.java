@@ -3,6 +3,7 @@ package client.view;
 import client.controler.ControlerParty;
 import client.controler.EventInitCamp;
 import server.model.*;
+import sharedGUIcomponents.ComposantsPerso.FontPerso;
 
 import javax.print.attribute.standard.Sides;
 import javax.swing.*;
