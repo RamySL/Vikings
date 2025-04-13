@@ -66,7 +66,7 @@ public class Farmer extends Viking {
      * La logique d'affichage du bouton dépend du thread de détection de proximité.
      */
     public void feed() {
-        for (Livestock l : camp.getSheap()) {
+        for (Livestock l : camp.getSheep()) {
             System.out.println("Le fermier nourrit " + (l instanceof Cow ? "une vache" : "un mouton") + " !");
             l.health += 10;
             if (l.health > 100) l.health = 100; // Limite à 100

@@ -15,68 +15,78 @@ import java.util.ArrayList;
 
 
 public class ViewPartie extends JPanel {
-    public static final int RATIO_X = 3, RATIO_Y = 3;
-    public static final int WIDTH_VIEW = (2*Position.MARGIN+Position.WIDTH)*RATIO_X;
-    public static final int HEIGHT_VIEW = (2*Position.MARGIN+Position.HEIGHT)*RATIO_Y;
+    bleAnim bavp = new bleAnim();
+    vikingAnim vavp = new vikingAnim();
+    cowAnim cavp = new cowAnim();
+    fermierAnim favp = new fermierAnim();
+    sheepAnim savp = new sheepAnim();
+    Image img_camp = new ImageIcon("src/ressources/images/grass_image.png").getImage();
+    Image img_field = new ImageIcon("src/ressources/images/animation/terre.png").getImage();
+
+    public static final int RATIO_X = 3,  RATIO_Y = 3;
+    public static final int WIDTH_VIEW =  (2*Position.MARGIN+Position.WIDTH)*RATIO_X;
+    public static final int HEIGHT_VIEW =  (2*Position.MARGIN+Position.HEIGHT)*RATIO_Y;
     // the point where the camp shold be translated to
-    public static final Point POINT_ANCRE = new Point(Position.MARGIN*RATIO_X,Position.MARGIN*RATIO_Y);
+    public static final Point POINT_ANCRE =  new Point(Position.MARGIN*RATIO_X,Position.MARGIN*RATIO_Y);
     // the amount that will be used to translate swing coordinates when draging
-    private int offsetDraggingX = 0, offsetDraggingY = 0;
+    private int offsetDraggingX = 0,  offsetDraggingY = 0;
     // the amount that will be used to translate swing coordinates when zooming relativeley to the mouse
     // the offset to use when translating to show the client camp on the screen
-    private int offsetCampX, offsetCampY;
+    private int  offsetCampX, offsetCampY;
     // scale factor for handeling the zoom
-    private double scaleFactor=1.0;
-    private int camp_id;
-    private Camp camp;
+    private double scaleFactor = 1.0;
+    private int camp_id ;
+    private Camp camp ;
 
-    private Partie partieModel;
-    private PanneauControle panneauControle;  // Ajout du champ PanneauControle
-    private int windowWidth=WIDTH_VIEW, windowHeight=HEIGHT_VIEW;
+    private Partie partieModel ;
+    private PanneauControle panneauControle ;  // Ajout du champ PanneauControle
+    private int windowWidth = WIDTH_VIEW, windowHeight = HEIGHT_VIEW;
 
 
-    /**
-     * Constructeur de la vue de la partie
-     */
-    public ViewPartie(ViewClient viewClient, Partie partieModel) {
+     /**
+      * Constructeur de la vue de la partie
+      */
+     public ViewPartie(ViewClient viewClient, Partie partieModel) {
 
-        this.setPreferredSize(new Dimension(windowWidth, windowHeight));
-
-        this.partieModel = partieModel;
-        this.panneauControle = new PanneauControle(windowWidth,  windowHeight);
-        this.setLayout(new BorderLayout());
-        this.panneauControle.setOpaque(false);
-        //this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
-        this.addComponentListener(new ComponentAdapter() {
+         this.setPreferredSize(new Dimension(windowWidth, windowHeight));
+         bavp.start();
+         vavp.start();
+         cavp.start();
+         favp.start();
+         savp.start();
+         this.partieModel = partieModel;
+         this.panneauControle = new PanneauControle(windowWidth,  windowHeight);
+         this.setLayout(new BorderLayout());
+         this.panneauControle.setOpaque(false);
+         //this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
+         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                updatePanneauControlePosition();
-            }
-        });
+                 updatePanneauControlePosition();
+             }
+         });
 
-    }
+     }
 
-    /**
-     * !! a lot of redundant calculations for the drawing !!
-     * @param g the <code>Graphics</code> object to protect
-     */
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.translate(offsetDraggingX, offsetDraggingY);
-        g2.translate(this.offsetCampX, this.offsetCampY);
-        g2.scale(scaleFactor,scaleFactor);
-
-        // L'anti-aliasing
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // draw the x and y axes in black and thick
-        g2.setColor(Color.BLACK);
-        g2.setStroke(new BasicStroke(2));
-        g2.drawLine(0, 0, 1000, 0);
-        g2.drawLine(0, 0, 0, 1000);
-
+     /**
+      * !! a lot of redundant calculations for the drawing !!
+      * @param g the <code>Graphics</code> object to protect
+      */
+     @Override
+     protected void paintComponent(Graphics g) {
+         super.paintComponent(g);
+         Graphics2D g2 = (Graphics2D) g;
+         g2.translate(offsetDraggingX, offsetDraggingY);
+         g2.translate(this.offsetCampX, this.offsetCampY);
+         g2.scale(scaleFactor,scaleFactor);
+         // L'anti-aliasing
+         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         // draw the x and y axes in black and thick
+         g2.setColor(Color.BLACK);
+         g2.setStroke(new BasicStroke(2));
+        //g2.drawLine(0, 0, 1000, 0);
+        //g2.drawLine(0, 0, 0, 1000);
+        //System.out.println(camp.getCow().size());
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
         }
@@ -159,37 +169,55 @@ public class ViewPartie extends JPanel {
         // drawRect avec un trait bleu normal
 
         if (camp.getId() == camp_id) {
-            g2.setStroke(new BasicStroke(5));
-            g2.setColor(Color.BLACK);
+            g2.setStroke(new BasicStroke(20));
+            g2.setColor(Color.RED);
         } else {
             g2.setStroke(new BasicStroke(1));
             g2.setColor(Color.BLUE);
         }
+        //g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
         g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
-
-        drawWarriors(camp.getWarriors(), g2);
-        //drawSheap(camp.getSheap(), g2);
-        drawFarmers(camp.getFarmers(), g2);
+        g2.drawImage(img_camp, topLeftView.x ,  topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y, null);
         drawFields(camp.getFields(), g2);
+        drawWarriors(camp.getWarriors(), g2);
+        drawSheep(camp.getSheep(), g2);
+        drawFarmers(camp.getFarmers(), g2);
+        drawCow(camp.getCow(), g2);
+        drawWheats(camp.getWheats(), g2);
     }
 
-    private void drawSheap(ArrayList<Sheap> sheap, Graphics2D g2) {
-        for (Sheap l : sheap) {
+    private void drawSheep(ArrayList<Sheep> sheep, Graphics2D g2) {
+        for (Sheep l : sheep) {
                 g2.setColor(Color.YELLOW);
                 Point pointView = pointModelToView(l.getPosition());
-                int width = Position.WIDTH_SHEAP * RATIO_X;
-                int height = Position.HEIGHT_SHEAP * RATIO_Y;
-                g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+                int width = Position.WIDTH_SHEEP * RATIO_X;
+                int height = Position.HEIGHT_SHEEP * RATIO_Y;
+                //g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+                g2.drawImage(sheepAnim.anim, pointView.x - width + 10 , pointView.y - height  ,width+10, height+10, null);
+
 
         }
     }
 
+    private void drawCow(ArrayList<Cow> cow, Graphics2D g2) {
+        for (Cow l : cow) {
+            g2.setColor(Color.green);
+            Point pointView = pointModelToView(l.getPosition());
+            int width = Position.WIDTH_COW * RATIO_X;
+            int height = Position.HEIGHT_COW * RATIO_Y;
+            //g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+            g2.drawImage(cowAnim.anim, pointView.x - width + 10 , pointView.y - height - 20  ,width+20, height+20, null);
+
+
+        }
+    }
     public void drawWarrior(Warrior warrior, Graphics2D g2) {
         g2.setColor(Color.RED);
         Point pointView = pointModelToView(warrior.getPosition());
         int width = Position.WIDTH_VIKINGS * RATIO_X;
         int height = Position.HEIGHT_VIKINGS * RATIO_Y;
-        g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+        //g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+        g2.drawImage(vikingAnim.anim, pointView.x - width + 5, pointView.y - height , width*2, height*2, null);
 
 
     }
@@ -206,8 +234,8 @@ public class ViewPartie extends JPanel {
             Point pointView = pointModelToView(farmer.getPosition());
             int width = Position.WIDTH_VIKINGS * RATIO_X;
             int height = Position.HEIGHT_VIKINGS * RATIO_Y;
-            g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
-
+            //g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+            g2.drawImage(fermierAnim.anim, pointView.x - width + 5, pointView.y - height , width*2, height*2, null);
         }
     }
 
@@ -217,11 +245,25 @@ public class ViewPartie extends JPanel {
             Point pointView = pointModelToView(field.getPosition());
             int width = Position.WIDTH_FIELD * RATIO_X;
             int height = Position.HEIGHT_FIELD * RATIO_Y;
-            g2.drawRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+            //g2.drawRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+            g2.drawImage(img_field, pointView.x - width / 2, pointView.y - height / 2, width, height, null);
+
             if (field.isPlanted()) {
                 g2.drawString(field.getResource(), pointView.x - width / 2, pointView.y - height / 2);
 
             }
+        }
+    }
+
+
+    private void drawWheats(ArrayList<Wheat> wheat, Graphics2D g2) {
+        g2.setColor(Color.BLACK);
+        for (Wheat w : wheat) {
+            Point pointView = pointModelToView(w.getPosition());
+            int width = Position.WIDTH_WHEAT * RATIO_X;
+            int height = Position.HEIGHT_WHEAT * RATIO_Y;
+            //g2.drawRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+            g2.drawImage(bleAnim.anim, pointView.x - width / 2, pointView.y - height / 2, width, height, null);
         }
     }
 
@@ -253,27 +295,27 @@ public class ViewPartie extends JPanel {
         return new Point(totalOffsetX, totalOffsetY);
     }
 
-    public double getScaleFactor() {
+     public double getScaleFactor() {
         return scaleFactor;
     }
 
-    public int getOffsetCampX() {
+     public int getOffsetCampX() {
         return offsetCampX;
     }
 
-    public int getOffsetCampY() {
+     public int getOffsetCampY() {
         return offsetCampY;
     }
 
-    public int getCamp_id() {
+     public int getCamp_id() {
         return camp_id;
     }
 
-    public Partie getPartieModel() {
-        return partieModel;
-    }
+      public Partie getPartieModel() {
+         return partieModel;
+     }
 
-    public Camp getCamp() {
-        return camp;
-    }
-}
+      public Camp getCamp() {
+         return camp;
+     }
+  }

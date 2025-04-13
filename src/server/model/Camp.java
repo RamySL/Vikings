@@ -4,6 +4,7 @@ package server.model;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,7 +23,8 @@ public class Camp {
     private ArrayList<Field> fields;
     private ArrayList<Farmer> farmers;
     private float strength; // Force du camp
-    private ArrayList<Sheap> sheap;
+    private ArrayList<Sheep> sheep;
+    private ArrayList<Cow> cow;
     private ArrayList<Wheat> wheats;
     // map entre les camp attaqué par les vikings de ce camp et les vikings qui l'attaquent
     private HashMap<Integer, ArrayList<Warrior>> vikingsAttack = new HashMap<>();
@@ -39,7 +41,8 @@ public class Camp {
         vikings = new ArrayList<>();
         this.id = id;
         this.strength = 0;
-        sheap = new ArrayList<>();
+        sheep = new ArrayList<>();
+        cow = new ArrayList<>();
         wheats = new ArrayList<>();
         CampManager.addCamp(this);
         init();
@@ -73,12 +76,15 @@ public class Camp {
         vikings.add(f1);
         vikings.add(f2);
         ;
-        Sheap s1 = new Sheap(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6/*,this*/);
-        Sheap s2 = new Sheap(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5/*,this*/);
-        sheap.add(s1);
-        sheap.add(s2);
+        Sheep s1 = new Sheep(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6/*,this*/);
+        Sheep s2 = new Sheep(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5/*,this*/);
+        sheep.add(s1);
+        sheep.add(s2);
 
-
+        Cow c1 = new Cow(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 70), this.id, 6/*,this*/);
+        Cow c2 = new Cow(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 70), this.id, 5/*,this*/);
+        cow.add(c1);
+        cow.add(c2);
         // Ajout des cultures
         //Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
         Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70,topLeftCamp.y - 50), this.id, 0);
@@ -191,8 +197,8 @@ public class Camp {
     /**
      * Ajoute un animal d'élevage au camp.
      */
-    public void addSheap(Sheap l) {
-        sheap.add(l);
+    public void addSheep(Sheep l) {
+        sheep.add(l);
         System.out.println("Un nouvel animal a été ajouté au camp !");
     }
 
@@ -213,9 +219,9 @@ public class Camp {
     /**
      * Supprime un animal du camp.
      */
-    public void removeSheap(Sheap l) {
+    public void removeSheep(Sheep l) {
         // remove the sheap from the sheap list
-        sheap.remove(l);
+        sheep.remove(l);
     }
 
     /**
@@ -240,8 +246,8 @@ public class Camp {
     /**
      * Déplace le bétail de façon aléatoire.
      */
-    public void moveSheap() {
-        for (Sheap l : sheap) {
+    public void moveSheep() {
+        for (Sheep l : sheep) {
             l.move(new Point(l.getPosition().x + 5, l.getPosition().y));
         }
     }
@@ -249,8 +255,8 @@ public class Camp {
     /**
      * Retourne la liste des animaux du camp.
      */
-    public ArrayList<Sheap> getSheap() {
-        return sheap;
+    public ArrayList<Sheep> getSheep() {
+        return sheep;
     }
 
     /**
@@ -299,7 +305,7 @@ public class Camp {
         // return the list of warriors, sheap and wheats
         return "Camp{" +
                 /*"vikings=" + vikings +*/
-                ", sheap=" + sheap +
+                ", sheap=" + sheep +
                 ", wheats=" + wheats +
                 ", fields= " + fields +
                 ", strength=" + strength +
@@ -332,6 +338,10 @@ public class Camp {
 
     public String getUsername() {
         return username;
+    }
+
+    public ArrayList<Cow> getCow() {
+        return cow;
     }
 }
 

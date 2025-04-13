@@ -1,0 +1,9 @@
+il faut que les ressources soient stockées niveau enum
+Class Position à modifier pour avoir des variables pour les coordonnées de Wheat, Cow, Fermier, Cow
+Class camp à modifier pour rajouter Cow, Wheat, Farmer
+Mettre le blé sur le champ il y est pas la
+j'ai créé les packs d'animations ( image ) suivant :
+attaque anim ennemi et allies
+sheep and cow ( mais je peux encore rajouter des animations si besoin )
+j'ai crée les deplacements gauche droite
+un pack de couleur alliés et ennemi ( default et vert pour nous, rouge et bleu pour les entites fermier viking ennemy)
