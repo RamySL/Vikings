@@ -96,7 +96,7 @@ public class Farmer extends Viking {
     // String avec nom de la classe
     @Override
     public String toString() {
-        return "Farmer";
+        return "Farmer " + super.id;
     }
 
 

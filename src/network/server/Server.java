@@ -6,6 +6,7 @@ import network.packets.FormatPacket;
 import network.packets.PacketConnectedPlayers;
 import server.model.Camp;
 import server.model.Partie;
+import server.model.ThreadCollisionCamp;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -57,6 +58,7 @@ public class Server {
                clientSoket =  socket.accept();
                // On créer un camp pour le client connecté
                Camp camp = new Camp(nbJoueursConnectes);
+               new ThreadCollisionCamp(camp).start();
                camps[nbJoueursConnectes] = camp;
                nbJoueursConnectes++;
                threadCommunicationServer = new ThreadCommunicationServer(this, clientSoket, camp);

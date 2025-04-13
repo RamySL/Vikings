@@ -15,7 +15,7 @@ public class Wheat extends Vegetable {
     // String avec nom de la classe
     @Override
     public String toString() {
-        return "Wheat";
+        return "Wheat " + super.id;
     }
 }
 

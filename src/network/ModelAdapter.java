@@ -19,6 +19,7 @@ public class ModelAdapter {
         gsonBuilder.registerTypeAdapter(Entity.class, new EntityAdapter(gson));
         gsonBuilder.registerTypeAdapter(Viking.class, new VikingAdapter(gson));
         gsonBuilder.registerTypeAdapter(Livestock.class, new LivestockAdapter(gson));
+        gsonBuilder.registerTypeAdapter(Vegetable.class, new VegetableAdapter(gson));
 
         return gsonBuilder.create();
     }
@@ -133,6 +134,39 @@ class LivestockAdapter extends TypeAdapter<Livestock> {
                 return gson.fromJson(jsonObj, Sheep.class);
             case "cow":
                 return gson.fromJson(jsonObj, Cow.class);
+            default:
+                throw new JsonParseException("Unknown type: " + type);
+        }
+    }
+}
+
+// fait une class équivalente à EntityAdapter mais qui VegetableAdapter
+// sachant que les sous classes concrete sont Wheat
+
+class VegetableAdapter extends TypeAdapter<Vegetable> {
+    private Gson gson;
+
+    public VegetableAdapter(Gson gson) {
+        this.gson = gson;
+    }
+
+    @Override
+    public void write(JsonWriter out, Vegetable value) throws IOException {
+        JsonObject jsonObj = gson.toJsonTree(value).getAsJsonObject();
+        if (value instanceof Wheat) {
+            jsonObj.addProperty("type", "wheat");
+        }
+        gson.toJson(jsonObj, out);
+    }
+
+    @Override
+    public Vegetable read(JsonReader in) throws IOException {
+        JsonObject jsonObj = JsonParser.parseReader(in).getAsJsonObject();
+        String type = jsonObj.get("type").getAsString();
+
+        switch (type.toLowerCase()) {
+            case "wheat":
+                return gson.fromJson(jsonObj, Wheat.class);
             default:
                 throw new JsonParseException("Unknown type: " + type);
         }

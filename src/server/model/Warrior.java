@@ -56,7 +56,7 @@ public class Warrior extends Viking {
 
     @Override
     public String toString() {
-        return "Warrior";
+        return "Warrior " + super.id;
     }
 
 }

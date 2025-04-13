@@ -12,7 +12,7 @@ public class Sheep extends Livestock{
     // String avec nom de la classe
     @Override
     public String toString() {
-        return "Sheep";
+        return "Sheep " + super.id;
     }
 
 
