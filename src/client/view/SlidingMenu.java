@@ -173,6 +173,7 @@ public class SlidingMenu extends JPanel {
      */
     public void toggleHide(){
         targetX = windowWidth+widthMenu;
+        elseWhereClicked();
         isVisible =false;
         timer.start();
     }

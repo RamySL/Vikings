@@ -66,16 +66,18 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
             this.viewPartie.clickToView(clickView);
 
             Camp camp = this.determineSelectedCamp(clickView.x, clickView.y);
+            this.viewPartie.panelHide();
 
             if (camp != null) {
                 selectedCamp = camp;
+
                 // Check if the click is within the client's camp
                 if (camp.getId() == this.viewPartie.getCamp_id()) {
                     if (isFirstClickCamp) {
                         // First click: Select entity
                         Object o = determineSelectedEntity(clickView.x, clickView.y);
                         if (o == null) {
-                            this.viewPartie.panelHide();
+                            //this.viewPartie.panelHide();
                         } else {
                             // Ouverture panel
                             this.viewPartie.panelSetVisibility(true);
@@ -110,6 +112,7 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
 
                     } else {
                         // Second click: Send movement command
+
                         String content = gson.toJson(new PacketMovement(this.selectedEntityID, clickOriginal, totalOffset, scale));
                         this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PacketMovement", content));
 
