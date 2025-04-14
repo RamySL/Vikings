@@ -14,6 +14,8 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
     private ViewClient view;
     private Client client;
     public static  final Object lock = new Object();
+    private ControlerParty controlerParty;
+
 
     public ControlerClient(ViewClient view) {
         this.view = view;
@@ -21,12 +23,12 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
         this.view.getConnectButton().addActionListener(this);
     }
 
-    // ControlerClient.java
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.view.getConnectButton()) {
             this.client = new Client(this.view.getIp(), this.view.getPort(), this.view.getUsername());
             this.threadCommunicationClient = new ThreadCommunicationClient(client, this.view);
+            this.threadCommunicationClient.setControlerParty(controlerParty);
             this.threadCommunicationClient.start();
             synchronized (lock) {
                 try {
@@ -39,6 +41,9 @@ public class ControlerClient extends MouseAdapter implements ActionListener, Mou
         }
     }
 
+    public void setControlerParty(ControlerParty controlerParty) {
+        this.controlerParty = controlerParty;
+    }
 
     public ThreadCommunicationClient getThreadCommunicationClient() {
         return threadCommunicationClient;

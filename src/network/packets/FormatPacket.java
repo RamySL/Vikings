@@ -1,9 +1,9 @@
 package network.packets;
 
 /**
- * Met en forme de PacketWrapper un paquet pour l'envoyer au serveur.
- * exemple d'utilisation
- * FormatPacket.format("PacketOpenPanelControl", gson.toJson(new PacketOpenPanelControl())
+ * FormatPacket is a utility class that provides a method to format packets for network communication.
+ * It formats the packet as a JSON string with a specified type and content.
+ * This class is used to create packets that can be sent over the network.
  */
 public class FormatPacket {
     public static String format(String type, String content) {

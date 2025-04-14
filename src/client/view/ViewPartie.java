@@ -1,6 +1,7 @@
 package client.view;
 
 import server.model.*;
+import sharedGUIcomponents.ComposantsPerso.FontPerso;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,7 +60,10 @@ public class ViewPartie extends JPanel {
          this.setLayout(new BorderLayout());
          this.panneauControle.setOpaque(false);
          //this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
-         this.addComponentListener(new ComponentAdapter() {
+        this.setLayout(new BorderLayout());
+        this.panneauControle.setOpaque(false);
+        this.add(panneauControle, BorderLayout.CENTER);  // Ajouter PanneauControle au panneau principal
+        this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                  updatePanneauControlePosition();
@@ -68,7 +72,7 @@ public class ViewPartie extends JPanel {
 
      }
 
-     /**
+    /**
       * !! a lot of redundant calculations for the drawing !!
       * @param g the <code>Graphics</code> object to protect
       */
@@ -90,6 +94,8 @@ public class ViewPartie extends JPanel {
         for (Camp camp : partieModel.getCamps()) {
             drawCamp(camp, g2);
         }
+
+        g2.dispose();
     }
 
     private void updatePanneauControlePosition() {
@@ -98,10 +104,6 @@ public class ViewPartie extends JPanel {
         int height = getHeight();  // Hauteur de la fenêtre
         panneauControle.updatePosition(width, height);
 
-    }
-    // Méthode pour obtenir PanneauControle
-    public PanneauControle getPanneauControle() {
-        return panneauControle;
     }
 
     /**
@@ -178,11 +180,12 @@ public class ViewPartie extends JPanel {
         //g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
         g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
         g2.drawImage(img_camp, topLeftView.x ,  topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y, null);
+
         drawFields(camp.getFields(), g2);
         drawWarriors(camp.getWarriors(), g2);
-        drawSheep(camp.getSheep(), g2);
+        drawSheep(camp.getSheeps(), g2);
         drawFarmers(camp.getFarmers(), g2);
-        drawCow(camp.getCow(), g2);
+        drawCow(camp.getCows(), g2);
         drawWheats(camp.getWheats(), g2);
     }
 
@@ -192,7 +195,7 @@ public class ViewPartie extends JPanel {
                 Point pointView = pointModelToView(l.getPosition());
                 int width = Position.WIDTH_SHEEP * RATIO_X;
                 int height = Position.HEIGHT_SHEEP * RATIO_Y;
-                //g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
+
                 g2.drawImage(sheepAnim.anim, pointView.x - width + 10 , pointView.y - height  ,width+10, height+10, null);
 
 
@@ -295,7 +298,37 @@ public class ViewPartie extends JPanel {
         return new Point(totalOffsetX, totalOffsetY);
     }
 
-     public double getScaleFactor() {
+    public void panelHide(){
+        this.panneauControle.elseWhereClicked();
+    }
+
+    public void panelSetFarmerOnField(boolean isFarmerOnField, int idFarmer, int idField, boolean isFieldPlanted) {
+        this.panneauControle.setFarmerOnField(isFarmerOnField, idFarmer, idField, isFieldPlanted);
+    }
+
+    // setFarmerNearSheep(true, idFarmer, idSheep);
+    public void panelSetVikingNearSheep(boolean isVikingNearSheep, int idViking, int idSheep) {
+        this.panneauControle.setVikingNearSheep(isVikingNearSheep, idViking, idSheep);
+    }
+
+    public void panelSetVisibility(boolean isVisible) {
+        this.panneauControle.setVisibility(isVisible);
+    }
+
+
+    public void panelShowInfos(String entityType, float health) {
+        this.panneauControle.showInfos(entityType, health);
+    }
+
+    public void panelShowInfos(String entityType, String ressource) {
+        this.panneauControle.showInfos(entityType, ressource);
+    }
+
+    public void panelShowInfos(String entityType) {
+        this.panneauControle.showInfos(entityType);
+    }
+
+    public double getScaleFactor() {
         return scaleFactor;
     }
 
@@ -318,4 +351,9 @@ public class ViewPartie extends JPanel {
       public Camp getCamp() {
          return camp;
      }
-  }
+
+    public SlidingMenu getSlidingMenu() {
+        return this.panneauControle.getSlidingMenu();
+    }
+}
+

@@ -1,7 +1,7 @@
 package network.server;
 
 import com.google.gson.Gson;
-import network.VikingAdapter;
+import network.ModelAdapter;
 import network.packets.FormatPacket;
 import network.packets.PacketConnectedPlayers;
 import server.model.Camp;
@@ -21,7 +21,7 @@ public class Server {
     private ArrayList<ThreadCommunicationServer> clients;
     private int nbJoueurs;
     private Partie partie;
-    private Gson gson = VikingAdapter.getGson();
+    private Gson gson = ModelAdapter.getGson();
     private server.view.Server serverView;
 
     /**

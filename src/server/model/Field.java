@@ -46,6 +46,7 @@ public class Field {
             String harvestedResource = this.resource;
             this.resource = "";
             this.isPlanted = false;
+            System.out.println("ressource " + harvestedResource + " récoltée");
             return harvestedResource;
         }
         return null;
@@ -56,6 +57,12 @@ public class Field {
     }
     public void setId(int id) {
         this.id = id;
+    }
+
+    // String avec nom de la classe
+    @Override
+    public String toString() {
+        return "Field";
     }
 
 

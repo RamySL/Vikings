@@ -4,8 +4,8 @@ import javax.swing.text.Position;
 import java.awt.*;
 
 public interface Moveable {
-
-    public void move(Point destination);
-    public Point getPosition();
+     void move(Point destination);
+     void stop();
+     Point getPosition();
 
 }

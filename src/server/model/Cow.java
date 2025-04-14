@@ -9,6 +9,11 @@ public class Cow extends Livestock{
         super(health, position, campId, age);
     }
 
+    @Override
+    public String toString() {
+        return "Cow";
+    }
+
 
   
 

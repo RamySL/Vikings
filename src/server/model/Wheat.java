@@ -11,5 +11,11 @@ public class Wheat extends Vegetable {
         super(health, position, camp, 5); // 5 = maxGrowthStage
         this.growthStage = growthStage;
     }
+
+    // String avec nom de la classe
+    @Override
+    public String toString() {
+        return "Wheat";
+    }
 }
 

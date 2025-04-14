@@ -18,14 +18,19 @@ import java.util.List;
 public class Camp {
     //public static int lastId = 0;
     private final int id;
-    private ArrayList<Viking> vikings;
-    private ArrayList<Warrior> warriors;
-    private ArrayList<Field> fields;
-    private ArrayList<Farmer> farmers;
     private float strength; // Force du camp
-    private ArrayList<Sheep> sheep;
-    private ArrayList<Cow> cow;
-    private ArrayList<Wheat> wheats;
+
+    private ArrayList<Entity> entities = new ArrayList<>();
+    private ArrayList<Warrior> warriors = new ArrayList<>();
+    private ArrayList<Viking> vikings = new ArrayList<>();
+    private ArrayList<Farmer> farmers = new ArrayList<>();
+    private ArrayList<Field> fields = new ArrayList<>();
+    private ArrayList<Livestock> livestocks = new ArrayList<>();
+    private ArrayList<Sheep> sheeps = new ArrayList<>();
+    private ArrayList<Cow> cows = new ArrayList<>();
+    private ArrayList<Vegetable> vegetables = new ArrayList<>();
+    private ArrayList<Wheat> wheats = new ArrayList<>();
+
     // map entre les camp attaqué par les vikings de ce camp et les vikings qui l'attaquent
     private HashMap<Integer, ArrayList<Warrior>> vikingsAttack = new HashMap<>();
     private ArrayList<Warrior> warriorsInCamp = new ArrayList<>();
@@ -34,16 +39,8 @@ public class Camp {
 
     // Constructeur
     public Camp(int id) {
-        // initialize the instance variables
-        warriors = new ArrayList<>();
-        fields = new ArrayList<>();
-        farmers = new ArrayList<>();
-        vikings = new ArrayList<>();
         this.id = id;
         this.strength = 0;
-        sheep = new ArrayList<>();
-        cow = new ArrayList<>();
-        wheats = new ArrayList<>();
         CampManager.addCamp(this);
         init();
 
@@ -55,11 +52,11 @@ public class Camp {
     public void init() {
         // Ajout des guerriers
         Point topLeftCamp =  Position.MAP_CAMPS_POSITION.get(this.id);
-        Warrior v1 = new Warrior(100,new Point(topLeftCamp.x + 10,topLeftCamp.y - 10), this.id/*,this*/);
-        Warrior v2 = new Warrior(100,new Point(topLeftCamp.x + 30,topLeftCamp.y - 10), this.id/*,this*/);
+        Warrior v1 = new Warrior(50,new Point(topLeftCamp.x + 10,topLeftCamp.y - 10), this.id);
+        Warrior v2 = new Warrior(50,new Point(topLeftCamp.x + 30,topLeftCamp.y - 10), this.id);
 
-        Farmer f1 = new Farmer(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 30), this.id/*,this*/);
-        Farmer f2 = new Farmer(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 30), this.id/*,this*/);
+        Farmer f1 = new Farmer(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 30), this.id);
+        Farmer f2 = new Farmer(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 30), this.id);
 
         warriors.add(v1);
         warriors.add(v2);
@@ -75,16 +72,17 @@ public class Camp {
 
         vikings.add(f1);
         vikings.add(f2);
-        ;
-        Sheep s1 = new Sheep(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6/*,this*/);
-        Sheep s2 = new Sheep(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5/*,this*/);
-        sheep.add(s1);
-        sheep.add(s2);
+
+        Sheep s1 = new Sheep(20, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6);
+        Sheep s2 = new Sheep(20, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5);
+        sheeps.add(s1);
+        sheeps.add(s2);
+
 
         Cow c1 = new Cow(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 70), this.id, 6/*,this*/);
         Cow c2 = new Cow(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 70), this.id, 5/*,this*/);
-        cow.add(c1);
-        cow.add(c2);
+        cows.add(c1);
+        cows.add(c2);
         // Ajout des cultures
         //Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
         Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70,topLeftCamp.y - 50), this.id, 0);
@@ -94,6 +92,16 @@ public class Camp {
         Field fi2 = new Field(new Point(topLeftCamp.x + 50,topLeftCamp.y - 100), this.id);
         fields.add(fi1);
         fields.add(fi2);
+
+        // ajoute tout les objet de camp créer dans entities
+        entities = new ArrayList<>();
+        entities.addAll(warriors);
+        entities.addAll(farmers);
+        entities.addAll(sheeps);
+        entities.addAll(wheats);
+
+        livestocks.addAll(sheeps);
+        livestocks.addAll(cows);
 
         this.setEntitiesId();
 
@@ -110,6 +118,11 @@ public class Camp {
         }
         for (Field field : fields) {
             field.setId(id * 10 + i);
+            i++;
+        }
+
+        for (Livestock livestock : livestocks) {
+            livestock.setId(id * 10 + i);
             i++;
         }
 
@@ -146,15 +159,6 @@ public class Camp {
         return positions;
     }
 
-    public Field getFieldById(int fieldId) {
-        for (Field field : fields) {
-            if (field.getId() == fieldId) {
-                return field;
-            }
-        }
-        return null;
-    }
-
     /*public List<Field> getFields() {
         return fields;
     }*/
@@ -165,6 +169,13 @@ public class Camp {
     public void increaseStrength(float amount) {
         this.strength += amount;
         System.out.println("Force du camp augmentée ! Nouvelle force : " + strength);
+    }
+
+    public void vikingEats(Livestock animal) {
+        // remove the livestock from the camp
+        this.removeLiveStock(animal);
+        // increase the strength of the camp
+        this.increaseStrength(animal.getHealth() * Viking.getCoeffStrength());
     }
 
     /**
@@ -198,7 +209,7 @@ public class Camp {
      * Ajoute un animal d'élevage au camp.
      */
     public void addSheep(Sheep l) {
-        sheep.add(l);
+        sheeps.add(l);
         System.out.println("Un nouvel animal a été ajouté au camp !");
     }
 
@@ -219,9 +230,10 @@ public class Camp {
     /**
      * Supprime un animal du camp.
      */
-    public void removeSheep(Sheep l) {
-        // remove the sheap from the sheap list
-        sheep.remove(l);
+
+    public void removeLiveStock(Livestock l) {
+        // remove the sheep from the sheep list
+        sheeps.remove(l);
     }
 
     /**
@@ -243,20 +255,8 @@ public class Camp {
         }
     }
 
-    /**
-     * Déplace le bétail de façon aléatoire.
-     */
-    public void moveSheep() {
-        for (Sheep l : sheep) {
-            l.move(new Point(l.getPosition().x + 5, l.getPosition().y));
-        }
-    }
-
-    /**
-     * Retourne la liste des animaux du camp.
-     */
-    public ArrayList<Sheep> getSheep() {
-        return sheep;
+    public ArrayList<Sheep> getSheeps() {
+        return sheeps;
     }
 
     /**
@@ -302,10 +302,10 @@ public class Camp {
     // declare the toString method
     @Override
     public String toString() {
-        // return the list of warriors, sheap and wheats
+        // return the list of warriors, sheep and wheats
         return "Camp{" +
                 /*"vikings=" + vikings +*/
-                ", sheap=" + sheep +
+                ", sheep=" + sheeps +
                 ", wheats=" + wheats +
                 ", fields= " + fields +
                 ", strength=" + strength +
@@ -332,6 +332,48 @@ public class Camp {
         return null;
     }
 
+    public Field getFieldByID(int id){
+        System.out.println("getFieldByID: " + id);
+        for (Field field : fields) {
+            System.out.println("field id: " + field.getId());
+            if (field.getId() == id) {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    public Livestock getLivestockByID(int id){
+        for (Livestock livestock : livestocks) {
+            if (livestock.getId() == id) {
+                return livestock;
+            }
+        }
+        return null;
+    }
+
+    public Vegetable getVegetableByID(int id){
+        for (Vegetable vegetable : vegetables) {
+            if (vegetable.getId() == id) {
+                return vegetable;
+            }
+        }
+        return null;
+    }
+
+    public Entity getEntityByID(int id){
+        for (Entity entity : entities) {
+            if (entity.getId() == id) {
+                return entity;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Entity> getEntities() {
+        return entities;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -340,8 +382,13 @@ public class Camp {
         return username;
     }
 
-    public ArrayList<Cow> getCow() {
-        return cow;
+    public ArrayList<Cow> getCows() {
+        return cows;
+    }
+
+
+    public ArrayList<Livestock> getLivestocks() {
+        return livestocks;
     }
 }
 

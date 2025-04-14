@@ -3,47 +3,49 @@ package network.packets;
 import com.google.gson.Gson;
 import network.client.Client;
 
+/**
+ * PaquetPlant is a class that represents a packet used to send planting information in the game.
+ * It contains information about the resource being planted, the coordinates of the farmer, and the coordinates of the field.
+ * This class is used to send planting information from the client to the server.
+ */
 public class PaquetPlant {
     private String resource;
-    private int farmerX, farmerY, fieldX, fieldY;
+    private int idFarmer;
+    private int idField;
 
-    // Updated constructor to accept communicationServer
-    public PaquetPlant(String resource, int farmerX, int farmerY, int fieldX, int fieldY) {
+    /**
+     * Constructor for the PaquetPlant class.
+     * @param resource The resource being planted.
+     * @param idFarmer The ID of the viking.
+     * @param idField The ID of the field.
+     */
+    public PaquetPlant(String resource, int idFarmer, int idField) {
         this.resource = resource;
-        this.farmerX=farmerX;
-        this.farmerY=farmerY;
-        this.fieldX=fieldX;
-        this.fieldY=fieldY;
+        this.idFarmer = idFarmer;
+        this.idField = idField;
     }
 
+    /**
+     * Getter for the resource being planted.
+     * @return The resource being planted.
+     */
     public String getResource() {
         return resource;
     }
-    public int getFarmerX() {
-        return farmerX;
+
+    /**
+     * Getter for the ID of the viking.
+     * @return The ID of the viking.
+     */
+    public int getIdFarmer() {
+        return idFarmer;
     }
 
-    public int getFarmerY() {
-        return farmerY;
-    }
-
-    public int getFieldX() {
-        return fieldX;
-    }
-
-    public int getFieldY() {
-        return fieldY;
-    }
-
-
-
-    public void sendPlantPacketToServer(Client client) {
-        System.out.println("heyyyyyyyyyy");
-        PacketWrapper packetWrapper = new PacketWrapper();
-        packetWrapper.type = "PaquetPlant";
-        packetWrapper.content = new Gson().toJsonTree(this);
-
-        String jsonPacket = new Gson().toJson(packetWrapper);
-
+    /**
+     * Getter for the ID of the field.
+     * @return The ID of the field.
+     */
+    public int getIdField() {
+        return idField;
     }
 }

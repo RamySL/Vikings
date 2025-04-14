@@ -1,6 +1,7 @@
 ### src ##
 src/experiments
 
+src/*.txt
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/

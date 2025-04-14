@@ -1,86 +1,131 @@
 package client.view;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import client.controler.event.PlantEvent;
-import client.controler.event.PlantListener;
+import client.controler.event.*;
 import server.model.*;
-import client.controler.event.EventBus;
+import sharedGUIcomponents.ComposantsPerso.BarreDeVie;
+import sharedGUIcomponents.ComposantsPerso.Buttons;
 
 public class SlidingMenu extends JPanel {
     private Timer timer;
     private int targetX;
-    private boolean isFarmerOnField;
+    private boolean isFarmerOnField, isVikingNearSheep;
     private boolean isFieldPlanted;
     private boolean isVisible;
-    private JButton plantButton;
+    private Buttons.BouttonJeu plantButton, harvestButton, eatButton, exitMenu;
     private JComboBox<String> plantComboBox;
-    private int farmerX, farmerY, fieldX, fieldY;
+    private JLabel entityLabel, ressourceLabel;
+
+    private int idField, idViking;
+    private int idAnimal;
     int posMenuY, widthMenu, windowWidth, windowHeight;
+    private BarreDeVie healthBar;
     private List<PlantListener> plantListeners = new ArrayList<>();
 
     public SlidingMenu(int x, int y, int width, int height) {
-        this.posMenuY=y;
-        this.widthMenu=width;
-        this.windowWidth=x;
-        this.windowHeight=height;
-        setLayout(null);
+        this.posMenuY = y;
+        this.widthMenu = width;
+        this.windowWidth = x;
+        this.windowHeight = height;
+
+
+        setLayout(new GridBagLayout());
         setBackground(Color.LIGHT_GRAY);
-        setBounds(windowWidth+widthMenu, posMenuY, widthMenu, windowHeight); // Initial position outside the view
+        setBorder(new EmptyBorder(30, 0, 30, 0));
+        setBounds(windowWidth + widthMenu, posMenuY, widthMenu, windowHeight);
 
-        plantButton = new JButton("Plant");
-        plantButton.setBounds(50, 50, 100, 40);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(20, 10, 20, 10); // marges
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.CENTER;
+        gbc.weightx = 1.0;
+
+        entityLabel = new JLabel();
+        entityLabel.setVisible(false);
+        entityLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        gbc.gridy = 0;
+        add(entityLabel, gbc);
+
+        gbc.fill = GridBagConstraints.BOTH;
+
+        gbc.weighty = 1.0;
+        healthBar = new BarreDeVie(10);
+        healthBar.setVisible(false);
+        gbc.gridy++;
+        add(healthBar, gbc);
+
+        gbc.weighty = 0.0;
+        ressourceLabel = new JLabel();
+        ressourceLabel.setVisible(false);
+        ressourceLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        gbc.gridy++;
+        add(ressourceLabel, gbc);
+
+        plantButton = new Buttons.BouttonJeu("Plant");
         plantButton.setVisible(false);
-        add(plantButton);
+        gbc.gridy++;
+        add(plantButton, gbc);
 
-        String[] vegetals = {"Wheat", "Corn", "Mais"};
-        plantComboBox = new JComboBox<>(vegetals);
-        plantComboBox.setBounds(50, 100, 100, 40);
+        plantComboBox = new JComboBox<>(new String[]{"Wheat", "Corn", "Mais"});
         plantComboBox.setVisible(false);
-        add(plantComboBox);
-        // Initialiser le JComboBox avec des végétaux à planter
+        gbc.gridy++;
+        add(plantComboBox, gbc);
 
-        // Action du bouton "Planter"
+        harvestButton = new Buttons.BouttonJeu("Harvest");
+        harvestButton.setVisible(false);
+        gbc.gridy++;
+        add(harvestButton, gbc);
+
+        eatButton = new Buttons.BouttonJeu("Eat");
+        eatButton.setVisible(false);
+        gbc.gridy++;
+        add(eatButton, gbc);
+
+        exitMenu = new Buttons.BouttonJeu("Exit");
+        exitMenu.setVisible(false);
+        gbc.gridy++;
+        add(exitMenu, gbc);
+
         plantButton.addActionListener(e -> {
-            plantButton.setVisible(false);  // Cacher le bouton lorsque "Planter" est cliqué
-            plantComboBox.setVisible(true);  // Afficher le JComboBox pour choisir un végétal
-            System.out.println("Le choix du végétal est maintenant visible");
+            plantButton.setVisible(false);
+            plantComboBox.setVisible(true);
         });
-        // Ajouter un ActionListener au JComboBox pour récupérer la sélection
+
+        harvestButton.addActionListener(e -> {
+            harvestButton.setVisible(false);
+            handleHarvestButtonClicked();
+        });
+
+        eatButton.addActionListener(e -> {
+            eatButton.setVisible(false);
+            handleEatButtonClicked();
+        });
+
         plantComboBox.addActionListener(e -> {
-            if (e.getSource() == plantComboBox) {
-                String selectedVegetal = (String) plantComboBox.getSelectedItem(); // Récupérer le végétal choisi
-                System.out.println("Végétal choisi: " + selectedVegetal);
-
-                // Appeler la méthode pour traiter la sélection
-                handleComboBoxSelection(selectedVegetal);
-
-                // Cacher le JComboBox après sélection
-                plantComboBox.setVisible(false);
-                System.out.println("Le JComboBox a été caché après la sélection");
-            }
+            String selectedVegetal = (String) plantComboBox.getSelectedItem();
+            handleComboBoxSelection(selectedVegetal);
+            plantComboBox.setVisible(false);
         });
-
 
         timer = new Timer(1, e -> slide());
     }
 
-   public void updatePosition(int windowWidth, int windowHeight) {
-       this.windowWidth = windowWidth;
-       this.windowHeight = windowHeight;
-       // On met à jour les positions x et y
-       this.setBounds(windowWidth  , this.posMenuY, this.widthMenu, windowHeight);  // Position X = largeur de la fenêtre - largeur du menu
-   }
+    public void updatePosition(int windowWidth, int windowHeight) {
+        this.windowWidth = windowWidth;
+        this.windowHeight = windowHeight;
+        this.setBounds(windowWidth + this.widthMenu, this.posMenuY, this.widthMenu, windowHeight);
+    }
 
-
-    public void toggle() {
-        if (isVisible) {
-            targetX = windowWidth+widthMenu;
-        } else {
+    public void toggle(boolean visible) {
+        if (isVisible && !visible) {
+            targetX = windowWidth + widthMenu;
+        } else if (!isVisible && visible) {
             targetX = windowWidth;
         }
         isVisible = !isVisible;
@@ -92,62 +137,123 @@ public class SlidingMenu extends JPanel {
         if (currentX != targetX) {
             int step = (targetX - currentX) / 10;
             setLocation(currentX + step, getY());
-            revalidate();
-            repaint();
         } else {
             timer.stop();
         }
     }
-    public void toggleVisible(){
+
+    public void toggleVisible() {
         targetX = windowWidth;
-        isVisible =true;
-        timer.start();
-    }
-    public void toggleHide(){
-        targetX = windowWidth+widthMenu;
-        isVisible =false;
+        isVisible = true;
+        exitMenu.setVisible(true);
         timer.start();
     }
 
-    public void updatePlantButtonVisibility(boolean isFarmerOnField, int farmerX, int farmerY, int fieldX, int fieldY, boolean isFieldPlanted) {
+    public void toggleHide() {
+        targetX = windowWidth + widthMenu;
+        isVisible = false;
+        timer.start();
+    }
+
+    public void updateButtonVisibility(boolean isFarmerOnField, int idFarmer, int idField, boolean isFieldPlanted) {
+        this.idViking = idFarmer;
+        this.idField = idField;
+        this.isFieldPlanted = isFieldPlanted;
         this.isFarmerOnField = isFarmerOnField;
-        this.farmerX = farmerX;
-        this.farmerY = farmerY;
-        this.fieldX = fieldX;
-        this.fieldY = fieldY;
 
-        // If the farmer is on a field, the button becomes visible
         if (isFarmerOnField) {
             if (!isFieldPlanted) {
-                plantButton.setVisible(true);
-                //System.out.println("Plant button visible at farmer position (" + farmerX + ", " + farmerY + ") and field position (" + fieldX + ", " + fieldY + ")");
-            }} else {
+                harvestButton.setVisible(false);
+                if (!plantComboBox.isVisible()) {
+                    plantButton.setVisible(true);
+                }
+            } else {
+                plantButton.setVisible(false);
+                harvestButton.setVisible(true);
+            }
+        } else {
             plantButton.setVisible(false);
-            //System.out.println("Plant button hidden");
+            harvestButton.setVisible(false);
         }
     }
+    public void updateButtonVisibility(boolean isVikingNearSheep, int idViking, int idSheep) {
+        this.isVikingNearSheep = isVikingNearSheep;
+        this.idViking = idViking;
+        this.idAnimal = idSheep;
+
+        eatButton.setVisible(isVikingNearSheep);
+    }
+
     public void elseWhereClicked() {
         plantComboBox.setVisible(false);
         plantButton.setVisible(false);
+        eatButton.setVisible(false);
+        harvestButton.setVisible(false);
+        exitMenu.setVisible(false);
     }
+
     public void setFarmerOnField(boolean isFarmerOnField, Farmer farmer, Field field) {
         this.isFarmerOnField = isFarmerOnField;
         refreshVisibility();
     }
+
     public void refreshVisibility() {
         plantButton.setVisible(isFarmerOnField);
     }
-
 
     public void addPlantListener(PlantListener listener) {
         plantListeners.add(listener);
     }
 
+    /**
+     * Handles the selection of a resource from the combo box.
+     * It creates a PlantEvent with the selected resource and publishes it to the EventBus.
+     *
+     * @param selectedResource The selected resource from the combo box.
+     */
    private void handleComboBoxSelection(String selectedResource) {
-       //System.out.println("Selected resource: " + selectedResource);
 
        // Créer et publier l'événement
-       PlantEvent event = new PlantEvent(selectedResource, this.farmerX, this.farmerY, this.fieldX, this.fieldY);
+       PlantEvent event = new PlantEvent(selectedResource, this.idViking, this.idField);
        EventBus.getInstance().publish("PlantEvent", event);
    }
+
+   private void handleEatButtonClicked() {
+       // Créer et publier l'événement
+       EatEvent event = new EatEvent(this.idViking, this.idAnimal);
+       EventBus.getInstance().publish("EatEvent", event);
+    }
+
+    private void handleHarvestButtonClicked() {
+        HarvestEvent event = new HarvestEvent(this.idViking, this.idField);
+
+    }
+    public void showInfos(String entity, float health) {
+        showInfos(entity);
+        healthBar.setVieMax(100);
+        healthBar.setVie((int) health);
+        healthBar.setVisible(true);
+    }
+
+    public void showInfos(String entity) {
+        entityLabel.setText(entity);
+        entityLabel.setVisible(true);
+        exitMenu.setVisible(true);
+    }
+
+    public void showInfos(String entity, String ressource) {
+        showInfos(entity);
+        ressourceLabel.setText("Ressource: " + ressource);
+        ressourceLabel.setVisible(true);
+    }
+
+    public void hideInfos() {
+        if (healthBar != null) healthBar.setVisible(false);
+        if (entityLabel != null) entityLabel.setVisible(false);
+        if (ressourceLabel != null) ressourceLabel.setVisible(false);
+    }
+
+    public Buttons.BouttonJeu getExitMenu() {
+        return exitMenu;
+    }
 }

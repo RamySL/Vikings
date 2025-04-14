@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class Position {
     // See the doc
-    public static final int MARGIN = 50;
+    public static final int MARGIN = 100    ;
     // width of a camp
     public static final int WIDTH = 250;
     // height of a camp
@@ -21,6 +21,11 @@ public class Position {
     public static final int WIDTH_SHEEP = 10, HEIGHT_SHEEP = 10;
     public static final int WIDTH_FIELD = 30, HEIGHT_FIELD = 30;
     public static final int WIDTH_COW = 10, HEIGHT_COW = 10;
+    // distance tolerance for the farmer to be considered on the field
+    public static final int DISTANCE_TOLERANCE_FIELD = WIDTH_FIELD/2;
+    // distance tolerance for the viking to be considered near a sheep
+    public static final int DISTANCE_TOLERANCE_SHEEP = WIDTH_SHEEP/2 + WIDTH_VIKINGS/2 + 2;
+
     // map betwwen camp id and the coordinates of the top left corner of the camp
     public static final HashMap<Integer, Point> MAP_CAMPS_POSITION = new HashMap<Integer, Point>(){
         {

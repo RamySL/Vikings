@@ -22,11 +22,14 @@ public class ThreadCommunicationServer extends Thread{
     private PrintWriter out;
     private BufferedReader in;
     private Camp camp;
-    private Farmer farmerSelected;
+    private Viking vikingSelected;
     private Field fieldSelected;
+    private Livestock livestockSelected;
     private Gson gson = new Gson();
+    private MovementThread currentMovementThread;
     // username concat avec IP
     private String usernameIP;
+
 
     public ThreadCommunicationServer(Server server, Socket client, Camp camp) {
         this.camp=camp;
@@ -72,6 +75,7 @@ public class ThreadCommunicationServer extends Thread{
      */
 
     public void reactMessage(String message) {
+        System.out.println("Je vais traiter un message du camp : " + camp.getId() );
         PacketWrapper wrapper = gson.fromJson(message, PacketWrapper.class);
         if (wrapper.type == null || wrapper.content == null) {
             System.out.println("Invalid message format");
@@ -91,19 +95,27 @@ public class ThreadCommunicationServer extends Thread{
             case "PaquetPlant":
                 PaquetPlant paquetPlant = gson.fromJson(wrapper.content, PaquetPlant.class);
                 String ressource= paquetPlant.getResource();
-                int farmerX = paquetPlant.getFarmerX();
-                int farmerY = paquetPlant.getFarmerY();
-                int fieldX = paquetPlant.getFieldX();
-                int fieldY = paquetPlant.getFieldY();
-
-                System.out.println("Received PaquetPlant with coordinates: Farmer(" + farmerX + ", " + farmerY + "), Field(" + fieldX + ", " + fieldY + ")");
-                farmerSelected=DetermineSelectedFarmer(farmerX, farmerY);
-                fieldSelected=DetermineSelectedField(fieldX, fieldY);
+                // il ne sert à rien pour l'instant le farmer qui plante dans la méthode plant
+                //vikingSelected = this.camp.getVikingByID(paquetPlant.getIdFarmer());
+                fieldSelected= this.camp.getFieldByID(paquetPlant.getIdField());
                 fieldSelected.plant(ressource);
+                break;
+            case "PaquetEat" :
+                PaquetEat paquetEat = gson.fromJson(wrapper.content, PaquetEat.class);
+                vikingSelected = this.camp.getVikingByID(paquetEat.getIdViking());
+                livestockSelected = this.camp.getLivestockByID(paquetEat.getIdAnimal());
+                vikingSelected.eat(livestockSelected, camp);
+                break;
+            case "PaquetHarvest" :
+                PaquetHarvest paquetHarvest = gson.fromJson(wrapper.content, PaquetHarvest.class);
+                vikingSelected = this.camp.getVikingByID(paquetHarvest.getIdFarmer());
+                fieldSelected = this.camp.getFieldByID(paquetHarvest.getIdField());
+                fieldSelected.harvest();
                 break;
             case "PacketMovement":
                 PacketMovement packetMovement = gson.fromJson(wrapper.content, PacketMovement.class);
                 Viking v = this.camp.getVikingByID(packetMovement.getId());
+                v.stop();
                 v.move(Position.viewToModel(packetMovement.getDst(),packetMovement.getTranslation(),packetMovement.getScale()));
                 break;
             case "PacketAttack":
@@ -116,47 +128,19 @@ public class ThreadCommunicationServer extends Thread{
                     return;
                 }else{
                     Camp enemy = this.server.getPartie().getCamp(packetAttack.getIdCamp());
-                    Point[] dsts =  Arrays.stream(packetAttack.getIdRessources()).mapToObj(id -> enemy.getFieldById(id).getPosition())
+                    Point[] dsts =  Arrays.stream(packetAttack.getIdRessources()).mapToObj(id -> enemy.getFieldByID(id).getPosition())
                             .toArray(Point[]::new);
                     for (int i = 0; i<NbVikings.length; i++){
                         camp.attack(NbVikings[i], enemy.getId(), dsts[i]);
                     }
                 }
-
-
                 // position
-
-                Point campToAtt =  this.server.getPartie().getCamp(packetAttack.getIdCamp()).getPosition();
+                //Point campToAtt =  this.server.getPartie().getCamp(packetAttack.getIdCamp()).getPosition();
                 break;
         }
     }
 
 
-    /**
-     * takes model coordinates and returns the farmer that is at that position
-     * @param x
-     * @param y
-     * @return
-     */
-    public Farmer DetermineSelectedFarmer(int x, int y) {
-        for (Farmer farmer : this.camp.getFarmers()) {
-            Point topLeft = new Point(farmer.getPosition().x - Position.WIDTH_VIKINGS/2, farmer.getPosition().y+Position.HEIGHT_VIKINGS/2);
-            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_VIKINGS && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_VIKINGS) {
-                return farmer;
-            }
-        }
-        return null;
-    }
-
-    public Field DetermineSelectedField(int x, int y){
-        for (Field field : this.camp.getFields()) {
-            Point topLeft = new Point(field.getPosition().x - Position.WIDTH_FIELD/2, field.getPosition().y+Position.HEIGHT_FIELD/2);
-            if (x>=topLeft.x && x<=topLeft.x+Position.WIDTH_FIELD && y<=topLeft.y && y>=topLeft.y-Position.HEIGHT_FIELD) {
-                return field;
-            }
-        }
-        return null;
-    }
     /**
      * Recoit un message du client, en lisant sur le flux d'entrée de la socket.<p>
      * Cette méthode est bloquante.

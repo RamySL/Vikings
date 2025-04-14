@@ -1,13 +1,12 @@
 package server.model;
 
-import javax.swing.text.Position;
 import java.awt.*;
 
 
 public abstract class Viking extends Entity implements Moveable {
 
-    protected Camp camp; // Référence au camp
     protected static float coeffStrength = 1.0f; // Coefficient appliqué à tous les Vikings
+    protected transient MovementThread currentMovementThread = null; // Thread de mouvement actuel
 
     public Viking(float health, Point position, int campId) {
         super(health, position, campId);
@@ -15,7 +14,15 @@ public abstract class Viking extends Entity implements Moveable {
 
     @Override
     public void move(Point destination) {
-        new MovementThread(this, destination).start();
+        currentMovementThread =  new MovementThread(this, destination);
+        currentMovementThread.start();
+    }
+
+    @Override
+    public void stop() {
+        if (currentMovementThread != null) {
+            currentMovementThread.stopMovement();
+        }
     }
 
     /**
@@ -23,16 +30,11 @@ public abstract class Viking extends Entity implements Moveable {
      * La vérification de proximité est gérée par un thread extérieur.
      * La force gagnée est égale à la santé de l'animal multipliée par le coeffStrength global des Vikings.
      */
-    public void eat(Sheep animal) {
-        System.out.println("Le Viking mange un mouton !");
 
+    public void eat(Livestock animal, Camp camp) {
         // Calcul de la force gagnée (santé * coeffStrength partagé par tous les Vikings)
         float strengthGained = animal.getHealth() * coeffStrength;
-        camp.increaseStrength(strengthGained);
-
-        // Supprime l'animal du camp
-        camp.removeSheep(animal);
-
+        camp.vikingEats(animal);
         System.out.println("Force du camp augmentée de " + strengthGained);
     }
 

@@ -1,35 +1,36 @@
 package network.packets;
 
+/**
+ * FarmerFieldWrapper is a class that represents the coordinates of a farmer and a field.
+ * It contains the x and y coordinates of both the farmer and the field, as well as a boolean indicating if the field is planted.
+ * This class is used to wrap the information about the farmer and field coordinates together.
+ */
 public class FarmerFieldWrapper {
-    private int farmerX;
-    private int farmerY;
-    private int fieldX;
-    private int fieldY;
+    private int idFarmer, idField;
     private boolean isPlanted;
 
-    public FarmerFieldWrapper(int farmerX, int farmerY, int fieldX, int fieldY, boolean isPlanted) {
-        this.farmerX = farmerX;
-        this.farmerY = farmerY;
-        this.fieldX = fieldX;
-        this.fieldY = fieldY;
+    /**
+     * Constructor for the FarmerFieldWrapper class.
+     * @param isPlanted A boolean indicating if the field is planted.
+     */
+    public FarmerFieldWrapper(int idFarmer, int idField, boolean isPlanted) {
+        this.idFarmer = idFarmer;
+        this.idField = idField;
         this.isPlanted=isPlanted;
     }
 
-    public int getFarmerX() {
-        return farmerX;
+    public int getIdFarmer() {
+        return idFarmer;
     }
 
-    public int getFarmerY() {
-        return farmerY;
+
+    public int getIdField() {
+        return idField;
     }
 
-    public int getFieldX() {
-        return fieldX;
-    }
-
-    public int getFieldY() {
-        return fieldY;
-    }
+    /**
+     * @return A boolean indicating if the field is planted.
+     */
     public boolean getIsPlanted() {
         return isPlanted;
     }
