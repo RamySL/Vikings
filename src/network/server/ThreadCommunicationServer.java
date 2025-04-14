@@ -124,6 +124,7 @@ public class ThreadCommunicationServer extends Thread{
                 int[] NbVikings = packetAttack.getNbVikings();
                 int nbVRequired = Arrays.stream(NbVikings).sum();
                 if(this.camp.getWarriorsInCamp().size() < nbVRequired) {
+                    // faut envoyer un packet à la place
                     System.out.println("Not enough vikings to attack");
                     return;
                 }else{

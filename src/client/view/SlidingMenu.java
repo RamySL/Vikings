@@ -3,6 +3,8 @@ package client.view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import client.controler.event.*;
 import server.model.*;
 import sharedGUIcomponents.ComposantsPerso.BarreDeVie;
 import sharedGUIcomponents.ComposantsPerso.Buttons;
+import sharedGUIcomponents.ComposantsPerso.FontPerso;
 
 public class SlidingMenu extends JPanel {
     private Timer timer;
@@ -17,15 +20,24 @@ public class SlidingMenu extends JPanel {
     private boolean isFarmerOnField, isVikingNearSheep;
     private boolean isFieldPlanted;
     private boolean isVisible;
-    private Buttons.BouttonJeu plantButton, harvestButton, eatButton, exitMenu;
+    private Buttons.BouttonJeu plantButton, harvestButton, eatButton, exitMenu, attackButton;
     private JComboBox<String> plantComboBox;
     private JLabel entityLabel, ressourceLabel;
+
+    private JTextField textFieldNbVikings;
 
     private int idField, idViking;
     private int idAnimal;
     int posMenuY, widthMenu, windowWidth, windowHeight;
     private BarreDeVie healthBar;
     private List<PlantListener> plantListeners = new ArrayList<>();
+
+
+    private ArrayList<Integer> idRessources = new ArrayList<>();
+    // pour stocker le nombre de viking à envoyer pour l'attaque de chaque ressources
+    private ArrayList<Integer> nbVikings = new ArrayList<>();
+    private int camp_to_attack = -1;
+
 
     public SlidingMenu(int x, int y, int width, int height) {
         this.posMenuY = y;
@@ -48,7 +60,7 @@ public class SlidingMenu extends JPanel {
 
         entityLabel = new JLabel();
         entityLabel.setVisible(false);
-        entityLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        entityLabel.setFont(FontPerso.mvBoli(20));
         gbc.gridy = 0;
         add(entityLabel, gbc);
 
@@ -63,9 +75,15 @@ public class SlidingMenu extends JPanel {
         gbc.weighty = 0.0;
         ressourceLabel = new JLabel();
         ressourceLabel.setVisible(false);
-        ressourceLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        ressourceLabel.setFont(FontPerso.mvBoli(20));
         gbc.gridy++;
         add(ressourceLabel, gbc);
+
+        textFieldNbVikings = new JTextField("1");
+        textFieldNbVikings.setVisible(false);
+        textFieldNbVikings.setFont(FontPerso.mvBoli(20));
+        gbc.gridy++;
+        add(textFieldNbVikings, gbc);
 
         plantButton = new Buttons.BouttonJeu("Plant");
         plantButton.setVisible(false);
@@ -86,6 +104,11 @@ public class SlidingMenu extends JPanel {
         eatButton.setVisible(false);
         gbc.gridy++;
         add(eatButton, gbc);
+
+        attackButton = new Buttons.BouttonJeu("Attack");
+        attackButton.setVisible(false);
+        gbc.gridy++;
+        add(attackButton, gbc);
 
         exitMenu = new Buttons.BouttonJeu("Exit");
         exitMenu.setVisible(false);
@@ -112,6 +135,27 @@ public class SlidingMenu extends JPanel {
             handleComboBoxSelection(selectedVegetal);
             plantComboBox.setVisible(false);
         });
+
+        attackButton.addActionListener( e -> {
+            attackButton.setVisible(false);
+            handleAttackButtonClicked();
+        });
+
+        textFieldNbVikings.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    // get the text from the text field and convert it to Integer
+                    String text = textFieldNbVikings.getText();
+                    SlidingMenu.this.nbVikings.add(Integer.parseInt(text));
+                    SlidingMenu.this.initAttack();
+                }
+            }
+        });
+
+
+
+
 
         timer = new Timer(1, e -> slide());
     }
@@ -155,7 +199,55 @@ public class SlidingMenu extends JPanel {
         timer.start();
     }
 
+
+    /**
+     * Initializes the attack menu for a camp.
+     * @param camp
+     */
+    public void initAttack(Camp camp) {
+        this.camp_to_attack = camp.getId();
+        attackButton.setVisible(false);
+        textFieldNbVikings.setVisible(false);
+        exitMenu.setVisible(true);
+        entityLabel.setText("Camp " + camp.getId() + ": " + camp.getUsername());
+        entityLabel.setVisible(true);
+        ressourceLabel.setText("Choisit une ressource");
+        ressourceLabel.setVisible(true);
+        plantButton.setVisible(false);
+        eatButton.setVisible(false);
+        harvestButton.setVisible(false);
+    }
+
+    /**
+     * Surcharge pour le cas ou on est entrain de choisir plusieur ressources à attaquer
+     */
+    public void initAttack(){
+        textFieldNbVikings.setVisible(false);
+        exitMenu.setVisible(true);
+        ressourceLabel.setText("Choisit une ressource");
+        ressourceLabel.setVisible(true);
+        plantButton.setVisible(false);
+        eatButton.setVisible(false);
+        harvestButton.setVisible(false);
+    }
+
+
+    /**
+     * Présondition: état du menu est déja avec les infos du camp à attaquer
+     */
+    public void setAttack(int idRessource) {
+        this.idRessources.add(idRessource);
+        ressourceLabel.setVisible(false); // pour enlever le "Choisit une ressource"
+        textFieldNbVikings.setVisible(true);
+        attackButton.setVisible(true);
+    }
+
+
     public void updateButtonVisibility(boolean isFarmerOnField, int idFarmer, int idField, boolean isFieldPlanted) {
+        eatButton.setVisible(false);
+        textFieldNbVikings.setVisible(false);
+        attackButton.setVisible(false);
+
         this.idViking = idFarmer;
         this.idField = idField;
         this.isFieldPlanted = isFieldPlanted;
@@ -226,6 +318,20 @@ public class SlidingMenu extends JPanel {
 
     private void handleHarvestButtonClicked() {
         HarvestEvent event = new HarvestEvent(this.idViking, this.idField);
+        EventBus.getInstance().publish("HarvestEvent", event);
+
+    }
+
+    private void handleAttackButtonClicked() {
+        // transform this.nbVikings and this.idRessources to int[]
+        int[] idRessources = this.idRessources.stream().mapToInt(Integer::intValue).toArray();
+        int[] nbVikings = this.nbVikings.stream().mapToInt(Integer::intValue).toArray();
+        AttackEvent event = new AttackEvent(this.camp_to_attack, idRessources, nbVikings);
+        EventBus.getInstance().publish("AttackEvent", event);
+        // reinit idressources and nbVikings and camp_to_attack
+        this.idRessources.clear();
+        this.nbVikings.clear();
+        this.camp_to_attack = -1;
 
     }
     public void showInfos(String entity, float health) {

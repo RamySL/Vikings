@@ -1,5 +1,7 @@
 package client.view;
 
+import server.model.Camp;
+
 import javax.swing.*;
 import java.awt.Dimension;
 
@@ -134,6 +136,17 @@ public class PanneauControle extends JPanel {
      */
     public void showInfos(String entity, String ressource) {
         slidingMenu.showInfos(entity, ressource);
+    }
+
+    /**
+     * affiche le camp slectionné pour l'attaque
+     */
+    public void initAttack(Camp camp){
+        this.slidingMenu.initAttack(camp);
+    }
+
+    public void setAttack(int idRessource){
+        this.slidingMenu.setAttack(idRessource);
     }
 
 

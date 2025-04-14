@@ -1,7 +1,6 @@
 package client.view;
 
 import server.model.*;
-import sharedGUIcomponents.ComposantsPerso.FontPerso;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,8 +87,9 @@ public class ViewPartie extends JPanel {
         //g2.drawLine(0, 0, 1000, 0);
         //g2.drawLine(0, 0, 0, 1000);
         //System.out.println(camp.getCow().size());
+         drawCamps(g2);
         for (Camp camp : partieModel.getCamps()) {
-            drawCamp(camp, g2);
+            drawCamp(camp,g2);
         }
 
         g2.dispose();
@@ -156,34 +156,39 @@ public class ViewPartie extends JPanel {
     }
 
     /**
+     * Dessine tout ce qui doit être dessiner en premier comme ça les vikings etc apparaissent au dessus
+     */
+    public void drawCamps (Graphics2D g2){
+
+        for (Camp camp : partieModel.getCamps()) {
+            Point topLeftModel = Position.MAP_CAMPS_POSITION.get(camp.getId());
+            Point topLeftView = pointModelToView(topLeftModel);
+            if (camp.getId() == camp_id) {
+                g2.setStroke(new BasicStroke(20));
+                g2.setColor(Color.RED);
+            } else {
+                g2.setStroke(new BasicStroke(1));
+                g2.setColor(Color.BLUE);
+            }
+
+            g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
+            g2.drawImage(img_camp, topLeftView.x ,  topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y, null);
+
+            drawFields(camp.getFields(), g2);
+            drawWheats(camp.getWheats(), g2);
+
+        }
+
+    }
+    /**
      * @param camp
      * @param g2
      */
     private void drawCamp(Camp camp, Graphics2D g2) {
-        Point topLeftModel = Position.MAP_CAMPS_POSITION.get(camp.getId());
-        Point topLeftView = pointModelToView(topLeftModel);
-        // redundant calculation (can be stock in a map for each camp)
-
-        // si l'id du camp correspend à l'id du camp du client alors drawRect avec un trait noir très épais sinon
-        // drawRect avec un trait bleu normal
-
-        if (camp.getId() == camp_id) {
-            g2.setStroke(new BasicStroke(20));
-            g2.setColor(Color.RED);
-        } else {
-            g2.setStroke(new BasicStroke(1));
-            g2.setColor(Color.BLUE);
-        }
-        //g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
-        g2.drawRect(topLeftView.x, topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y);
-        g2.drawImage(img_camp, topLeftView.x ,  topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y, null);
-
-        drawFields(camp.getFields(), g2);
         drawWarriors(camp.getWarriors(), g2);
         drawSheep(camp.getSheeps(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawCow(camp.getCows(), g2);
-        drawWheats(camp.getWheats(), g2);
     }
 
     private void drawSheep(ArrayList<Sheep> sheep, Graphics2D g2) {
@@ -323,6 +328,17 @@ public class ViewPartie extends JPanel {
 
     public void panelShowInfos(String entityType) {
         this.panneauControle.showInfos(entityType);
+    }
+
+    /**
+     * affiche le camp slectionné pour l'attaque
+     */
+    public void initAttack(Camp camp){
+        this.panneauControle.initAttack(camp);
+    }
+
+    public void setAttack(int idRessource){
+        this.panneauControle.setAttack(idRessource);
     }
 
     public double getScaleFactor() {

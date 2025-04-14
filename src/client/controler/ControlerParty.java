@@ -19,7 +19,7 @@ import java.util.Scanner;
 /**
  * Controler of the party
  */
-public class ControlerParty extends MouseAdapter implements ActionListener, MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner {
+public class ControlerParty extends MouseAdapter implements AttackListener, ActionListener, MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner {
 
     private ControlerClient controlerClient;
     private ViewPartie viewPartie;
@@ -49,6 +49,7 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
         EventBus.getInstance().subscribe("PlantEvent", this::handlePlantEvent);
         EventBus.getInstance().subscribe("EatEvent", this::handleEatEvent);
         EventBus.getInstance().subscribe("HarvestEvent", this::handleHarvestEvent);
+        EventBus.getInstance().subscribe("AttackEvent", this::handleAttackEvent);
     }
 
     @Override
@@ -67,11 +68,9 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
             this.viewPartie.clickToView(clickView);
 
             Camp camp = this.determineSelectedCamp(clickView.x, clickView.y);
-            this.viewPartie.panelHide();
+            //this.viewPartie.panelHide();
 
             if (camp != null) {
-                selectedCamp = camp;
-
                 // Check if the click is within the client's camp
                 if (camp.getId() == this.viewPartie.getCamp_id()) {
                     if (isFirstClickCamp) {
@@ -124,30 +123,16 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
                     isFirstClickCamp = true;
                     if (isFirstClickEnemyCamp) {
                         // ouvrir un panneau pour demander de slect une ressource à attquer
-                        System.out.println("Ouverture du panneau pour l'ataque sur le camp : " + camp.getId());
-                        isFirstClickEnemyCamp = false;
+                        initAttack(camp);
                     } else {
                         if (camp.getId() == selectedCamp.getId()) {
                             // determiner la ressource slectionner
                             System.out.println("deuxieme click sur le camp ennemi");
                             Object selectedRessource = determineSelectedField(clickView.x, clickView.y);
+                            // Il faut traiter la selection des fields et des enclos d'animaux
                             if (selectedRessource != null) {
                                 if (selectedRessource instanceof Field) {
-                                    System.out.println("Click sur le champ ennemi");
-                                    Scanner scanner = new Scanner(System.in);
-                                    System.out.print("Combien de viking envoyer sur le champ : ");
-                                    int nombreViking = Integer.parseInt(scanner.nextLine());
-                                    System.out.print("Simulation boutton valider : ");
-                                    String simulation = scanner.nextLine();
-                                    System.out.println("Simulation : " + simulation);
-                                    scanner.close();
-
-                                    // on envoie le paquet d'attaque
-                                    int[] ressourceID = {((Field) selectedRessource).getId()};
-                                    int[] nbs = {nombreViking};
-                                    String content = gson.toJson(new PacketAttack(selectedCamp.getId(), ressourceID, nbs));
-                                    this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PacketAttack", content));
-
+                                    this.viewPartie.setAttack(((Field) selectedRessource).getId());
                                 } else {
                                     System.out.println("Click sur une autre ressource à traiter");
                                 }
@@ -158,7 +143,8 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
                             isFirstClickCamp = true;
                         } else {
                             // on change de camp ennemi on affiche le panneau pour l'autre camp
-                            selectedCamp = camp;
+                            System.out.println("Click sur un autre camp ennemi");
+                            initAttack(camp);
 
                         }
                     }
@@ -169,6 +155,17 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
             }
         }
 
+    }
+
+    /**
+     *
+     * @param camp
+     */
+    public void initAttack(Camp camp){
+        selectedCamp = camp;
+        this.viewPartie.panelSetVisibility(true);
+        this.viewPartie.initAttack(camp);
+        isFirstClickEnemyCamp = false;
     }
 
     /**
@@ -373,5 +370,22 @@ public class ControlerParty extends MouseAdapter implements ActionListener, Mous
             }
 
         }
+    }
+
+    @Override
+    public void onAttack(AttackEvent event) {
+        sendAttackPacketToServer(event);
+    }
+
+    private void handleAttackEvent(Object event) {
+        if (event instanceof AttackEvent) {
+            sendAttackPacketToServer((AttackEvent) event);
+        }
+    }
+
+    public void sendAttackPacketToServer(AttackEvent event) {
+        Gson gson = new Gson();
+        String contentPaquet = gson.toJson(new PacketAttack(event.getIdCamp(), event.getIdRessources(), event.getNbVikings()));
+        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PacketAttack", contentPaquet));
     }
 }

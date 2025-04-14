@@ -80,7 +80,7 @@ public class ThreadCommunicationClient extends Thread {
                     gameStarted = true;
                     // un petit délai d'attente avant de changer vers la vue de la partie
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(0);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
