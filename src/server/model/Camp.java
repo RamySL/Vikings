@@ -139,7 +139,7 @@ public class Camp {
     public void attack(int n, int id, Point dst) {
 
         for (int i = 0; i < n; i++) {
-            Warrior warrior = this.warriors.get(i);
+            Warrior warrior = this.warriorsInCamp.get(i);
             warrior.move(dst);
             // add the warrior to the vikingsAttack
             if (this.vikingsAttack.containsKey(id)) {

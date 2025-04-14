@@ -9,6 +9,7 @@ public class Field {
     private String resource;
     private int campId;
     private int id;
+    private Vegetable vegetable;
 
     public Field(Point position, int campId) {
         this.position = position;
@@ -38,6 +39,15 @@ public class Field {
             this.resource = resource;
             this.isPlanted = true;
             System.out.println("ressource "+ resource + " plantée");
+            switch (resource) {
+                case "Corn":
+                    break;
+                case "wheat":
+                    vegetable = new Wheat(0,this.position, this.campId, 1);
+                    break;
+                default:
+                    System.out.println("Ressource inconnue");
+            }
         }
     }
 

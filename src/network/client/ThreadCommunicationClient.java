@@ -24,10 +24,6 @@ public class ThreadCommunicationClient extends Thread {
     private Client client;
     private boolean gameStarted = false;
     private ViewClient view;
-    private boolean isFieldPlanted;
-    private int idFarmer, idField, idSheep;
-    private  FarmerSheepWrapper farmerSheepWrapper;
-    private FarmerFieldWrapper farmerFieldWrapper;
     private Gson gson;
     private ControlerParty controlerParty;
 

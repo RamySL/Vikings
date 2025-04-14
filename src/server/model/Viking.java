@@ -22,6 +22,7 @@ public abstract class Viking extends Entity implements Moveable {
     public void stop() {
         if (currentMovementThread != null) {
             currentMovementThread.stopMovement();
+            currentMovementThread = null;
         }
     }
 
