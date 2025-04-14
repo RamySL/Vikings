@@ -62,7 +62,7 @@ public class Field {
     // String avec nom de la classe
     @Override
     public String toString() {
-        return "Field";
+        return "Field " + id;
     }
 
 

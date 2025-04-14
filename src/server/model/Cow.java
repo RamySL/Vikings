@@ -11,7 +11,7 @@ public class Cow extends Livestock{
 
     @Override
     public String toString() {
-        return "Cow";
+        return "Cow " + super.id;
     }
 
 

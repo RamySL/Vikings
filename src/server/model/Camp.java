@@ -88,6 +88,8 @@ public class Camp {
         Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70,topLeftCamp.y - 50), this.id, 0);
         wheats.add(v);
 
+        vegetables.add(v);
+
         Field fi1 = new Field(new Point(topLeftCamp.x + 15,topLeftCamp.y - 100), this.id);
         Field fi2 = new Field(new Point(topLeftCamp.x + 50,topLeftCamp.y - 100), this.id);
         fields.add(fi1);
@@ -232,16 +234,22 @@ public class Camp {
      */
 
     public void removeLiveStock(Livestock l) {
-        // remove the sheep from the sheep list
-        sheeps.remove(l);
+        livestocks.remove(l);
+        if (l instanceof Sheep) {
+            sheeps.remove(l);
+        } else if (l instanceof Cow) {
+            cows.remove(l);
+        }
+        entities.remove(l);
     }
 
     /**
      * Supprime une culture du camp.
      */
     public void removeWheat(Wheat v) {
-        // remove the vegetable from the vegetable list
+        vegetables.remove(v);
         wheats.remove(v);
+        entities.remove(v);
     }
 
     /**
@@ -321,6 +329,10 @@ public class Camp {
 
     public ArrayList<Warrior> getWarriorsInCamp() {
         return warriorsInCamp;
+    }
+
+    public ArrayList<Livestock> getLivestocks() {
+        return livestocks;
     }
 
     public Viking getVikingByID(int id){
