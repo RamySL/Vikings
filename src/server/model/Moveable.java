@@ -7,5 +7,6 @@ public interface Moveable {
 
     public void move(Point destination);
     public Point getPosition();
+    //
 
 }

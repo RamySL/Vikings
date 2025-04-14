@@ -10,7 +10,7 @@ public class Farmer extends Viking {
         super(health, position, camp);
     }
 
-
+//
     /**met
      * Plante du blé à la position actuelle du fermier.
      * La vérification de proximité est gérée ailleurs (ex: un thread détecte la proximité et affiche un bouton).

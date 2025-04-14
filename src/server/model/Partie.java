@@ -17,7 +17,7 @@ public class Partie {
     public Camp[] getCamps() {
         return camps;
     }
-
+//
     // gtter en foncion de l'id
     public Camp getCamp(int id) {
         for (Camp camp : camps) {

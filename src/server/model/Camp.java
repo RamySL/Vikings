@@ -132,6 +132,7 @@ public class Camp {
         }
 
     }
+    //
     public List<Point> getFieldPositions() {
         List<Point> positions = new ArrayList<>();
         for (Field field : fields) {

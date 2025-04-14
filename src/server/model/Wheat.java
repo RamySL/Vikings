@@ -5,6 +5,7 @@ import java.awt.*;
 /*
     Blé (Wheat) - Hérite de Vegetable
  */
+//
 public class Wheat extends Vegetable {
 
     public Wheat(float health, Point position, int camp, int growthStage) {

@@ -9,7 +9,7 @@ public class Field {
     private String resource;
     private int campId;
     private int id;
-
+//
     public Field(Point position, int campId) {
         this.position = position;
         this.isPlanted = false;
