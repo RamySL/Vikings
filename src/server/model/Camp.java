@@ -399,8 +399,5 @@ public class Camp {
     }
 
 
-    public ArrayList<Livestock> getLivestocks() {
-        return livestocks;
-    }
 }
 
