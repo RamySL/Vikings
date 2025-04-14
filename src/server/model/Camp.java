@@ -70,8 +70,8 @@ public class Camp {
         vikings.add(f1);
         vikings.add(f2);
 
-        Sheep s1 = new Sheep(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6);
-        Sheep s2 = new Sheep(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5);
+        Sheep s1 = new Sheep(20, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6);
+        Sheep s2 = new Sheep(20, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5);
         sheeps.add(s1);
         sheeps.add(s2);
 

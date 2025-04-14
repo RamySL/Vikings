@@ -1,6 +1,7 @@
 package client.view;
 
 import server.model.*;
+import sharedGUIcomponents.ComposantsPerso.FontPerso;
 
 import javax.swing.*;
 import java.awt.*;
