@@ -75,6 +75,8 @@ public class SlidingMenu extends JPanel {
         gbc.weighty = 0.0;
         ressourceLabel = new JLabel();
         ressourceLabel.setVisible(false);
+        ressourceLabel.setPreferredSize(new Dimension(widthMenu, windowHeight));
+
         ressourceLabel.setFont(FontPerso.mvBoli(20));
         gbc.gridy++;
         add(ressourceLabel, gbc);
@@ -146,6 +148,7 @@ public class SlidingMenu extends JPanel {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     // get the text from the text field and convert it to Integer
+                    attackButton.setVisible(true);
                     String text = textFieldNbVikings.getText();
                     SlidingMenu.this.nbVikings.add(Integer.parseInt(text));
                     SlidingMenu.this.initAttack();
@@ -211,7 +214,7 @@ public class SlidingMenu extends JPanel {
         exitMenu.setVisible(true);
         entityLabel.setText("Camp " + camp.getId() + ": " + camp.getUsername());
         entityLabel.setVisible(true);
-        ressourceLabel.setText("Choisit une ressource");
+        ressourceLabel.setText("<html>Choisit une<br>ressource</html>");
         ressourceLabel.setVisible(true);
         plantButton.setVisible(false);
         eatButton.setVisible(false);
@@ -224,7 +227,7 @@ public class SlidingMenu extends JPanel {
     public void initAttack(){
         textFieldNbVikings.setVisible(false);
         exitMenu.setVisible(true);
-        ressourceLabel.setText("Choisit une ressource");
+        ressourceLabel.setText("<html>Choisit une<br>ressource</html>");
         ressourceLabel.setVisible(true);
         plantButton.setVisible(false);
         eatButton.setVisible(false);
@@ -239,7 +242,7 @@ public class SlidingMenu extends JPanel {
         this.idRessources.add(idRessource);
         ressourceLabel.setVisible(false); // pour enlever le "Choisit une ressource"
         textFieldNbVikings.setVisible(true);
-        attackButton.setVisible(true);
+        attackButton.setVisible(false);
     }
 
 

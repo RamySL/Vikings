@@ -1,6 +1,8 @@
 package client.view;
 
 import server.model.*;
+import sharedGUIcomponents.ComposantsPerso.BarreDeTemps;
+import sharedGUIcomponents.ComposantsPerso.BarreDeVie;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,6 +40,7 @@ public class ViewPartie extends JPanel {
     private double scaleFactor = 1.0;
     private int camp_id ;
     private Camp camp ;
+    private BarreDeTemps timeBar;
 
     private Partie partieModel ;
     private PanneauControle panneauControle ;  // Ajout du champ PanneauControle
@@ -66,6 +69,13 @@ public class ViewPartie extends JPanel {
                  updatePanneauControlePosition();
              }
          });
+
+         // Initialize the progress bar
+         timeBar = new BarreDeTemps(20);
+         timeBar.setTemps(20);
+
+         // Add the progress bar to the bottom of the panel
+         this.add(timeBar, BorderLayout.NORTH);
 
      }
 
@@ -240,7 +250,6 @@ public class ViewPartie extends JPanel {
             Point pointView = pointModelToView(farmer.getPosition());
             int width = Position.WIDTH_VIKINGS * RATIO_X;
             int height = Position.HEIGHT_VIKINGS * RATIO_Y;
-            //g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
             g2.drawImage(fermierAnim.anim, pointView.x - width + 5, pointView.y - height , width*2, height*2, null);
         }
     }
@@ -372,7 +381,7 @@ public class ViewPartie extends JPanel {
         return this.panneauControle.getSlidingMenu();
     }
     public void setTime(int time) {
-        System.out.println(time);
+        timeBar.setTemps(time);
     }
     public void setEndGame(List<Integer> winningCampIds) {
         System.out.println("End game for camps: " + winningCampIds);
