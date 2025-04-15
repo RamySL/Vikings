@@ -79,16 +79,21 @@ public class Camp {
         Sheep s2 = new Sheep(20, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5);
         sheeps.add(s1);
         sheeps.add(s2);
+        ressources.add(s1);
+        ressources.add(s2);
 
 
         Cow c1 = new Cow(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 70), this.id, 6/*,this*/);
         Cow c2 = new Cow(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 70), this.id, 5/*,this*/);
         cows.add(c1);
         cows.add(c2);
+        ressources.add(c1);
+        ressources.add(c2);
         // Ajout des cultures
         //Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
         Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70,topLeftCamp.y - 50), this.id, 0);
         wheats.add(v);
+        ressources.add(v);
 
         vegetables.add(v);
 
@@ -214,6 +219,7 @@ public class Camp {
      */
     public void addSheep(Sheep l) {
         sheeps.add(l);
+
         System.out.println("Un nouvel animal a été ajouté au camp !");
     }
 
@@ -222,6 +228,7 @@ public class Camp {
      */
     public void addWheat(Wheat vegetable) {
         wheats.add(vegetable);
+        ressources.add(vegetable);
     }
 
     /**
@@ -402,6 +409,10 @@ public class Camp {
 
     public void addRessource(Entity e){
         this.ressources.add(e);
+    }
+    public ArrayList<Entity> getRessources() {
+        System.out.println("ressources: " + ressources);
+        return ressources;
     }
 
 

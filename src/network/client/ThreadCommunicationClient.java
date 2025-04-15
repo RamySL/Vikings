@@ -74,14 +74,19 @@ public class ThreadCommunicationClient extends Thread {
                 if (!gameStarted) {
                     new ThreadRepaint(this.view.getViewPartie()).start();
                     gameStarted = true;
-                    // un petit délai d'attente avant de changer vers la vue de la partie
-                    try {
-                        Thread.sleep(0);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
                     this.view.changeCard("3");
                 }
+                break;
+
+            case "PaquetTimer":
+                PaquetTimer paquetTimer = gson.fromJson(wrapper.content, PaquetTimer.class);
+                this.view.getViewPartie().setTime(paquetTimer.getRemainingTime());
+                break;
+
+            case "PaquetEndGame":
+                PaquetEndGame paquetEndGame = gson.fromJson(wrapper.content, PaquetEndGame.class);
+                this.view.getViewPartie().setEndGame(paquetEndGame.getWinningCampIds());
+                this.view.changeCard("4");
                 break;
             default:
                 System.out.println("Invalid message format");

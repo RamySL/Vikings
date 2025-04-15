@@ -1,5 +1,7 @@
 package server.model;
 
+import server.model.GameTimer;
+
 import java.util.ArrayList;
 
 /**
@@ -8,10 +10,12 @@ import java.util.ArrayList;
 
 public class Partie {
     private Camp[] camps;
+    private GameTimer timer;
 
 
-    public Partie(Camp[] camps ) {
+    public Partie(Camp[] camps, GameTimer timer) {
         this.camps = camps;
+        this.timer = timer;
     }
 
     public Camp[] getCamps() {
@@ -27,5 +31,17 @@ public class Partie {
         }
         return null;
     }
+
+    public boolean isGameOver() {
+        if (timer.getRemainingTime() <= 0) {
+            return true;
+        }
+
+        return false;
+    }
+    public int getRemainingTime() {
+        return timer.getRemainingTime();
+    }
+
 
 }

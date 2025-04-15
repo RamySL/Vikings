@@ -3,7 +3,7 @@ package server.model;
 import java.awt.*;
 import java.util.stream.DoubleStream;
 
-public class Field {
+public class  Field {
     private Point position;
     private boolean isPlanted;
     private String resource;
@@ -60,8 +60,9 @@ public class Field {
         if (isPlanted) {
             this.resource = "";
             this.isPlanted = false;
-            this.vegetable = new AbsenceVegetable();
             camp.addRessource(this.vegetable);
+            this.vegetable = new AbsenceVegetable();
+
         }
     }
 

@@ -71,6 +71,7 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
             //this.viewPartie.panelHide();
 
             if (camp != null) {
+                selectedCamp = camp;
                 // Check if the click is within the client's camp
                 if (camp.getId() == this.viewPartie.getCamp_id()) {
                     if (isFirstClickCamp) {

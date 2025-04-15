@@ -20,6 +20,7 @@ public class ModelAdapter {
         gsonBuilder.registerTypeAdapter(Viking.class, new VikingAdapter(gson));
         gsonBuilder.registerTypeAdapter(Livestock.class, new LivestockAdapter(gson));
         gsonBuilder.registerTypeAdapter(Vegetable.class, new VegetableAdapter(gson));
+        gsonBuilder.registerTypeAdapter(GameTimer.class, new GameTimerAdapter());
 
         return gsonBuilder.create();
     }
@@ -179,3 +180,27 @@ class VegetableAdapter extends TypeAdapter<Vegetable> {
         }
     }
 }
+class GameTimerAdapter extends TypeAdapter<GameTimer> {
+    @Override
+    public void write(JsonWriter out, GameTimer timer) throws IOException {
+        out.beginObject();
+        out.name("remainingTime").value(timer.getRemainingTime());
+        out.endObject();
+    }
+
+    @Override
+    public GameTimer read(JsonReader in) throws IOException {
+        in.beginObject();
+        int remainingTime = 0;
+        while (in.hasNext()) {
+            String name = in.nextName();
+            if (name.equals("remainingTime")) {
+                remainingTime = in.nextInt();
+            }
+        }
+        in.endObject();
+        return new GameTimer(remainingTime); // Adjust constructor as needed
+    }
+}
+
+
