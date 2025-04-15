@@ -12,8 +12,9 @@ public class fermierAnim extends Thread{
     public static boolean iSrunning = false; // pour savoir si l'on est en mouvement ou pas
     public static boolean left = false; // pour la direction
     private int delay = 125;
-
-    public fermierAnim() {
+    private List<Image> degat_anim;
+    private List<Image> degat_anim_r;
+     public fermierAnim() {
         images = new ArrayList<>();
         images.add(anim);
         images.add(new ImageIcon("src/ressources/images/animation/farmer/farmer_2.png").getImage());

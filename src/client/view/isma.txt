@@ -7,3 +7,11 @@ attaque anim ennemi et allies
 sheep and cow ( mais je peux encore rajouter des animations si besoin )
 j'ai crée les deplacements gauche droite
 un pack de couleur alliés et ennemi ( default et vert pour nous, rouge et bleu pour les entites fermier viking ennemy)
+!!!!! Change de couleurs les ennemis je l'ai pas fait
+
+Rajouter un thread pour l'animation attaque
+
+Rajouter la direction (left right sous forme de boolean),
+Rajouter un boolean pour dire si l'entité se déplace,
+Rajouter un boolean pour dire si l'entité attaque
+Rajouter un boolean pour dire si l'entité prend des degats

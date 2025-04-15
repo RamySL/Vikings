@@ -8,14 +8,22 @@ import java.util.List;
 public class cowAnim extends Thread {
     public static Image anim =  new ImageIcon("src/ressources/images/animation/vache_1.png").getImage();
     private List<Image> images;
-    public static boolean iSrunning = false; // pour savoir si l'on est en mouvement ou pas
-    public static boolean left = false; // pour la direction
+    private boolean iSrunning = false; // pour savoir si l'on est en mouvement ou pas
+    private boolean left = false; // pour la direction
+    //private boolean ;
     private int delay = 300;
+    private List<Image> degat_anim;
+    private List<Image> degat_anim_r;
+
+
+
 
     public cowAnim() {
         images = new ArrayList<>();
         images.add(anim);
         images.add(new ImageIcon("src/ressources/images/animation/vache_2.png").getImage());
+
+
     }
 
     @Override

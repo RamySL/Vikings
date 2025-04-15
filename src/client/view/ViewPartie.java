@@ -175,7 +175,7 @@ public class ViewPartie extends JPanel {
             g2.drawImage(img_camp, topLeftView.x ,  topLeftView.y, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y, null);
 
             drawFields(camp.getFields(), g2);
-            drawWheats(camp.getWheats(), g2);
+            //drawWheats(camp.getWheats(), g2);
 
         }
 
@@ -250,29 +250,32 @@ public class ViewPartie extends JPanel {
             Point pointView = pointModelToView(field.getPosition());
             int width = Position.WIDTH_FIELD * RATIO_X;
             int height = Position.HEIGHT_FIELD * RATIO_Y;
+            //System.out.println(width + " " + height);;
             //g2.drawRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
             g2.drawImage(img_field, pointView.x - width / 2, pointView.y - height / 2, width, height, null);
+            System.out.println(pointView.x + " " + pointView.y);
+            //if (field.isPlanted()) {
+              //  if (field.getVegetable() instanceof Wheat){
+                    drawWheats(g2, pointView.x - width / 2, pointView.y - height / 2 );
+                //}
 
-            if (field.isPlanted()) {
-                if (field.getVegetable() instanceof Wheat){
-                    g2.drawImage(bleAnim.anim, pointView.x, pointView.y, Position.WIDTH_WHEAT*RATIO_X, Position.HEIGHT_WHEAT*RATIO_Y, null );
-                }
+            //}
+        }
+    }
 
+
+    private void drawWheats(Graphics2D g2, int point_of_view_x, int point_of_view_y ) {
+        g2.setColor(Color.BLACK);
+        int width = Position.WIDTH_WHEAT * RATIO_X;
+        int height = Position.HEIGHT_WHEAT * RATIO_Y;
+        for (int x = point_of_view_x+9; x < point_of_view_x +81; x += 9 ) {
+            for (int y = point_of_view_y+9; y < point_of_view_y +81; y += 9 ) {
+                g2.drawImage(bleAnim.anim, x - width / 2, y - height / 2, width, height, null);
             }
         }
     }
 
 
-    private void drawWheats(ArrayList<Wheat> wheat, Graphics2D g2) {
-        g2.setColor(Color.BLACK);
-        for (Wheat w : wheat) {
-            Point pointView = pointModelToView(w.getPosition());
-            int width = Position.WIDTH_WHEAT * RATIO_X;
-            int height = Position.HEIGHT_WHEAT * RATIO_Y;
-            //g2.drawRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
-            g2.drawImage(bleAnim.anim, pointView.x - width / 2, pointView.y - height / 2, width, height, null);
-        }
-    }
 
     public void setPartie(Partie partieModel) {
         this.partieModel = partieModel;
