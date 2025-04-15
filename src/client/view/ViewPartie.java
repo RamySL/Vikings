@@ -368,5 +368,11 @@ public class ViewPartie extends JPanel {
     public SlidingMenu getSlidingMenu() {
         return this.panneauControle.getSlidingMenu();
     }
+    public void setTime(int time) {
+        System.out.println(time);
+    }
+    public void setEndGame(int i){
+        System.out.println("End game " + i);
+    }
 }
 

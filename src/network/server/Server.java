@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import network.ModelAdapter;
 import network.packets.FormatPacket;
 import network.packets.PacketConnectedPlayers;
+import network.packets.PaquetEndGame;
+import network.packets.PaquetTimer;
+import server.model.GameTimer;
 import server.model.Camp;
 import server.model.Partie;
 import server.model.ThreadCollisionCamp;
@@ -24,7 +27,7 @@ public class Server {
     private Partie partie;
     private Gson gson = ModelAdapter.getGson();
     private server.view.Server serverView;
-
+    private GameTimer timer;
     /**
      * Lance le serveur sur le port donné et attend le nombre de joueur donné pour lancer la partie
      * @param port
@@ -39,6 +42,7 @@ public class Server {
             throw new RuntimeException(e);
         }
         this.clients = new ArrayList<>();
+        this.timer = new GameTimer(5);
 
     }
 
@@ -70,16 +74,22 @@ public class Server {
                throw new RuntimeException(e);
            }
        }
-        createPartie(camps);
-       (new ThreadGameState(this)).start();
+        createPartie(camps, timer);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        timer.start();
+        (new ThreadGameState(this)).start();
 
     }
 
     /**
      * Intialise la partie.
      */
-    public void createPartie(Camp[] camps) {
-        this.partie = new Partie(camps);
+    public void createPartie(Camp[] camps, GameTimer timer) {
+        this.partie = new Partie(camps, timer);
 
     }
 
@@ -89,6 +99,14 @@ public class Server {
     public void broadcastGameState() {
         String content = gson.toJson(partie);
         broadcast(FormatPacket.format("Partie",content), true);
+        if (partie != null && !partie.isGameOver()) {
+            String timerContent = gson.toJson(new PaquetTimer(partie.getRemainingTime()));
+            broadcast(FormatPacket.format("PaquetTimer", timerContent),partie.isGameOver() );
+        }
+        if (partie!=null && partie.isGameOver()){
+            String endGameContent = gson.toJson(new PaquetEndGame(1));
+            broadcast(FormatPacket.format("PaquetEndGame", endGameContent), true);
+        }
     }
 
     /**
@@ -158,5 +176,9 @@ public class Server {
     // add log received packet
     public void logReceivedPacket(String from, String message) {
         this.serverView.logReceivedPacket(from, message);
+    }
+
+    public int getWinnerCampId() {
+        return this.partie.getWinnerCampId();
     }
 }

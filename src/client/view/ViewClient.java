@@ -21,6 +21,7 @@ public class ViewClient extends JPanel {
     private Start start;
     private ViewWaiting viewWaiting;
     private ViewPartie viewPartie;
+    private ViewEndGame viewEndGame;
     private ControlerClient controlerClient;
     private JButton connectButton;
 
@@ -30,10 +31,12 @@ public class ViewClient extends JPanel {
 
         this.start = new Start();
         this.viewPartie = new ViewPartie(this, null);
+        this.viewEndGame = new ViewEndGame("Fin de la partie");
 
         this.setLayout(this.cardLayout);
         this.add(this.start, "1");
         this.add(this.viewPartie, "3");
+        this.add(this.viewEndGame, "4");
 
         this.cardLayout.show(this, "1");
 
@@ -90,6 +93,7 @@ public class ViewClient extends JPanel {
         this.viewWaiting = new ViewWaiting(maxPlayers);
         this.add(this.viewWaiting, "2");
     }
+
 
     public void addConnectedPlayers(String[] usernames, String[] ips) {
         this.viewWaiting.addPlayers(usernames, ips);
