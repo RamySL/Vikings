@@ -11,6 +11,7 @@ public class sheepAnim extends Thread {
     public static boolean iSrunning = false; // pour savoir si l'on est en mouvement ou pas
     public static boolean left = false; // pour la direction
     private int delay = 300;
+    private List<Image> degat_anim;
 
     public sheepAnim() {
         images = new ArrayList<>();
