@@ -30,12 +30,14 @@ public class Camp {
     private ArrayList<Cow> cows = new ArrayList<>();
     private ArrayList<Vegetable> vegetables = new ArrayList<>();
     private ArrayList<Wheat> wheats = new ArrayList<>();
+    private ArrayList<Entity> ressources = new ArrayList<>();
 
     // map entre les camp attaqué par les vikings de ce camp et les vikings qui l'attaquent
     private HashMap<Integer, ArrayList<Warrior>> vikingsAttack = new HashMap<>();
     private ArrayList<Warrior> warriorsInCamp = new ArrayList<>();
     // username du joueur qui détient ce camp
     private String username;
+
 
     // Constructeur
     public Camp(int id) {
@@ -90,10 +92,8 @@ public class Camp {
 
         vegetables.add(v);
 
-        Field fi1 = new Field(new Point(topLeftCamp.x + 15,topLeftCamp.y - 100), this.id);
-        fi1.setVegetable(new Object());
-        Field fi2 = new Field(new Point(topLeftCamp.x + 50,topLeftCamp.y - 100), this.id);
-        fi2.setVegetable(new Object());
+        Field fi1 = new Field(new Point(topLeftCamp.x + 15,topLeftCamp.y - 100), this.id, new AbsenceVegetable());
+        Field fi2 = new Field(new Point(topLeftCamp.x + 50,topLeftCamp.y - 100), this.id, new AbsenceVegetable());
         fields.add(fi1);
         fields.add(fi2);
 
@@ -398,6 +398,10 @@ public class Camp {
 
     public ArrayList<Cow> getCows() {
         return cows;
+    }
+
+    public void addRessource(Entity e){
+        this.ressources.add(e);
     }
 
 

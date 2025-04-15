@@ -254,7 +254,9 @@ public class ViewPartie extends JPanel {
             g2.drawImage(img_field, pointView.x - width / 2, pointView.y - height / 2, width, height, null);
 
             if (field.isPlanted()) {
-                g2.drawString(field.getResource(), pointView.x - width / 2, pointView.y - height / 2);
+                if (field.getVegetable() instanceof Wheat){
+                    g2.drawImage(bleAnim.anim, pointView.x, pointView.y, Position.WIDTH_WHEAT*RATIO_X, Position.HEIGHT_WHEAT*RATIO_Y, null );
+                }
 
             }
         }

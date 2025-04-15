@@ -110,7 +110,7 @@ public class ThreadCommunicationServer extends Thread{
                 PaquetHarvest paquetHarvest = gson.fromJson(wrapper.content, PaquetHarvest.class);
                 vikingSelected = this.camp.getVikingByID(paquetHarvest.getIdFarmer());
                 fieldSelected = this.camp.getFieldByID(paquetHarvest.getIdField());
-                fieldSelected.harvest();
+                fieldSelected.harvest(this.camp);
                 break;
             case "PacketMovement":
                 PacketMovement packetMovement = gson.fromJson(wrapper.content, PacketMovement.class);
