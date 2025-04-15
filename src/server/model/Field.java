@@ -9,7 +9,7 @@ public class Field {
     private String resource;
     private int campId;
     private int id;
-    private Vegetable vegetable;
+    private Object vegetable;
 
     public Field(Point position, int campId) {
         this.position = position;
@@ -67,6 +67,10 @@ public class Field {
     }
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setVegetable(Object o) {
+        this.vegetable = o;
     }
 
     // String avec nom de la classe

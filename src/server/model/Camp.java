@@ -91,7 +91,9 @@ public class Camp {
         vegetables.add(v);
 
         Field fi1 = new Field(new Point(topLeftCamp.x + 15,topLeftCamp.y - 100), this.id);
+        fi1.setVegetable(new Object());
         Field fi2 = new Field(new Point(topLeftCamp.x + 50,topLeftCamp.y - 100), this.id);
+        fi2.setVegetable(new Object());
         fields.add(fi1);
         fields.add(fi2);
 
