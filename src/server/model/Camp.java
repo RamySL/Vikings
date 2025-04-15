@@ -37,6 +37,7 @@ public class Camp {
     private ArrayList<Warrior> warriorsInCamp = new ArrayList<>();
     // username du joueur qui détient ce camp
     private String username;
+    private int lastId;
 
 
     // Constructeur
@@ -112,7 +113,13 @@ public class Camp {
         livestocks.addAll(sheeps);
         livestocks.addAll(cows);
 
+
         this.setEntitiesId();
+
+        VikingRegenerator regenerator = new VikingRegenerator(this, topLeftCamp.x + 15, topLeftCamp.y - 100, this.lastId );
+
+        Thread regenThread = new Thread(regenerator);
+        regenThread.start();
 
     }
 
@@ -134,6 +141,7 @@ public class Camp {
             livestock.setId(id * 10 + i);
             i++;
         }
+        this.lastId=i;
 
     }
 
@@ -197,6 +205,8 @@ public class Camp {
     public void addWarrior(Warrior warrior) {
         // add the viking to the warriors list
         warriors.add(warrior);
+        entities.add(warrior);
+        vikings.add(warrior);
     }
 
     public void addFarmer(Farmer farmer) {
@@ -414,6 +424,7 @@ public class Camp {
         System.out.println("ressources: " + ressources);
         return ressources;
     }
+
 
 
 }

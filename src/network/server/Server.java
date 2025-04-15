@@ -40,7 +40,7 @@ public class Server {
             throw new RuntimeException(e);
         }
         this.clients = new ArrayList<>();
-        this.timer = new GameTimer(20);
+        this.timer = new GameTimer(200);
 
     }
 
