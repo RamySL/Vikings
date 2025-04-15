@@ -40,10 +40,12 @@ class EntityAdapter extends TypeAdapter<Entity>{
             jsonObj.addProperty("type", "farmer");
         }else if (value instanceof Sheep) {
             jsonObj.addProperty("type", "sheep");
-        } else if (value instanceof Cow){
-            jsonObj.addProperty("type", "sheep");
         }else if (value instanceof Wheat) {
             jsonObj.addProperty("type", "wheat");
+        } else if (value instanceof Cow) {
+            jsonObj.addProperty("type", "cow");
+        } else if (value instanceof AbsenceVegetable) {
+            jsonObj.addProperty("type", "absence");
         }
         gson.toJson(jsonObj, out);
     }
@@ -64,6 +66,8 @@ class EntityAdapter extends TypeAdapter<Entity>{
                 return gson.fromJson(jsonObj, Cow.class);
             case "wheat":
                 return gson.fromJson(jsonObj, Wheat.class);
+            case "absence":
+                return gson.fromJson(jsonObj, AbsenceVegetable.class);
             default:
                 throw new JsonParseException("Unknown type: " + type);
         }
@@ -142,8 +146,7 @@ class LivestockAdapter extends TypeAdapter<Livestock> {
 }
 
 // fait une class équivalente à EntityAdapter mais qui VegetableAdapter
-// sachant que les sous classes concrete sont Wheat
-
+// sachant que les sous classes concrete sont Wheat, AbsenceVegetable
 class VegetableAdapter extends TypeAdapter<Vegetable> {
     private Gson gson;
 
@@ -156,6 +159,8 @@ class VegetableAdapter extends TypeAdapter<Vegetable> {
         JsonObject jsonObj = gson.toJsonTree(value).getAsJsonObject();
         if (value instanceof Wheat) {
             jsonObj.addProperty("type", "wheat");
+        } else if (value instanceof AbsenceVegetable) {
+            jsonObj.addProperty("type", "absence");
         }
         gson.toJson(jsonObj, out);
     }
@@ -168,6 +173,8 @@ class VegetableAdapter extends TypeAdapter<Vegetable> {
         switch (type.toLowerCase()) {
             case "wheat":
                 return gson.fromJson(jsonObj, Wheat.class);
+            case "absence":
+                return gson.fromJson(jsonObj, AbsenceVegetable.class);
             default:
                 throw new JsonParseException("Unknown type: " + type);
         }

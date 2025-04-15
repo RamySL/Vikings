@@ -6,15 +6,13 @@ import network.packets.FormatPacket;
 import network.packets.PacketConnectedPlayers;
 import network.packets.PaquetEndGame;
 import network.packets.PaquetTimer;
-import server.model.GameTimer;
-import server.model.Camp;
-import server.model.Partie;
-import server.model.ThreadCollisionCamp;
+import server.model.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe pricipale du serveur, Création du serveur, lancement, gestion des connexions, gestion des partie.
@@ -42,7 +40,7 @@ public class Server {
             throw new RuntimeException(e);
         }
         this.clients = new ArrayList<>();
-        this.timer = new GameTimer(5);
+        this.timer = new GameTimer(20);
 
     }
 
@@ -104,7 +102,7 @@ public class Server {
             broadcast(FormatPacket.format("PaquetTimer", timerContent),partie.isGameOver() );
         }
         if (partie!=null && partie.isGameOver()){
-            String endGameContent = gson.toJson(new PaquetEndGame(1));
+            String endGameContent = gson.toJson(new PaquetEndGame(getWinnerCampIds()));
             broadcast(FormatPacket.format("PaquetEndGame", endGameContent), true);
         }
     }
@@ -178,7 +176,31 @@ public class Server {
         this.serverView.logReceivedPacket(from, message);
     }
 
-    public int getWinnerCampId() {
-        return this.partie.getWinnerCampId();
+    public List<Integer> getWinnerCampIds() {
+        int maxScore = 0;
+        List<Integer> winnerCampIds = new ArrayList<>();
+        Camp[] camps = partie.getCamps();
+
+        for (Camp camp : camps) {
+            int score = 0;
+
+            for (Entity ressource : camp.getRessources()) {
+                if (ressource instanceof Livestock) {
+                    score += (int) (((Livestock) ressource).getHealth() * 2);
+                } else if (ressource instanceof Wheat) {
+                    score += 1;
+                }
+            }
+
+            if (score > maxScore) {
+                maxScore = score;
+                winnerCampIds.clear();
+                winnerCampIds.add(camp.getId());
+            } else if (score == maxScore) {
+                winnerCampIds.add(camp.getId());
+            }
+
+        }
+        return winnerCampIds;
     }
 }

@@ -85,7 +85,7 @@ public class ThreadCommunicationClient extends Thread {
 
             case "PaquetEndGame":
                 PaquetEndGame paquetEndGame = gson.fromJson(wrapper.content, PaquetEndGame.class);
-                this.view.getViewPartie().setEndGame(paquetEndGame.getWinningCampId());
+                this.view.getViewPartie().setEndGame(paquetEndGame.getWinningCampIds());
                 this.view.changeCard("4");
                 break;
             default:

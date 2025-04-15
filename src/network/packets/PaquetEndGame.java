@@ -1,15 +1,15 @@
 package network.packets;
 
+import java.util.List;
+
 public class PaquetEndGame {
-    private int winningCampId;
+    private List<Integer> winningCampIds;
 
-
-    public PaquetEndGame(int winningCampId) {
-        this.winningCampId = winningCampId;
+    public PaquetEndGame(List<Integer> winningCampIds) {
+        this.winningCampIds = winningCampIds;
     }
 
-    public int getWinningCampId() {
-        return winningCampId;
+    public List<Integer> getWinningCampIds() {
+        return winningCampIds;
     }
-
 }

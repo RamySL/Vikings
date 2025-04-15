@@ -3,19 +3,20 @@ package server.model;
 import java.awt.*;
 import java.util.stream.DoubleStream;
 
-public class Field {
+public class  Field {
     private Point position;
     private boolean isPlanted;
     private String resource;
     private int campId;
     private int id;
-    private Object vegetable;
+    private Vegetable vegetable;
 
-    public Field(Point position, int campId) {
+    public Field(Point position, int campId, Vegetable vegetable) {
         this.position = position;
         this.isPlanted = false;
         this.campId = campId;
         this.resource = "";
+        this.vegetable = vegetable;
     }
 
     public Point getPosition() {
@@ -42,7 +43,7 @@ public class Field {
             switch (resource) {
                 case "Corn":
                     break;
-                case "wheat":
+                case "Wheat":
                     vegetable = new Wheat(0,this.position, this.campId, 1);
                     break;
                 default:
@@ -51,15 +52,18 @@ public class Field {
         }
     }
 
-    public String harvest() {
+    /**
+     * Post condition l'objet est un vegetable
+     * @return
+     */
+    public void harvest(Camp camp) {
         if (isPlanted) {
-            String harvestedResource = this.resource;
             this.resource = "";
             this.isPlanted = false;
-            System.out.println("ressource " + harvestedResource + " récoltée");
-            return harvestedResource;
+            camp.addRessource(this.vegetable);
+            this.vegetable = new AbsenceVegetable();
+
         }
-        return null;
     }
 
     public int getId(){
@@ -69,15 +73,13 @@ public class Field {
         this.id = id;
     }
 
-    public void setVegetable(Object o) {
-        this.vegetable = o;
-    }
-
     // String avec nom de la classe
     @Override
     public String toString() {
         return "Field " + id;
     }
 
-
+    public Vegetable getVegetable() {
+        return (Vegetable) vegetable;
+    }
 }

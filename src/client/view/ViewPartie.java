@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Vue de la partie, Dessine tous les éléments du modèle
@@ -254,7 +255,9 @@ public class ViewPartie extends JPanel {
             g2.drawImage(img_field, pointView.x - width / 2, pointView.y - height / 2, width, height, null);
 
             if (field.isPlanted()) {
-                g2.drawString(field.getResource(), pointView.x - width / 2, pointView.y - height / 2);
+                if (field.getVegetable() instanceof Wheat){
+                    g2.drawImage(bleAnim.anim, pointView.x, pointView.y, Position.WIDTH_WHEAT*RATIO_X, Position.HEIGHT_WHEAT*RATIO_Y, null );
+                }
 
             }
         }
@@ -371,8 +374,8 @@ public class ViewPartie extends JPanel {
     public void setTime(int time) {
         System.out.println(time);
     }
-    public void setEndGame(int i){
-        System.out.println("End game " + i);
+    public void setEndGame(List<Integer> winningCampIds) {
+        System.out.println("End game for camps: " + winningCampIds);
     }
 }
 

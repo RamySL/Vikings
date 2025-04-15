@@ -43,18 +43,5 @@ public class Partie {
         return timer.getRemainingTime();
     }
 
-    public int getWinnerCampId() {
-        int maxScore = 0;
-        int winnerCampId = -1;
 
-        for (Camp camp : camps) {
-            if (camp.getScore() > maxScore) {
-                maxScore = camp.getScore();
-                winnerCampId = camp.getId();
-            }
-        }
-
-        return winnerCampId;
-
-    }
 }
