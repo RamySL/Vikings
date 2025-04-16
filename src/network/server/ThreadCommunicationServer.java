@@ -35,6 +35,7 @@ public class ThreadCommunicationServer extends Thread{
         this.camp=camp;
         this.client = client;
         this.server = server;
+
         try {
             this.out = new PrintWriter(this.client.getOutputStream());
             this.in = new BufferedReader(new java.io.InputStreamReader(client.getInputStream()));
@@ -42,7 +43,9 @@ public class ThreadCommunicationServer extends Thread{
             throw new RuntimeException(e);
         }
         this.sendMessage(FormatPacket.format("PacketCampIdNbPlayers", gson.toJson(new PacketCampIdNbPlayers(camp.getId(), server.getNbJoueurs()))), false);
-
+    }
+    public void setThreadCommunicationServer(Camp camp){
+        camp.setThreadCommunicationServer(this);
     }
 
     @Override

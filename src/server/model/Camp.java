@@ -2,6 +2,8 @@ package server.model;
 
 
 
+import network.server.ThreadCommunicationServer;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +39,9 @@ public class Camp {
     private ArrayList<Warrior> warriorsInCamp = new ArrayList<>();
     // username du joueur qui détient ce camp
     private String username;
+    private int lastId;
+    private transient ThreadCommunicationServer threadCommunicationServer;
+    Object regenLock = new Object();
 
 
     // Constructeur
@@ -115,26 +120,43 @@ public class Camp {
         this.setEntitiesId();
 
     }
+    private int lastIds = 0;
 
+    public synchronized int generateNewId() {
+        return id * 100 + lastIds++;
+    }
     /**
      * Set the id of the entities in the camp.
      */
-    public void setEntitiesId(){
+    /*public void setEntitiesId(){
         int i = 0;
         for (Viking viking : vikings) {
-            viking.setId(id * 10 + i);
+            viking.setId(id * 100 + i);
             i++;
         }
         for (Field field : fields) {
-            field.setId(id * 10 + i);
+            field.setId(id * 100 + i);
             i++;
         }
 
         for (Livestock livestock : livestocks) {
-            livestock.setId(id * 10 + i);
+            livestock.setId(id * 100 + i);
             i++;
         }
+        this.lastId=i;
 
+    }*/
+    public void setEntitiesId() {
+        this.lastId = 0;
+        for (Viking viking : vikings) {
+            viking.setId(generateNewId());
+        }
+        for (Field field : fields) {
+            field.setId(generateNewId());
+        }
+        for (Livestock livestock : livestocks) {
+            livestock.setId(generateNewId());
+        }
     }
 
     /**
@@ -197,6 +219,9 @@ public class Camp {
     public void addWarrior(Warrior warrior) {
         // add the viking to the warriors list
         warriors.add(warrior);
+        warriorsInCamp.add(warrior);
+        entities.add(warrior);
+        vikings.add(warrior);
     }
 
     public void addFarmer(Farmer farmer) {
@@ -415,6 +440,11 @@ public class Camp {
         return ressources;
     }
 
-
+    public void setThreadCommunicationServer(ThreadCommunicationServer threadCommunicationServer) {
+        this.threadCommunicationServer = threadCommunicationServer;
+        VikingRegenerator regenerator = new VikingRegenerator(this, this.lastId, threadCommunicationServer, regenLock );
+        Thread regenThread = new Thread(regenerator);
+        regenThread.start();
+    }
 }
 
