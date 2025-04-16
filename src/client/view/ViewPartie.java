@@ -25,6 +25,8 @@ public class ViewPartie extends JPanel {
 
     public static ArrayList<Image> images_anim;
 
+    private Image bareer = new ImageIcon("src/ressources/images/animation/bareer.png").getImage();
+
     private ArrayList<vikingAnim> vikings_thread;
     vikingAnim c1 = new vikingAnim(0);
     vikingAnim c2 = new vikingAnim(1);
@@ -213,6 +215,7 @@ public class ViewPartie extends JPanel {
             drawFields(camp.getFields(), g2);
             //drawWheats(camp.getWheats(), g2);
 
+
         }
 
     }
@@ -225,7 +228,18 @@ public class ViewPartie extends JPanel {
         drawSheep(camp.getSheeps(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawCow(camp.getCows(), g2);
+        //drawBareer(camp, g2);
+
     }
+
+    /*
+    private void drawBareer(Camp camp, Graphics2D g2) {
+
+            Point topLeftCamp = Position.MAP_CAMPS_POSITION.get(camp.getId());
+            Point topLeftView = pointModelToView(topLeftCamp);
+            g2.drawImage(bareer, topLeftCamp.x + 30 - 10, topLeftCamp.y - 70, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y, null);
+    }
+    */
 
     private void drawSheep(ArrayList<Sheep> sheep, Graphics2D g2) {
         for (Sheep l : sheep) {
