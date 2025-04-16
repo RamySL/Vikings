@@ -1,9 +1,6 @@
 package client.controler;
 
-import server.model.Camp;
-import server.model.Position;
-import server.model.Sheep;
-import server.model.Viking;
+import server.model.*;
 
 import java.awt.*;
 
@@ -40,15 +37,15 @@ public abstract class VikingPositionChecker extends Thread{
      * @param viking The viking whose position is being checked.
      * @return the nearest sheep to the viking.
      */
-    protected Sheep getNearestSheep() {
+    protected Livestock getNearestLivestock() {
         Point farmerPosition = this.viking.getPosition();
         double minDistance = Double.MAX_VALUE;
-        Sheep nearestSheep = null;
-        for (Sheep sheep : camp.getSheeps()) {
-            double distance = farmerPosition.distance(sheep.getPosition());
+        Livestock nearestSheep = null;
+        for (Livestock livestock : camp.getLivestocks()) {
+            double distance = farmerPosition.distance(livestock.getPosition());
             if (distance < minDistance) {
                 minDistance = distance;
-                nearestSheep = sheep;
+                nearestSheep = livestock;
             }
         }
         return nearestSheep;
@@ -61,7 +58,7 @@ public abstract class VikingPositionChecker extends Thread{
      * @param sheep  The sheep to check against.
      * @return True if the viking is near the sheep, false otherwise.
      */
-    private boolean isNearSheepWithMargin(Viking viking, Sheep sheep) {
+    private boolean isNearLivestockWithMargin(Viking viking, Livestock sheep) {
         if (sheep == null) {
             return false;
         }
@@ -73,9 +70,9 @@ public abstract class VikingPositionChecker extends Thread{
      * Checks if the farmer is near a sheep and sends a message to the communication server if the state has changed.
      * It uses the distance tolerance to determine if the farmer is near a sheep.
      */
-    protected void checkNearSheep(Viking viking) {
-        Sheep nearestSheep = getNearestSheep();
-        boolean nearSheep = isNearSheepWithMargin(viking, nearestSheep);
+    protected void checkNearLivestock(Viking viking) {
+        Livestock nearestSheep = getNearestLivestock();
+        boolean nearSheep = isNearLivestockWithMargin(viking, nearestSheep);
         if(nearestSheep != null) {
             this.controlerParty.setVikingNearSheep(nearSheep, viking.getId(), nearestSheep.getId());
         }else{

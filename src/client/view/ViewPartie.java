@@ -224,11 +224,12 @@ public class ViewPartie extends JPanel {
      * @param g2
      */
     private void drawCamp(Camp camp, Graphics2D g2) {
+        drawBareer(camp.getEnclosses(), g2);
         drawWarriors(camp.getWarriors(), g2, camp);
         drawSheep(camp.getSheeps(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawCow(camp.getCows(), g2);
-        drawBareer(camp.getEnclosses(), g2);
+
 
     }
 

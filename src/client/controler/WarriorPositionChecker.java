@@ -1,8 +1,6 @@
 package client.controler;
 
 import server.model.Camp;
-import server.model.Position;
-import server.model.Sheep;
 import server.model.Viking;
 
 public class WarriorPositionChecker extends VikingPositionChecker{
@@ -29,8 +27,7 @@ public class WarriorPositionChecker extends VikingPositionChecker{
                     }
                 }
             }
-
-            super.checkNearSheep(this.viking);
+            super.checkNearLivestock(this.viking);
             this.update();
             try {
                 Thread.sleep(CHECK_INTERVAL_MS);
