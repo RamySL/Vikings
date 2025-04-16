@@ -48,11 +48,10 @@ public class BarreDeTemps extends JComponent {
         int horlogeLargeur = horlogeAfficheLargeur;
         int horlogeHauteur = horlogeAfficheHauteur;
 
-        // Position du cœur
 
 
 
-        int barreX = padding + horlogeLargeur -15;
+        int barreX = padding + horlogeLargeur -5;
         int barreLargeur = largeur - barreX - padding;
         int barreHauteur = 12;
         int barreY = (hauteur - barreHauteur) / 2;
@@ -102,11 +101,8 @@ public class BarreDeTemps extends JComponent {
             g2.drawImage(horlogeImage, padding, (hauteur - horlogeAfficheHauteur) / 2,
                     horlogeAfficheLargeur, horlogeAfficheHauteur, null);
         }
-        if (ratio < 0.3f) {
-            g2.setColor(Color.WHITE);
-        } else {
-            g2.setColor(Color.BLACK);
-        }
+
+        g2.setColor(Color.BLACK);
         g2.drawString(texteTemps, textX, textY);
 
         g2.dispose();

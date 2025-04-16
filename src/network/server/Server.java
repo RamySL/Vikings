@@ -7,6 +7,7 @@ import network.packets.PacketConnectedPlayers;
 import network.packets.PaquetEndGame;
 import network.packets.PaquetTimer;
 import server.model.*;
+import java.util.TreeSet;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -40,7 +41,7 @@ public class Server {
             throw new RuntimeException(e);
         }
         this.clients = new ArrayList<>();
-        this.timer = new GameTimer(200);
+        this.timer = new GameTimer(2000);
 
     }
 
@@ -103,8 +104,17 @@ public class Server {
             String timerContent = gson.toJson(new PaquetTimer(partie.getRemainingTime()));
             broadcast(FormatPacket.format("PaquetTimer", timerContent),!partie.isGameOver() );
         }
-        if (partie!=null && partie.isGameOver()){
-            String endGameContent = gson.toJson(new PaquetEndGame(getWinnerCampIds()));
+        if (partie != null && partie.isGameOver()) {
+            List<Integer> orderedCampIds = getCampIdsSortedByScore();
+            List<String> playerNames = new ArrayList<>();
+
+            // Récupération des pseudos des joueurs
+            for (ThreadCommunicationServer client : this.clients) {
+                playerNames.add(client.getCamp().getUsername());
+            }
+
+            // Création du paquet avec les IDs des camps et les pseudos
+            String endGameContent = gson.toJson(new PaquetEndGame(orderedCampIds, playerNames));
             broadcast(FormatPacket.format("PaquetEndGame", endGameContent), true);
         }
     }
@@ -178,31 +188,49 @@ public class Server {
         this.serverView.logReceivedPacket(from, message);
     }
 
-    public List<Integer> getWinnerCampIds() {
-        int maxScore = 0;
-        List<Integer> winnerCampIds = new ArrayList<>();
+    public List<Integer> getCampIdsSortedByScore() {
         Camp[] camps = partie.getCamps();
+
+        // Classe interne pour stocker camp + score
+        class CampScore {
+            int id;
+            int score;
+
+            CampScore(int id, int score) {
+                this.id = id;
+                this.score = score;
+            }
+        }
+
+        // TreeSet avec comparateur personnalisé : score décroissant, puis ID croissant
+        TreeSet<CampScore> sortedCamps = new TreeSet<>((a, b) -> {
+            if (b.score != a.score) {
+                return Integer.compare(b.score, a.score); // Score décroissant
+            } else {
+                return Integer.compare(a.id, b.id); // ID croissant si égalité
+            }
+        });
 
         for (Camp camp : camps) {
             int score = 0;
 
             for (Entity ressource : camp.getRessources()) {
                 if (ressource instanceof Livestock) {
-                    score += (int) (((Livestock) ressource).getHealth() * 2);
+                    score += ((Livestock) ressource).getHealth() * 2;
                 } else if (ressource instanceof Wheat) {
                     score += 1;
                 }
             }
 
-            if (score > maxScore) {
-                maxScore = score;
-                winnerCampIds.clear();
-                winnerCampIds.add(camp.getId());
-            } else if (score == maxScore) {
-                winnerCampIds.add(camp.getId());
-            }
-
+            sortedCamps.add(new CampScore(camp.getId(), score));
         }
-        return winnerCampIds;
+
+        // Extraire les IDs dans l’ordre trié
+        List<Integer> orderedIds = new ArrayList<>();
+        for (CampScore cs : sortedCamps) {
+            orderedIds.add(cs.id);
+        }
+
+        return orderedIds;
     }
 }

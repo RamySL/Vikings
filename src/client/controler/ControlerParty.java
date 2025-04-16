@@ -60,14 +60,13 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
         if (camp != null) {
             Warrior newWarrior = (Warrior) determineSelectedEntity(coordonnee.x, coordonnee.y);
             if (newWarrior != null) {
-                System.out.println("shhshhshhs");
-            }
+                VikingPositionChecker positionChecker = new WarriorPositionChecker(this, camp, camp, newWarrior);
+                this.mapIdChecker.put(warriorId, positionChecker);
+                positionChecker.start();            }
 
 
             // Start a position checker thread for the new warrior
-            VikingPositionChecker positionChecker = new WarriorPositionChecker(this, camp, camp, newWarrior);
-            this.mapIdChecker.put(warriorId, positionChecker);
-            positionChecker.start();
+
         } else {
             System.err.println("Camp with ID  not found.");
         }
@@ -118,13 +117,14 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
                                 VikingPositionChecker th = this.mapIdChecker.get(((Viking) o).getId());
                                 if (lastThreadChecker != null && lastThreadChecker != th) {
                                     lastThreadChecker.locked = true;
-                                }
-                                lastThreadChecker = th;
-                                synchronized (th.lock){
-                                    th.locked = false;
-                                    th.lock.notify();
+                                    lastThreadChecker = th;
+                                    synchronized (th.lock){
+                                        th.locked = false;
+                                        th.lock.notify();
 
+                                    }
                                 }
+
 
                                 System.out.println("Click sur camp : Viking slectionné");
                                 selectedEntityID = ((Viking) o).getId();

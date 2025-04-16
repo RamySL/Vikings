@@ -99,8 +99,8 @@ public class ViewPartie extends JPanel {
          });
 
          // Initialize the progress bar
-         timeBar = new BarreDeTemps(20);
-         timeBar.setTemps(20);
+         timeBar = new BarreDeTemps(2000);
+         timeBar.setTemps(2000);
 
          // Add the progress bar to the bottom of the panel
          this.add(timeBar, BorderLayout.NORTH);
@@ -446,9 +446,7 @@ public class ViewPartie extends JPanel {
     public void setTime(int time) {
         timeBar.setTemps(time);
     }
-    public void setEndGame(List<Integer> winningCampIds) {
-        System.out.println("End game for camps: " + winningCampIds);
-    }
+
 
 
 }

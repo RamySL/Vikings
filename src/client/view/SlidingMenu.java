@@ -47,7 +47,7 @@ public class SlidingMenu extends JPanel {
 
 
         setLayout(new GridBagLayout());
-        setBackground(Color.LIGHT_GRAY);
+        this.setBackground(new Color(255, 182, 193));
         setBorder(new EmptyBorder(30, 0, 30, 0));
         setBounds(windowWidth + widthMenu, posMenuY, widthMenu, windowHeight);
 
