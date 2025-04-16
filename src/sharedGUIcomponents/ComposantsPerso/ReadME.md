@@ -1,1 +1,0 @@
-- Ce package contient les composants de l'interface graphique personalisés pour le jeu. Que ça soit la vu client ou server
