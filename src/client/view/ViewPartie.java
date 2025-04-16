@@ -311,6 +311,8 @@ public class ViewPartie extends JPanel {
             Point pointView = pointModelToView(field.getPosition());
             int width = Position.WIDTH_FIELD * RATIO_X;
             int height = Position.HEIGHT_FIELD * RATIO_Y;
+//            System.out.println("field position: " +width);
+//            System.out.println("field view position: " + height);
 
             g2.drawImage(img_field, pointView.x - width / 2, pointView.y - height / 2, width, height, null);
             if (field.isPlanted()) {
@@ -327,9 +329,9 @@ public class ViewPartie extends JPanel {
         g2.setColor(Color.BLACK);
         int width = Position.WIDTH_WHEAT * RATIO_X;
         int height = Position.HEIGHT_WHEAT * RATIO_Y;
-        for (int x = point_of_view_x+9; x < point_of_view_x +81; x += 9 ) {
-            for (int y = point_of_view_y+9; y < point_of_view_y +81; y += 9 ) {
-                g2.drawImage(bleAnim.anim, x - width / 2, y - height / 2, width, height, null);
+        for (int x = point_of_view_x+16; x < point_of_view_x +135; x += 15 ) {
+            for (int y = point_of_view_y+13; y < point_of_view_y +93; y += 8 ) {
+                g2.drawImage(bleAnim.anim, x - width / 2, y - height / 2, width, 15, null);
             }
         }
     }

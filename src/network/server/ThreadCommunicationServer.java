@@ -135,7 +135,7 @@ public class ThreadCommunicationServer extends Thread{
                     Point[] dsts =  Arrays.stream(packetAttack.getIdRessources()).mapToObj(id -> enemy.getFieldByID(id).getPosition())
                             .toArray(Point[]::new);
                     for (int i = 0; i<NbVikings.length; i++){
-                        camp.attack(NbVikings[i], enemy.getId(), dsts[i]);
+                        camp.attack(NbVikings[i],this.camp, enemy, dsts[i],packetAttack.getIdRessources()[i]);
                     }
                 }
                 // position

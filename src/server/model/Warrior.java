@@ -17,21 +17,23 @@ public class Warrior extends Viking {
      * - Inflige des dégâts aux guerriers ennemis.
      * - Réduit la force du camp ennemi.
      */
-    public void attack(Camp targetCamp) {
+    public void attack(Camp camp_src, Camp targetCamp, int idRessource) {
         System.out.println("Un guerrier attaque le camp " + targetCamp.getId() + " !");
         Random rand = new Random();
 
-        for (Warrior enemy : targetCamp.getWarriors()) {
-                float damage = ATTACK_POWER + rand.nextFloat() * 10; // Dommages aléatoires
-                ((Warrior) enemy).damage(damage);
-                System.out.println("Dégâts infligés : " + damage);
+        Field field = targetCamp.getFieldByID(idRessource);
+        if(field.isPlanted()){
+            camp_src.addRessource(field.getVegetable());
+            targetCamp.removeRessource(field.getVegetable());
+            System.out.println("Le champ " + field.getId() + " a été récolté !");
+        } else {
+            System.out.println("Le champ " + field.getId() + " n'est pas planté !");
         }
-
-        // Réduction de la force du camp ennemi
-        targetCamp.decreaseStrength(ATTACK_POWER * 2);
-        System.out.println("La force du camp " + targetCamp.getId() + " est maintenant de : " + targetCamp.getStrength());
     }
 
+    public void moveAttack(Point destination, Camp campSrc, Camp camp, int idRessource) {
+        new MovementThread(this, destination,campSrc, camp, true, idRessource).start();
+    }
     /**
      * Défend le camp lorsqu'il est attaqué.
      * - Active la réduction des dégâts subis.

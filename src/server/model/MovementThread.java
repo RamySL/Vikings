@@ -5,10 +5,25 @@ import java.awt.*;
 public class MovementThread extends Thread {
     private final Moveable entity;
     private Point destination;
+    private boolean attack;
+    private Camp enemy;
+    private int idRessource;
+    private Camp campSrc;
 
     public MovementThread(Moveable entity, Point destination) {
         this.entity = entity;
         this.destination = destination;
+        this.attack = false;
+    }
+
+    public MovementThread(Moveable entity, Point destination,Camp campSrc,  Camp camp, boolean attack, int idRessource) {
+        this.entity = entity;
+        this.destination = destination;
+        this.attack = attack;
+        this.enemy = camp;
+        this.idRessource = idRessource;
+        this.campSrc = campSrc;
+
     }
 
     @Override
@@ -31,8 +46,16 @@ public class MovementThread extends Thread {
                     break;
                 }
             }
+            if(attack){
+                attack((Warrior) entity, campSrc, enemy, idRessource);
+                attack = false;
+            }
 
 
+    }
+
+    public void attack(Warrior warrior, Camp campSrc, Camp enemy, int idRessource) {
+        warrior.attack(campSrc, enemy, idRessource);
     }
 
     public void stopMovement() {

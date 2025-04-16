@@ -11,7 +11,7 @@ import javax.swing.*;
 public class Monoplayer {
     public static void main(String[] args) {
         // mettez le nombre de joueur que vous voulez
-        int nbJR = 4;
+        int nbJR = 1;
         new Thread(() -> {
             Server serverView = new Server();
             serverView.getFieldNbPlayers().setText(String.valueOf(nbJR));

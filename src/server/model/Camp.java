@@ -209,11 +209,11 @@ public class Camp {
      * @param n
      * @param id
      */
-    public void attack(int n, int id, Point dst) {
+    public void attack(int n,Camp campSrc, Camp camp, Point dst, int idResource) {
 
         for (int i = 0; i < n; i++) {
             Warrior warrior = this.warriorsInCamp.get(i);
-            warrior.move(dst);
+            warrior.moveAttack(dst,campSrc, camp, idResource);
             // add the warrior to the vikingsAttack
             if (this.vikingsAttack.containsKey(id)) {
                 this.vikingsAttack.get(id).add(warrior);
@@ -489,6 +489,10 @@ public class Camp {
         VikingRegenerator regenerator = new VikingRegenerator(this, this.lastId, threadCommunicationServer, regenLock );
         Thread regenThread = new Thread(regenerator);
         regenThread.start();
+    }
+
+    public void removeRessource(Entity e){
+        this.ressources.remove(e);
     }
 }
 
