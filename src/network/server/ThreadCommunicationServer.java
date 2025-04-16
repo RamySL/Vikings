@@ -141,10 +141,11 @@ public class ThreadCommunicationServer extends Thread{
                     return;
                 }else{
                     Camp enemy = this.server.getPartie().getCamp(packetAttack.getIdCamp());
+                    System.out.println("Camp à attaquer : " + enemy.getId());
                     Point[] dsts =  Arrays.stream(packetAttack.getIdRessources()).mapToObj(id -> enemy.getFieldByID(id).getPosition())
                             .toArray(Point[]::new);
                     for (int i = 0; i<NbVikings.length; i++){
-                        enemy.attack(NbVikings[i],this.camp, enemy, dsts[i],packetAttack.getIdRessources()[i]);
+                        this.camp.attack(NbVikings[i],this.camp, enemy, dsts[i],packetAttack.getIdRessources()[i]);
 
                     }
                 }

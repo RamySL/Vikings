@@ -18,14 +18,13 @@ public class Warrior extends Viking {
      * - Réduit la force du camp ennemi.
      */
     public void attack(Camp camp_src, Camp targetCamp, int idRessource) {
-        System.out.println("Un guerrier attaque le camp " + targetCamp.getId() + " !");
-        Random rand = new Random();
 
         Field field = targetCamp.getFieldByID(idRessource);
         if(field.isPlanted()){
             camp_src.addRessource(field.getVegetable());
             targetCamp.removeRessource(field.getVegetable());
-            System.out.println("Le champ " + field.getId() + " a été récolté !");
+            field.setPlanted(false);
+            field.setResource("");
         } else {
             System.out.println("Le champ " + field.getId() + " n'est pas planté !");
         }

@@ -198,7 +198,6 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
     public Camp determineSelectedCamp(int x, int y) {
         Camp[] camps=this.viewPartie.getPartieModel().getCamps();
         for (Camp camp : camps) {
-            System.out.println(camp.getEntities());
             // getPosition rend le top left point of the camp
             Point viewPos = ViewPartie.pointModelToView(camp.getPosition());
             if (x >= viewPos.x && x <= viewPos.x + (Position.WIDTH * ViewPartie.RATIO_X)

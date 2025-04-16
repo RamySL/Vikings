@@ -331,7 +331,7 @@ public class ViewPartie extends JPanel {
         int height = Position.HEIGHT_WHEAT * RATIO_Y;
         for (int x = point_of_view_x+16; x < point_of_view_x +135; x += 15 ) {
             for (int y = point_of_view_y+13; y < point_of_view_y +93; y += 8 ) {
-                g2.drawImage(bleAnim.anim, x - width / 2, y - height / 2, width, 15, null);
+                g2.drawImage(bleAnim.anim, x - width / 2, y - height / 2, width, height, null);
             }
         }
     }

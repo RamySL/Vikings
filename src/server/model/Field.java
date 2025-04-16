@@ -82,4 +82,12 @@ public class  Field {
     public Vegetable getVegetable() {
         return (Vegetable) vegetable;
     }
+
+    public void setPlanted(boolean planted) {
+        isPlanted = planted;
+    }
+
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
 }
