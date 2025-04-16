@@ -27,10 +27,10 @@ public class ViewPartie extends JPanel {
     Image img_field = new ImageIcon("src/ressources/images/animation/terre.png").getImage();
 
     public static final int RATIO_X = 3,  RATIO_Y = 3;
-    public static final int WIDTH_VIEW =  (2*Position.MARGIN+Position.WIDTH)*RATIO_X;
-    public static final int HEIGHT_VIEW =  (2*Position.MARGIN+Position.HEIGHT)*RATIO_Y;
+    public static final int WIDTH_VIEW =  (2*Position.MARGIN_X+Position.WIDTH)*RATIO_X;
+    public static final int HEIGHT_VIEW =  (2*Position.MARGIN_Y+Position.HEIGHT)*RATIO_Y;
     // the point where the camp shold be translated to
-    public static final Point POINT_ANCRE =  new Point(Position.MARGIN*RATIO_X,Position.MARGIN*RATIO_Y);
+    public static final Point POINT_ANCRE =  new Point(Position.MARGIN_X*RATIO_X,Position.MARGIN_Y*RATIO_Y);
     // the amount that will be used to translate swing coordinates when draging
     private int offsetDraggingX = 0,  offsetDraggingY = 0;
     // the amount that will be used to translate swing coordinates when zooming relativeley to the mouse
@@ -51,7 +51,7 @@ public class ViewPartie extends JPanel {
       * Constructeur de la vue de la partie
       */
      public ViewPartie(ViewClient viewClient, Partie partieModel) {
-
+         // recupere la taille de l'ecran du pc
          this.setPreferredSize(new Dimension(windowWidth, windowHeight));
          bavp.start();
          vavp.start();
@@ -120,7 +120,7 @@ public class ViewPartie extends JPanel {
      * @return
      */
     public static Point pointModelToView(Point pointModele) {
-        return new Point(pointModele.x * RATIO_X, (Position.HEIGHT + 2 * Position.MARGIN - pointModele.y) * RATIO_Y);
+        return new Point(pointModele.x * RATIO_X, (Position.HEIGHT + 2 * Position.MARGIN_Y - pointModele.y) * RATIO_Y);
     }
 
     public void clickToView(Point click) {

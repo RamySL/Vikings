@@ -74,7 +74,7 @@ public class Server {
        }
         createPartie(camps, timer);
         try {
-            Thread.sleep(3000);
+            Thread.sleep(0);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

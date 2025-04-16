@@ -3,9 +3,7 @@ package server.model;
 
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -31,6 +29,7 @@ public class Camp {
     private ArrayList<Vegetable> vegetables = new ArrayList<>();
     private ArrayList<Wheat> wheats = new ArrayList<>();
     private ArrayList<Entity> ressources = new ArrayList<>();
+    private ArrayList<Enclos> enclosses = new ArrayList<>();
 
     // map entre les camp attaqué par les vikings de ce camp et les vikings qui l'attaquent
     private HashMap<Integer, ArrayList<Warrior>> vikingsAttack = new HashMap<>();
@@ -54,54 +53,96 @@ public class Camp {
      */
     public void init() {
         // Ajout des guerriers
-        Point topLeftCamp =  Position.MAP_CAMPS_POSITION.get(this.id);
-        Warrior v1 = new Warrior(50,new Point(topLeftCamp.x + 10,topLeftCamp.y - 10), this.id);
-        Warrior v2 = new Warrior(50,new Point(topLeftCamp.x + 30,topLeftCamp.y - 10), this.id);
+        Point topLeftCamp = Position.MAP_CAMPS_POSITION.get(this.id);
+        Random random = new Random();
 
-        Farmer f1 = new Farmer(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 30), this.id);
-        Farmer f2 = new Farmer(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 30), this.id);
+        for (int i = 0; i < 8; i++) {
+            int x = random.nextInt(Position.WIDTH + 1);  // +1 pour inclure WIDTH
+            int y = random.nextInt(Position.HEIGHT + 1); // +1 pour inclure HEIGHT
+            Point p = new Point(topLeftCamp.x + x, topLeftCamp.y - y);
+            Warrior v = new Warrior(100, p, i); // on utilise 'i' comme identifiant
+            warriors.add(v);
+            warriorsInCamp.add(v);
+            vikings.add(v);
+        }
 
-        warriors.add(v1);
-        warriors.add(v2);
-        warriorsInCamp.add(v1);
-        warriorsInCamp.add(v2);
+        for (int i = 0; i < 3; i++) {
+            int x = random.nextInt(Position.WIDTH + 1);
+            int y = random.nextInt(Position.HEIGHT + 1);
+            Point p = new Point(topLeftCamp.x + x, topLeftCamp.y - y);
+            Farmer f = new Farmer(100, p, i);
+            farmers.add(f);
+            vikings.add(f);
+        }
 
-        vikings.add(v1);
-        vikings.add(v2);
 
-        // add farmer
-        farmers.add(f1);
-        farmers.add(f2);
-
-        vikings.add(f1);
-        vikings.add(f2);
-
-        Sheep s1 = new Sheep(20, new Point(topLeftCamp.x + 10,topLeftCamp.y - 50), this.id, 6);
-        Sheep s2 = new Sheep(20, new Point(topLeftCamp.x + 30,topLeftCamp.y - 50), this.id, 5);
+        Sheep s1 = new Sheep(20, new Point(topLeftCamp.x + 10, topLeftCamp.y - 50), this.id, 6);
+        Sheep s2 = new Sheep(20, new Point(topLeftCamp.x + 30, topLeftCamp.y - 50), this.id, 5);
         sheeps.add(s1);
         sheeps.add(s2);
         ressources.add(s1);
         ressources.add(s2);
 
 
-        Cow c1 = new Cow(100, new Point(topLeftCamp.x + 10,topLeftCamp.y - 70), this.id, 6/*,this*/);
-        Cow c2 = new Cow(100, new Point(topLeftCamp.x + 30,topLeftCamp.y - 70), this.id, 5/*,this*/);
+        Cow c1 = new Cow(100, new Point(topLeftCamp.x + 10, topLeftCamp.y - 70), this.id, 6/*,this*/);
+        Cow c2 = new Cow(100, new Point(topLeftCamp.x + 30, topLeftCamp.y - 70), this.id, 5/*,this*/);
         cows.add(c1);
         cows.add(c2);
         ressources.add(c1);
         ressources.add(c2);
         // Ajout des cultures
         //Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
-        Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70,topLeftCamp.y - 50), this.id, 0);
+        Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70, topLeftCamp.y - 50), this.id, 0);
         wheats.add(v);
         ressources.add(v);
 
         vegetables.add(v);
+        int prc1 = 2;
+        Field fi1 = new Field(new Point(Position.WIDTH_FIELD / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100, -Position.HEIGHT_FIELD / 2 + topLeftCamp.y - prc1 * Position.HEIGHT / 100), this.id, new AbsenceVegetable());
+        Field fi2 = new Field(new Point(Position.WIDTH_FIELD / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100, -Position.HEIGHT_FIELD / 2 + topLeftCamp.y - prc1 * Position.HEIGHT / 100 - Position.HEIGHT_FIELD - prc1 * Position.HEIGHT / 100),
+                this.id, new AbsenceVegetable());
+        Field fi3 = new Field(new Point(Position.WIDTH_FIELD / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100 + Position.WIDTH_FIELD + prc1 * Position.WIDTH / 100, -Position.HEIGHT_FIELD / 2 + topLeftCamp.y - prc1 * Position.HEIGHT / 100 - Position.HEIGHT_FIELD - prc1 * Position.HEIGHT / 100), this.id, new AbsenceVegetable());
+        Field fi4 = new Field(new Point(Position.WIDTH_FIELD / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100 + Position.WIDTH_FIELD + prc1 * Position.WIDTH / 100, -Position.HEIGHT_FIELD / 2 + topLeftCamp.y - prc1 * Position.HEIGHT / 100), this.id, new AbsenceVegetable());
 
-        Field fi1 = new Field(new Point(topLeftCamp.x + 15,topLeftCamp.y - 100), this.id, new AbsenceVegetable());
-        Field fi2 = new Field(new Point(topLeftCamp.x + 50,topLeftCamp.y - 100), this.id, new AbsenceVegetable());
+        Field fi5 = new Field(
+                new Point(
+                        Position.WIDTH_FIELD / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100,
+                        // On soustrait pour "descendre" dans un repère où Y+ = haut
+                        topLeftCamp.y - Position.HEIGHT + prc1 * Position.HEIGHT / 100 + Position.HEIGHT_FIELD - Position.HEIGHT_FIELD / 2
+                ),
+                this.id,
+                new AbsenceVegetable()
+        );
+        Field fi6 = new Field(
+                new Point(
+                        Position.WIDTH_FIELD / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100 + Position.WIDTH_FIELD + prc1 * Position.WIDTH / 100,
+                        // On "descend" encore plus : on retire la hauteur supplémentaire
+                        topLeftCamp.y - Position.HEIGHT + prc1 * Position.HEIGHT / 100 + Position.HEIGHT_FIELD - Position.HEIGHT_FIELD / 2
+                ),
+                this.id,
+                new AbsenceVegetable()
+        );
+
         fields.add(fi1);
         fields.add(fi2);
+        fields.add(fi3);
+        fields.add(fi4);
+        fields.add(fi5);
+        fields.add(fi6);
+
+        Enclos e1 = new Enclos(
+                new Point(
+                        Position.WIDTH_ENCLOS / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100,
+                        // On soustrait pour "descendre" dans un repère où Y+ = haut
+                        topLeftCamp.y - Position.HEIGHT / 2 + Position.HEIGHT_ENCLOS - (int) (Position.HEIGHT_ENCLOS * 1.4)
+                ),
+                this.id, livestocks);
+
+        Enclos e2 = new Enclos(new Point(topLeftCamp.x + Position.WIDTH - prc1 * Position.WIDTH / 100 - Position.WIDTH_ENCLOS / 2,
+                -Position.HEIGHT_FIELD / 2 + topLeftCamp.y - prc1 * Position.HEIGHT / 100), this.id, livestocks);
+
+        enclosses.add(e1);
+        enclosses.add(e2);
 
         // ajoute tout les objet de camp créer dans entities
         entities = new ArrayList<>();
@@ -116,12 +157,9 @@ public class Camp {
 
         this.setEntitiesId();
 
-        VikingRegenerator regenerator = new VikingRegenerator(this, topLeftCamp.x + 15, topLeftCamp.y - 100, this.lastId );
-
-        Thread regenThread = new Thread(regenerator);
-        regenThread.start();
 
     }
+
 
     /**
      * Set the id of the entities in the camp.
@@ -205,6 +243,7 @@ public class Camp {
     public void addWarrior(Warrior warrior) {
         // add the viking to the warriors list
         warriors.add(warrior);
+        warriorsInCamp.add(warrior);
         entities.add(warrior);
         vikings.add(warrior);
     }

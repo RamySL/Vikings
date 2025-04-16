@@ -23,13 +23,12 @@ public class VikingRegenerator implements Runnable {
                 idStart = idStart+1;
 
                 Warrior newWarrior = new Warrior(health, position, idStart);
-
+                System.out.println("New Warrior created: " + newWarrior.toString());
                 // Add the Warrior to the camp
-                synchronized (camp) {
-                    camp.addWarrior(newWarrior);
-                }
+                camp.addWarrior(newWarrior);
 
-                System.out.println("A new Warrior has been regenerated: " );
+
+                //System.out.println("A new Warrior has been regenerated: " );
 
                 // Wait 30 seconds before regenerating another Warrior
                 TimeUnit.SECONDS.sleep(3);

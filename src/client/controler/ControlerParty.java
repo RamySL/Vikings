@@ -106,7 +106,6 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
 
                                 }
 
-                                System.out.println("Click sur camp : Viking slectionné");
                                 selectedEntityID = ((Viking) o).getId();
                                 isFirstClickCamp = false;
                             }
@@ -216,6 +215,7 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
      */
     public Object determineSelectedEntity(int x, int y) {
         for (Entity entity : this.viewPartie.getCamp().getEntities()) {
+            System.out.println(this.viewPartie.getCamp().getEntities());
             // getPosition rend le top left point of the entity
             Point viewPos = ViewPartie.pointModelToView(entity.getPosition());
             viewPos = new Point(viewPos.x - (Position.WIDTH_VIKINGS / 2) * ViewPartie.RATIO_X, viewPos.y - (Position.HEIGHT_VIKINGS / 2) * ViewPartie.RATIO_Y);
