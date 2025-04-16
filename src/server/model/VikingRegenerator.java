@@ -43,6 +43,7 @@ public class VikingRegenerator implements Runnable {
 
     @Override
     public void run() {
+
         while (!Thread.currentThread().isInterrupted()) {
             checkAndLockIfNeeded();
             if (locked) {
