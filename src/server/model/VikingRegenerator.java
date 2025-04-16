@@ -24,7 +24,7 @@ public class VikingRegenerator implements Runnable {
         this.locked = false;
     }
     private void checkAndLockIfNeeded() {
-        if (camp.getWarriors().size() > 2) {
+        if (camp.getWarriors().size() > 4) {
             lock();
         }
     }
@@ -56,7 +56,7 @@ public class VikingRegenerator implements Runnable {
                             return;
                         }
                         // Recheck the condition to possibly unlock
-                        if (camp.getWarriors().size() <= 2) {
+                        if (camp.getWarriors().size() <= 4) {
                             unlock();
                         }
                     }
@@ -67,20 +67,21 @@ public class VikingRegenerator implements Runnable {
             try {
                 float health = 100.0f;
 
-                TimeUnit.SECONDS.sleep(8);
+                TimeUnit.SECONDS.sleep(5);
                 Point pos= Position.MAP_CAMPS_POSITION.get(camp.getId());
                 Point position = new Point(pos.x+100, pos.y);
 
 
                 Warrior newWarrior = new Warrior(health, position, camp.getId());
                 newWarrior.setId(camp.generateNewId());
+
                 camp.addWarrior(newWarrior);
 
                 PacketNewWarrior packet = new PacketNewWarrior(newWarrior.getId(), newWarrior.getPosition().x, newWarrior.getPosition().y);
                 String packetJson = new Gson().toJson(packet);
                 threadCommunicationServer.sendMessage(FormatPacket.format("PacketNewWarrior", packetJson), true);
 
-                TimeUnit.SECONDS.sleep(15);
+                TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
                 System.out.println("The regeneration thread was interrupted during sleep.");
                 Thread.currentThread().interrupt();

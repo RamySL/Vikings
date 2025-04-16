@@ -182,6 +182,34 @@ public class Camp {
         }
 
     }
+    public void repli(int attackedCampId) {
+        if (!vikingsAttack.containsKey(attackedCampId)) {
+            System.out.println("Aucun viking n'attaque ce camp");
+            return;
+        }
+
+        ArrayList<Warrior> attackingWarriors = vikingsAttack.get(attackedCampId);
+        if (attackingWarriors == null || attackingWarriors.isEmpty()) {
+            System.out.println("Aucun guerrier a moi attaquant ce camps");
+            return;
+        }
+
+        Point dest = Position.MAP_CAMPS_POSITION.get(this.id);
+        System.out.println("Début du repli vers le camp " + this.id + " depuis le camp attaqué " + attackedCampId);
+
+        for (Warrior warrior : attackingWarriors) {
+            Thread moveThread = new Thread(() -> {
+                warrior.move(dest);
+                synchronized (warriorsInCamp) {
+                    warriorsInCamp.add(warrior);
+                }
+            });
+            moveThread.start();
+        }
+
+        vikingsAttack.remove(attackedCampId);
+    }
+
     public List<Point> getFieldPositions() {
         List<Point> positions = new ArrayList<>();
         for (Field field : fields) {

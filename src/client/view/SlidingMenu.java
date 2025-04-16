@@ -20,7 +20,7 @@ public class SlidingMenu extends JPanel {
     private boolean isFarmerOnField, isVikingNearSheep;
     private boolean isFieldPlanted;
     private boolean isVisible;
-    private Buttons.BouttonJeu plantButton, harvestButton, eatButton, exitMenu, attackButton;
+    private Buttons.BouttonJeu plantButton, harvestButton, eatButton, exitMenu, attackButton, repliButton;
     private JComboBox<String> plantComboBox;
     private JLabel entityLabel, ressourceLabel;
 
@@ -155,6 +155,13 @@ public class SlidingMenu extends JPanel {
                 }
             }
         });
+        repliButton = new Buttons.BouttonJeu("Repli");
+        repliButton.setVisible(false);
+        gbc.gridy++;
+        add(repliButton, gbc);
+        repliButton.addActionListener(e -> {
+            handleRepliButtonClicked();
+        });
 
 
 
@@ -232,6 +239,7 @@ public class SlidingMenu extends JPanel {
         plantButton.setVisible(false);
         eatButton.setVisible(false);
         harvestButton.setVisible(false);
+        repliButton.setVisible(true);
     }
 
 
@@ -364,5 +372,22 @@ public class SlidingMenu extends JPanel {
 
     public Buttons.BouttonJeu getExitMenu() {
         return exitMenu;
+    }
+    private void handleRepliButtonClicked() {
+        if (camp_to_attack != -1) {
+            RepliEvent event = new RepliEvent(camp_to_attack);
+            EventBus.getInstance().publish("RepliEvent", event);
+        }
+
+        // Réinitialise les états
+        this.idRessources.clear();
+        this.nbVikings.clear();
+        this.camp_to_attack = -1;
+
+        // Masquer boutons/inputs liés à l’attaque
+        attackButton.setVisible(false);
+        textFieldNbVikings.setVisible(false);
+        repliButton.setVisible(false);
+        ressourceLabel.setVisible(false);
     }
 }

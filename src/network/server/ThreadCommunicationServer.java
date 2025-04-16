@@ -121,6 +121,15 @@ public class ThreadCommunicationServer extends Thread{
                 v.stop();
                 v.move(Position.viewToModel(packetMovement.getDst(),packetMovement.getTranslation(),packetMovement.getScale()));
                 break;
+            case "PaquetRepli":
+                PaquetRepli paquetRepli = gson.fromJson(wrapper.content, PaquetRepli.class);
+                int idCamp = paquetRepli.getIdCampAttaque();
+                Camp camp = this.server.getPartie().getCamp(idCamp);
+
+                camp.repli(idCamp);
+
+                System.out.println("Camp " + idCamp + " se replie.");
+                break;
             case "PacketAttack":
                 // On vérifie si l'attaque est valide
                 PacketAttack packetAttack = gson.fromJson(wrapper.content, PacketAttack.class);
@@ -135,7 +144,7 @@ public class ThreadCommunicationServer extends Thread{
                     Point[] dsts =  Arrays.stream(packetAttack.getIdRessources()).mapToObj(id -> enemy.getFieldByID(id).getPosition())
                             .toArray(Point[]::new);
                     for (int i = 0; i<NbVikings.length; i++){
-                        camp.attack(NbVikings[i], enemy.getId(), dsts[i]);
+                        enemy.attack(NbVikings[i], enemy.getId(), dsts[i]);
                     }
                 }
                 // position

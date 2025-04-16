@@ -13,12 +13,14 @@ import server.model.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Controler of the party
  */
-public class ControlerParty extends MouseAdapter implements AttackListener, ActionListener, MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner {
+public class ControlerParty extends MouseAdapter implements AttackListener, ActionListener, MouseMotionListener, MouseWheelListener, PlantListener, EatListenner, HarvestListenner, RepliListener {
 
     private ControlerClient controlerClient;
     private ViewPartie viewPartie;
@@ -49,13 +51,18 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
         EventBus.getInstance().subscribe("EatEvent", this::handleEatEvent);
         EventBus.getInstance().subscribe("HarvestEvent", this::handleHarvestEvent);
         EventBus.getInstance().subscribe("AttackEvent", this::handleAttackEvent);
+        EventBus.getInstance().subscribe("RepliEvent", this::handleRepliEvent);
     }
 
     public void addNewWarrior(int warriorId, int x, int y){
         Point coordonnee = ViewPartie.pointModelToView(new Point(x,y));
         Camp camp = determineSelectedCamp(coordonnee.x, coordonnee.y);
         if (camp != null) {
-            Warrior newWarrior = (Warrior) determineSelectedEntity(x,y);
+            Warrior newWarrior = (Warrior) determineSelectedEntity(coordonnee.x, coordonnee.y);
+            if (newWarrior != null) {
+                System.out.println("shhshhshhs");
+            }
+
 
             // Start a position checker thread for the new warrior
             VikingPositionChecker positionChecker = new WarriorPositionChecker(this, camp, camp, newWarrior);
@@ -189,7 +196,9 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
      *
      */
     public Camp determineSelectedCamp(int x, int y) {
-        for (Camp camp : this.viewPartie.getPartieModel().getCamps()) {
+        Camp[] camps=this.viewPartie.getPartieModel().getCamps();
+        for (Camp camp : camps) {
+            System.out.println(camp.getEntities());
             // getPosition rend le top left point of the camp
             Point viewPos = ViewPartie.pointModelToView(camp.getPosition());
             if (x >= viewPos.x && x <= viewPos.x + (Position.WIDTH * ViewPartie.RATIO_X)
@@ -208,8 +217,9 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
      * @return
      */
     public Object determineSelectedField(int x, int y) {
-        // parcours que la liste des fields
-        for (Field field : this.selectedCamp.getFields()) {
+        this.selectedCamp=determineSelectedCamp(x, y);
+        ArrayList<Field> fields = this.selectedCamp.getFields();
+        for (Field field : fields) {
             // getPosition rend le top left point of the field
             Point viewPos = ViewPartie.pointModelToView(field.getPosition());
             viewPos = new Point(viewPos.x - (Position.WIDTH_FIELD / 2) * ViewPartie.RATIO_X, viewPos.y - (Position.HEIGHT_FIELD / 2) * ViewPartie.RATIO_Y);
@@ -228,7 +238,10 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
      * @return
      */
     public Object determineSelectedEntity(int x, int y) {
-        for (Entity entity : this.viewPartie.getCamp().getEntities()) {
+        this.selectedCamp=determineSelectedCamp(x, y);
+        ArrayList<Entity> entities = this.selectedCamp.getEntities();
+
+        for (Entity entity : entities) {
             // getPosition rend le top left point of the entity
             Point viewPos = ViewPartie.pointModelToView(entity.getPosition());
             viewPos = new Point(viewPos.x - (Position.WIDTH_VIKINGS / 2) * ViewPartie.RATIO_X, viewPos.y - (Position.HEIGHT_VIKINGS / 2) * ViewPartie.RATIO_Y);
@@ -368,6 +381,7 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
 
     public void setPartie(){
         if(firstPacketGame){
+
             for (Warrior warrior : this.viewPartie.getCamp().getWarriors()){
                 VikingPositionChecker t = new WarriorPositionChecker(this, this.viewPartie.getCamp(), this.viewPartie.getCamp(),warrior);
                 this.mapIdChecker.put(warrior.getId(),t);
@@ -403,4 +417,21 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
         String contentPaquet = gson.toJson(new PacketAttack(event.getIdCamp(), event.getIdRessources(), event.getNbVikings()));
         this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PacketAttack", contentPaquet));
     }
+
+    @Override
+    public void onRepli(RepliEvent event) {
+        sendRepliPaquetToServer(event.getIdCampAttaque());
+    }
+
+    private void handleRepliEvent(Object event) {
+        if (event instanceof RepliEvent) {
+            RepliEvent repliEvent = (RepliEvent) event;
+            sendRepliPaquetToServer(repliEvent.getIdCampAttaque());
+        }
+    }
+    public void sendRepliPaquetToServer(int idCamp) {
+        String contentPaquet = gson.toJson(new PaquetRepli(idCamp));
+        this.controlerClient.getThreadCommunicationClient().getClient().sendMessage(FormatPacket.format("PaquetRepli", contentPaquet));
+    }
+
 }

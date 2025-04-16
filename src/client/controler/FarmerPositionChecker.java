@@ -10,9 +10,11 @@ import java.awt.Point;
 
 
 public class FarmerPositionChecker extends VikingPositionChecker {
+    private Farmer farmer;
 
     public FarmerPositionChecker(ControlerParty controlerParty, Camp camp, Camp nextCamp, Farmer farmer) {
         super(controlerParty, camp, nextCamp, farmer);
+        this.farmer=farmer;
     }
 
     /**
@@ -31,8 +33,8 @@ public class FarmerPositionChecker extends VikingPositionChecker {
                     }
                 }
             }
-            checkFarmerNearField();
-            super.checkNearSheep();
+            checkFarmerNearField(this.farmer);
+            super.checkNearSheep(this.farmer);
             this.update();
             try {
                 Thread.sleep(CHECK_INTERVAL_MS);
@@ -48,7 +50,7 @@ public class FarmerPositionChecker extends VikingPositionChecker {
      * Checks if the farmer is near a field and sends a message to the communication server if the state has changed.
      * It uses the distance tolerance to determine if the farmer is near a field.
      */
-    private void checkFarmerNearField() {
+    private void checkFarmerNearField(Farmer farmer) {
         Field nearestField = getNearestField((Farmer) viking);
         boolean nearField = isNearFieldWithMargin((Farmer) viking, Position.DISTANCE_TOLERANCE_FIELD, nearestField);
         this.controlerParty.setFarmerNearField(nearField, viking.getId(), nearestField.getId(), nearestField.isPlanted());
