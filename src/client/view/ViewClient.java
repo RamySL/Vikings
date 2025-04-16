@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe qui regroupe toutes les vues de l'application.<p>
@@ -24,6 +26,9 @@ public class ViewClient extends JPanel {
     private ViewEndGame viewEndGame;
     private ControlerClient controlerClient;
     private JButton connectButton;
+    private List<Integer> winningCampIds;
+    private List<String> playerNames;
+
 
 
     public ViewClient() {
@@ -31,8 +36,11 @@ public class ViewClient extends JPanel {
 
         this.start = new Start();
         this.viewPartie = new ViewPartie(this, null);
-        this.viewEndGame = new ViewEndGame("Fin de la partie");
 
+
+        this.playerNames = new ArrayList<>();
+
+        this.viewEndGame = new ViewEndGame("End Of The game", this.getWinningCampIds(), playerNames);
         this.setLayout(this.cardLayout);
         this.add(this.start, "1");
         this.add(this.viewPartie, "3");
@@ -66,7 +74,7 @@ public class ViewClient extends JPanel {
         return viewPartie;
     }
 
-    /**
+        /**
      *  Cette classe ne devrait pas avoir de méthode pour actualiser la partie
      */
     public void actualisePartie(Partie partie) {
@@ -98,5 +106,21 @@ public class ViewClient extends JPanel {
     public void addConnectedPlayers(String[] usernames, String[] ips) {
         this.viewWaiting.addPlayers(usernames, ips);
     }
-}
+    public void setEndGame(List<Integer> winningCampIds, List<String> playerNames) {
+        System.out.println("End game for camps in order of score:");
 
+        // Display camps and their ranks
+        for (int i = 0; i < winningCampIds.size(); i++) {
+            int campId = winningCampIds.get(i);
+            String playerName = playerNames.get(i);
+            System.out.println("Camp ID: " + campId + ", Player: " + playerName + ", Rank: " + (i + 1));
+        }
+
+        this.winningCampIds = winningCampIds;
+        this.viewEndGame.setTable(winningCampIds, playerNames); // Update to pass both lists
+    }
+
+    public List<Integer> getWinningCampIds() {
+        return this.winningCampIds;
+    }
+}
