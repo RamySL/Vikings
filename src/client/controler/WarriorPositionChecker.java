@@ -6,9 +6,12 @@ import server.model.Sheep;
 import server.model.Viking;
 
 public class WarriorPositionChecker extends VikingPositionChecker{
+    private Viking viking;
 
     public WarriorPositionChecker(ControlerParty controlerParty, Camp camp, Camp nextCamp, Viking viking) {
         super(controlerParty, camp, nextCamp, viking);
+        this.viking = viking;
+
     }
     /**
      * The run method of the thread that continuously checks the farmer's position.
@@ -27,7 +30,7 @@ public class WarriorPositionChecker extends VikingPositionChecker{
                 }
             }
 
-            super.checkNearSheep();
+            super.checkNearSheep(this.viking);
             this.update();
             try {
                 Thread.sleep(CHECK_INTERVAL_MS);

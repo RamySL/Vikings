@@ -32,7 +32,6 @@ public abstract class VikingPositionChecker extends Thread{
         this.camp = camp;
         this.nextCamp = nextCamp;
         this.viking = viking;
-
     }
 
     /**
@@ -41,8 +40,8 @@ public abstract class VikingPositionChecker extends Thread{
      * @param viking The viking whose position is being checked.
      * @return the nearest sheep to the viking.
      */
-    protected Sheep getNearestSheep(Viking viking) {
-        Point farmerPosition = viking.getPosition();
+    protected Sheep getNearestSheep() {
+        Point farmerPosition = this.viking.getPosition();
         double minDistance = Double.MAX_VALUE;
         Sheep nearestSheep = null;
         for (Sheep sheep : camp.getSheeps()) {
@@ -74,8 +73,8 @@ public abstract class VikingPositionChecker extends Thread{
      * Checks if the farmer is near a sheep and sends a message to the communication server if the state has changed.
      * It uses the distance tolerance to determine if the farmer is near a sheep.
      */
-    protected void checkNearSheep() {
-        Sheep nearestSheep = getNearestSheep(viking);
+    protected void checkNearSheep(Viking viking) {
+        Sheep nearestSheep = getNearestSheep();
         boolean nearSheep = isNearSheepWithMargin(viking, nearestSheep);
         if(nearestSheep != null) {
             this.controlerParty.setVikingNearSheep(nearSheep, viking.getId(), nearestSheep.getId());

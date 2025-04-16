@@ -101,7 +101,7 @@ public class Server {
         broadcast(FormatPacket.format("Partie",content), true);
         if (partie != null && !partie.isGameOver()) {
             String timerContent = gson.toJson(new PaquetTimer(partie.getRemainingTime()));
-            broadcast(FormatPacket.format("PaquetTimer", timerContent),partie.isGameOver() );
+            broadcast(FormatPacket.format("PaquetTimer", timerContent),!partie.isGameOver() );
         }
         if (partie!=null && partie.isGameOver()){
             String endGameContent = gson.toJson(new PaquetEndGame(getWinnerCampIds()));
