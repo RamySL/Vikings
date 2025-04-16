@@ -24,7 +24,7 @@ public class VikingRegenerator implements Runnable {
         this.locked = false;
     }
     private void checkAndLockIfNeeded() {
-        if (camp.getWarriors().size() > 14) {
+        if (camp.getWarriors().size() > 8) {
             lock();
         }
     }
@@ -57,7 +57,7 @@ public class VikingRegenerator implements Runnable {
                             return;
                         }
                         // Recheck the condition to possibly unlock
-                        if (camp.getWarriors().size() <= 14) {
+                        if (camp.getWarriors().size() <= 8) {
                             unlock();
                         }
                     }
@@ -73,7 +73,7 @@ public class VikingRegenerator implements Runnable {
                 int spacing = 40;
                 int index = camp.getWarriors().size();
 
-                int x = basePos.x-100 + (index * spacing)/2;
+                int x = basePos.x + (index * spacing)/2;
                 int y = basePos.y;
 
                 Point position = new Point(x, y);

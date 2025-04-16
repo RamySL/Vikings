@@ -99,8 +99,8 @@ public class ViewPartie extends JPanel {
          });
 
          // Initialize the progress bar
-         timeBar = new BarreDeTemps(2000);
-         timeBar.setTemps(2000);
+         timeBar = new BarreDeTemps(180);
+         timeBar.setTemps(180);
 
          // Add the progress bar to the bottom of the panel
          this.add(timeBar, BorderLayout.NORTH);

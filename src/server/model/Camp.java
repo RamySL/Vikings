@@ -60,7 +60,7 @@ public class Camp {
         Point topLeftCamp = Position.MAP_CAMPS_POSITION.get(this.id);
         Random random = new Random();
 
-        int warriorsCount = 8;
+        int warriorsCount = 4;
         int rows = 2;
         int cols = (int) Math.ceil(warriorsCount / (double) rows);
         int spacingX = Position.WIDTH / (cols + 1);
@@ -94,20 +94,6 @@ public class Camp {
             vikings.add(f);
         }
 
-        Sheep s1 = new Sheep(20, new Point(topLeftCamp.x + 10, topLeftCamp.y - 50), this.id, 6);
-        Sheep s2 = new Sheep(20, new Point(topLeftCamp.x + 30, topLeftCamp.y - 50), this.id, 5);
-        sheeps.add(s1);
-        sheeps.add(s2);
-        ressources.add(s1);
-        ressources.add(s2);
-
-
-        Cow c1 = new Cow(100, new Point(topLeftCamp.x + 10, topLeftCamp.y - 70), this.id, 6/*,this*/);
-        Cow c2 = new Cow(100, new Point(topLeftCamp.x + 30, topLeftCamp.y - 70), this.id, 5/*,this*/);
-        cows.add(c1);
-        cows.add(c2);
-        ressources.add(c1);
-        ressources.add(c2);
         // Ajout des cultures
         //Wheat v = new Wheat(100, new Point(70, 50), this.id, 0);
         Wheat v = new Wheat(100, new Point(topLeftCamp.x + 70, topLeftCamp.y - 50), this.id, 0);
