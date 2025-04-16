@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class Server {
 
-    private ServerSocket socket;
+    private transient ServerSocket socket;
     private ArrayList<ThreadCommunicationServer> clients;
     private int nbJoueurs;
     private Partie partie;
@@ -66,6 +66,8 @@ public class Server {
                threadCommunicationServer = new ThreadCommunicationServer(this, clientSoket, camp);
                this.clients.add(threadCommunicationServer);
                threadCommunicationServer.start();
+               threadCommunicationServer.setThreadCommunicationServer(camp);
+
 
            } catch (IOException e) {
                System.out.println("Erreur lors de la connexion");
@@ -74,7 +76,7 @@ public class Server {
        }
         createPartie(camps, timer);
         try {
-            Thread.sleep(3000);
+            Thread.sleep(0);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

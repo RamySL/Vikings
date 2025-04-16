@@ -21,7 +21,6 @@ public class GameTimer {
             public void run() {
                 if (remainingTime > 0) {
                     remainingTime--;
-                    System.out.println("Temps restant: " + remainingTime + " secondes");
                 } else {
                     timer.cancel();
                     if (onTimeUp != null) {

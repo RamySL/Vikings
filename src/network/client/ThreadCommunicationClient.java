@@ -43,6 +43,9 @@ public class ThreadCommunicationClient extends Thread {
     public void run() {
         while (true) {
             String msg = this.client.receiveMessage();
+            if(msg == null){
+                System.out.println("NIKMOK");
+            }
             reactMessage(msg);
         }
     }
@@ -87,6 +90,10 @@ public class ThreadCommunicationClient extends Thread {
                 PaquetEndGame paquetEndGame = gson.fromJson(wrapper.content, PaquetEndGame.class);
                 this.view.getViewPartie().setEndGame(paquetEndGame.getWinningCampIds());
                 this.view.changeCard("4");
+                break;
+            case "PacketNewWarrior":
+                PacketNewWarrior packetNewWarrior = gson.fromJson(wrapper.content, PacketNewWarrior.class);
+                this.controlerParty.addNewWarrior(packetNewWarrior.getWarriorId(), packetNewWarrior.getX(), packetNewWarrior.getY());
                 break;
             default:
                 System.out.println("Invalid message format");
