@@ -25,6 +25,7 @@ public class ViewClient extends JPanel {
     private ControlerClient controlerClient;
     private JButton connectButton;
 
+
     public ViewClient() {
         this.cardLayout = new CardLayout();
 

@@ -19,10 +19,7 @@ public class fermierAnim extends Thread{
         images.add(anim);
         images.add(new ImageIcon("src/ressources/images/animation/farmer/farmer_2.png").getImage());
         images.add(new ImageIcon("src/ressources/images/animation/farmer/farmer_3.png").getImage());
-        images_r = new ArrayList<>();
-        images_r.add(new ImageIcon("src/ressources/images/animation/farmer/farmer_1_r.png").getImage());
-        images_r.add(new ImageIcon("src/ressources/images/animation/farmer/farmer_2_r.png").getImage());
-        images_r.add(new ImageIcon("src/ressources/images/animation/farmer/farmer_3_r.png").getImage());
+
     }
 
     @Override

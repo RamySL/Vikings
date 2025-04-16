@@ -14,7 +14,6 @@ import server.model.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
-import java.util.Scanner;
 
 /**
  * Controler of the party
@@ -52,6 +51,21 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
         EventBus.getInstance().subscribe("AttackEvent", this::handleAttackEvent);
     }
 
+    public void addNewWarrior(int warriorId, int x, int y){
+        Point coordonnee = ViewPartie.pointModelToView(new Point(x,y));
+        Camp camp = determineSelectedCamp(coordonnee.x, coordonnee.y);
+        if (camp != null) {
+            Warrior newWarrior = (Warrior) determineSelectedEntity(x,y);
+
+            // Start a position checker thread for the new warrior
+            VikingPositionChecker positionChecker = new WarriorPositionChecker(this, camp, camp, newWarrior);
+            this.mapIdChecker.put(warriorId, positionChecker);
+            positionChecker.start();
+        } else {
+            System.err.println("Camp with ID  not found.");
+        }
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e instanceof EventInitCamp){
@@ -69,7 +83,6 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
 
             Camp camp = this.determineSelectedCamp(clickView.x, clickView.y);
             //this.viewPartie.panelHide();
-
 
             if (camp != null) {
                 selectedCamp = camp;
