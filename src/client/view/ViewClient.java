@@ -25,6 +25,7 @@ public class ViewClient extends JPanel {
     private ControlerClient controlerClient;
     private JButton connectButton;
 
+
     public ViewClient() {
         this.setPreferredSize(new Dimension(ViewPartie.WIDTH_VIEW, ViewPartie.HEIGHT_VIEW));
         this.cardLayout = new CardLayout();

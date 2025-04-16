@@ -1,56 +1,79 @@
 package client.view;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class vikingAnim extends Thread {
-    public static Image anim =  new ImageIcon("src/ressources/images/animation/vicking/idle_0.png").getImage();
-    private List<Image> images;
-    private List<Image> images_r;
-    public static boolean iSrunning = false; // pour savoir si l'on est en mouvement ou pas
-    public static boolean left = false; // pour la direction
-    private int delay = 125;
+    private List<Image> img_anim;
     private List<Image> degat_anim;
-    private List<Image> degat_anim_r;
     private List<Image> attack_anim;
-    private List<Image> attack_anim_r;
+    private Etat etat;
+    private int campID;
+    private int delay = 25;
 
-    public vikingAnim() {
-            images = new ArrayList<>();
-            images.add(anim);
-            images.add(new ImageIcon("src/ressources/images/animation/vicking/idle_1.png").getImage());
-            images.add(new ImageIcon("src/ressources/images/animation/vicking/idle_2.png").getImage());
-            images.add(new ImageIcon("src/ressources/images/animation/vicking/idle_3.png").getImage());
-            images_r = new ArrayList<>();
-            images_r.add(new ImageIcon("src/ressources/images/animation/vicking/idle_0_r.png").getImage());
-            images_r.add(new ImageIcon("src/ressources/images/animation/vicking/idle_1_r.png").getImage());
-            images_r.add(new ImageIcon("src/ressources/images/animation/vicking/idle_2_r.png").getImage());
-            images_r.add(new ImageIcon("src/ressources/images/animation/vicking/idle_3_r.png").getImage());
+
+    public vikingAnim(int campId) {
+        etat = Etat.Chill;
+        this.campID = campId;
+        switch (campId){
+            case 0:
+                img_anim = Animation.images_anim_0;
+                degat_anim = Animation.degat_anim_0;
+                attack_anim = Animation.attack_anim_0;
+                break;
+            case 1:
+                img_anim = Animation.images_anim_1;
+                degat_anim = Animation.degat_anim_1;
+                attack_anim = Animation.attack_anim_1;
+                break;
+            case 2:
+                img_anim = Animation.images_anim_2;
+                degat_anim = Animation.degat_anim_2;
+                attack_anim = Animation.attack_anim_2;
+                break;
+            case 3:
+                img_anim = Animation.images_anim_3;
+                degat_anim = Animation.degat_anim_3;
+                attack_anim = Animation.attack_anim_3;
+                break;
+        }
     }
 
-        @Override
+    public Etat getEtat() {
+        return etat;
+    }
+
+
+
+    public void setEtat(Etat etat) {
+        this.etat = etat;
+    }
+
+    @Override
         public void run() {
             try {
                 int i = 1;
                 while (true) { // à modifier pour definir la fin de jeu
-                    if (!iSrunning) {
-                        if (!left){
-                            anim = images.get(i);
-                            Thread.sleep(delay);
-                            i = (i + 1) % images.size();
-                            Thread.sleep(delay);
-                        }else {
-                            anim = images_r.get(i);
-                            Thread.sleep(delay);
-                            i = (i + 1) % images_r.size();
-                            Thread.sleep(delay);
-                        }
-                    }
+                    if (etat == Etat.Chill) {
+                        ViewPartie.images_anim.set(campID, img_anim.get(i));
+                        Thread.sleep(delay);
+                        i = (i + 1) % img_anim.size();
+                        Thread.sleep(delay);
+                    } else if (etat == Etat.Degat) {
+                        ViewPartie.images_anim.set(campID, degat_anim.get(i));
 
-                    // modifier ici pour rajouter l'anim si il y a mouvment, modifie aussi les variables au dessus
+                        Thread.sleep(delay);
+                        i = (i + 1) % degat_anim.size();
+                        Thread.sleep(delay);
+                    } else if (etat == Etat.Attack) {
+                        ViewPartie.images_anim.set(campID, attack_anim.get(i));
+
+                        Thread.sleep(delay);
+                        i = (i + 1) % attack_anim.size();
+                        Thread.sleep(delay);
+                    }
                 }
+
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

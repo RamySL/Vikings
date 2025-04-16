@@ -8,8 +8,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+
+import static client.view.Animation.images_anim_0;
 
 /**
  * Vue de la partie, Dessine tous les éléments du modèle
@@ -18,8 +21,17 @@ import java.util.List;
 
 
 public class ViewPartie extends JPanel {
+    private Animation animation = new Animation();
+
+    public static ArrayList<Image> images_anim;
+
+    private ArrayList<vikingAnim> vikings_thread;
+    vikingAnim c1 = new vikingAnim(0);
+    vikingAnim c2 = new vikingAnim(1);
+    vikingAnim c3 = new vikingAnim(2);
+    vikingAnim c4 = new vikingAnim(3);
+
     bleAnim bavp = new bleAnim();
-    vikingAnim vavp = new vikingAnim();
     cowAnim cavp = new cowAnim();
     fermierAnim favp = new fermierAnim();
     sheepAnim savp = new sheepAnim();
@@ -46,6 +58,8 @@ public class ViewPartie extends JPanel {
     private PanneauControle panneauControle ;  // Ajout du champ PanneauControle
     private int windowWidth = WIDTH_VIEW, windowHeight = HEIGHT_VIEW;
 
+    private boolean launched = false;
+
 
      /**
       * Constructeur de la vue de la partie
@@ -53,11 +67,23 @@ public class ViewPartie extends JPanel {
      public ViewPartie(ViewClient viewClient, Partie partieModel) {
 
          this.setPreferredSize(new Dimension(windowWidth, windowHeight));
+         images_anim = new ArrayList<>();
+         images_anim.add(new ImageIcon("src/ressources/animation/vicking/idle_0.png").getImage());
+         images_anim.add(new ImageIcon("src/ressources/animation/vicking/idle_0_c1.png").getImage());
+         images_anim.add(new ImageIcon("src/ressources/animation/vicking/idle_0_c2.png").getImage());
+         images_anim.add(new ImageIcon("src/ressources/animation/vicking/idle_0_c3.png").getImage());
+
+         vikings_thread = new ArrayList<>();
+         vikings_thread.add(c1);
+         vikings_thread.add(c2);
+         vikings_thread.add(c3);
+         vikings_thread.add(c4);
+
          bavp.start();
-         vavp.start();
          cavp.start();
          favp.start();
          savp.start();
+
          this.partieModel = partieModel;
          this.panneauControle = new PanneauControle(windowWidth,  windowHeight);
          this.panneauControle.setOpaque(false);
@@ -195,7 +221,7 @@ public class ViewPartie extends JPanel {
      * @param g2
      */
     private void drawCamp(Camp camp, Graphics2D g2) {
-        drawWarriors(camp.getWarriors(), g2);
+        drawWarriors(camp.getWarriors(), g2, camp);
         drawSheep(camp.getSheeps(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawCow(camp.getCows(), g2);
@@ -226,20 +252,32 @@ public class ViewPartie extends JPanel {
 
         }
     }
-    public void drawWarrior(Warrior warrior, Graphics2D g2) {
+    public void drawWarrior(Warrior warrior, Graphics2D g2, Camp camp) {
         g2.setColor(Color.RED);
         Point pointView = pointModelToView(warrior.getPosition());
         int width = Position.WIDTH_VIKINGS * RATIO_X;
         int height = Position.HEIGHT_VIKINGS * RATIO_Y;
-        //g2.fillRect(pointView.x - width / 2, pointView.y - height / 2, width, height);
-        g2.drawImage(vikingAnim.anim, pointView.x - width + 5, pointView.y - height , width*2, height*2, null);
+        switch (camp.getId()){
+            case 0:
+                g2.drawImage(images_anim.get(0), pointView.x - width + 5, pointView.y - height , width*2, height*2, null);
+                break;
+            case 1:
+                g2.drawImage(images_anim.get(1), pointView.x - width + 5, pointView.y - height , width*2, height*2, null);
+                break;
+            case 2:
+                g2.drawImage(images_anim.get(2), pointView.x - width + 5, pointView.y - height , width*2, height*2, null);
+                break;
+            case 3:
+                g2.drawImage(images_anim.get(3), pointView.x - width + 5, pointView.y - height , width*2, height*2, null);
+                break;
+        }
 
 
     }
 
-    public void drawWarriors(ArrayList<Warrior> warriors, Graphics2D g2) {
+    public void drawWarriors(ArrayList<Warrior> warriors, Graphics2D g2, Camp camp) {
         for (Warrior warrior : warriors) {
-            drawWarrior(warrior, g2);
+            drawWarrior(warrior, g2, camp);
         }
     }
 
@@ -289,6 +327,15 @@ public class ViewPartie extends JPanel {
         this.camp = partieModel.getCamp(this.camp_id);
         this.revalidate();
         this.repaint();
+
+        if(!launched){
+            this.launched = true;
+            int n = Array.getLength(this.partieModel.getCamps());
+            for(int i = 0; i < n; i++){
+                vikings_thread.get(i).start();
+            }
+
+        }
 
     }
 
@@ -386,5 +433,7 @@ public class ViewPartie extends JPanel {
     public void setEndGame(List<Integer> winningCampIds) {
         System.out.println("End game for camps: " + winningCampIds);
     }
+
+
 }
 
