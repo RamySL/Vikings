@@ -52,7 +52,8 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
     }
 
     public void addNewWarrior(int warriorId, int x, int y){
-        Camp camp = determineSelectedCamp(x, y);
+        Point coordonnee = ViewPartie.pointModelToView(new Point(x,y));
+        Camp camp = determineSelectedCamp(coordonnee.x, coordonnee.y);
         if (camp != null) {
             Warrior newWarrior = (Warrior) determineSelectedEntity(x,y);
 
