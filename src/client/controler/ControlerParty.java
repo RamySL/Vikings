@@ -145,7 +145,12 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
                     isFirstClickCamp = true;
                     if (isFirstClickEnemyCamp) {
                         // ouvrir un panneau pour demander de slect une ressource à attquer
-                        initAttack(camp);
+                        System.out.println("map : " + this.viewPartie.getCamp().getVikingsAttack());
+                        if(this.viewPartie.getCamp().getVikingsAttack().containsKey(camp.getId())){
+                            repli(camp);
+                        }else{
+                            initAttack(camp);
+                        }
                     } else {
                         if (camp.getId() == selectedCamp.getId()) {
                             // determiner la ressource slectionner
@@ -189,6 +194,15 @@ public class ControlerParty extends MouseAdapter implements AttackListener, Acti
         this.viewPartie.initAttack(camp);
         isFirstClickEnemyCamp = false;
     }
+
+    public void repli(Camp camp){
+        selectedCamp = camp;
+        this.viewPartie.panelSetVisibility(true);
+        this.viewPartie.repli(camp);
+        isFirstClickEnemyCamp = false;
+    }
+
+
 
     /**
      * Un méthode générique qui permet de déterminer si un click est sur un camp.

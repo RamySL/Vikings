@@ -11,6 +11,7 @@ public class PaquetRepli {
      * @param idCampAttaque ID du camp que mes vikings attaquent et depuis lequel ils doivent revenir
      */
     public PaquetRepli(int idCampAttaque) {
+
         this.idCampAttaque = idCampAttaque;
     }
 

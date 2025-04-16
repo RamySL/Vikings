@@ -239,7 +239,22 @@ public class SlidingMenu extends JPanel {
         plantButton.setVisible(false);
         eatButton.setVisible(false);
         harvestButton.setVisible(false);
+        repliButton.setVisible(false);
+    }
+
+    public void repli(Camp camp){
         repliButton.setVisible(true);
+        this.camp_to_attack = camp.getId();
+        attackButton.setVisible(false);
+        textFieldNbVikings.setVisible(false);
+        exitMenu.setVisible(true);
+        entityLabel.setText("Camp " + camp.getId() + ": " + camp.getUsername());
+        entityLabel.setVisible(true);
+        ressourceLabel.setText("<html>Choisit une<br>ressource</html>");
+        ressourceLabel.setVisible(true);
+        plantButton.setVisible(false);
+        eatButton.setVisible(false);
+        harvestButton.setVisible(false);
     }
 
 

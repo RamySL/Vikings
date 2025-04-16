@@ -38,4 +38,8 @@ public class  Enclos {
         return "Field " + id;
     }
 
+    public void addLivestock(Livestock livestock) {
+        livestocks.add(livestock);
+    }
+
 }

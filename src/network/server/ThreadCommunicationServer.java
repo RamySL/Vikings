@@ -126,7 +126,7 @@ public class ThreadCommunicationServer extends Thread{
                 int idCamp = paquetRepli.getIdCampAttaque();
                 Camp camp = this.server.getPartie().getCamp(idCamp);
 
-                camp.repli(idCamp);
+                this.camp.repli(idCamp);
 
                 System.out.println("Camp " + idCamp + " se replie.");
                 break;
