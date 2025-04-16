@@ -1,9 +1,5 @@
 package client.controler;
 
-import network.packets.FarmerFieldWrapper;
-import network.packets.FarmerSheepWrapper;
-import network.packets.FormatPacket;
-import network.server.ThreadCommunicationServer;
 import server.model.*;
 
 import java.awt.Point;
@@ -34,7 +30,7 @@ public class FarmerPositionChecker extends VikingPositionChecker {
                 }
             }
             checkFarmerNearField(this.farmer);
-            super.checkNearSheep(this.farmer);
+            super.checkNearLivestock(this.farmer);
             this.update();
             try {
                 Thread.sleep(CHECK_INTERVAL_MS);

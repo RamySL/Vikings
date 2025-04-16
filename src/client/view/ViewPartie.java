@@ -25,7 +25,7 @@ public class ViewPartie extends JPanel {
 
     public static ArrayList<Image> images_anim;
 
-    private Image bareer = new ImageIcon("src/ressources/images/animation/bareer.png").getImage();
+    private Image bareer = new ImageIcon("src/ressources/images/animation/enclos.png").getImage();
 
     private ArrayList<vikingAnim> vikings_thread;
     vikingAnim c1 = new vikingAnim(0);
@@ -224,22 +224,26 @@ public class ViewPartie extends JPanel {
      * @param g2
      */
     private void drawCamp(Camp camp, Graphics2D g2) {
+        drawBareer(camp.getEnclosses(), g2);
         drawWarriors(camp.getWarriors(), g2, camp);
         drawSheep(camp.getSheeps(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawCow(camp.getCows(), g2);
-        //drawBareer(camp, g2);
+
 
     }
 
-    /*
-    private void drawBareer(Camp camp, Graphics2D g2) {
 
-            Point topLeftCamp = Position.MAP_CAMPS_POSITION.get(camp.getId());
-            Point topLeftView = pointModelToView(topLeftCamp);
-            g2.drawImage(bareer, topLeftCamp.x + 30 - 10, topLeftCamp.y - 70, Position.WIDTH * RATIO_X, Position.HEIGHT * RATIO_Y, null);
+    private void drawBareer(ArrayList<Enclos> enclos, Graphics2D g2) {
+        for (Enclos e : enclos) {
+            Point pointView = e.getPosition();
+            Point topLeftView = pointModelToView(pointView);
+            int width = Position.WIDTH_ENCLOS * RATIO_X;
+            int height = Position.HEIGHT_ENCLOS * RATIO_Y;
+            g2.drawImage(bareer, topLeftView.x - width/2, topLeftView.y - height/2, width, height, null);
+        }
     }
-    */
+
 
     private void drawSheep(ArrayList<Sheep> sheep, Graphics2D g2) {
         for (Sheep l : sheep) {
@@ -412,6 +416,12 @@ public class ViewPartie extends JPanel {
         this.panneauControle.initAttack(camp);
     }
 
+    public void repli(Camp camp){
+        this.panneauControle.repli(camp);
+    }
+
+
+
     public void setAttack(int idRessource){
         this.panneauControle.setAttack(idRessource);
     }
@@ -446,6 +456,8 @@ public class ViewPartie extends JPanel {
     public void setTime(int time) {
         timeBar.setTemps(time);
     }
+
+
 
 
 

@@ -145,6 +145,10 @@ public class PanneauControle extends JPanel {
         this.slidingMenu.initAttack(camp);
     }
 
+    public void repli(Camp camp){
+        this.slidingMenu.repli(camp);
+    }
+
     public void setAttack(int idRessource){
         this.slidingMenu.setAttack(idRessource);
     }

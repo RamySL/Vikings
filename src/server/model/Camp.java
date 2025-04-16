@@ -148,19 +148,62 @@ public class Camp {
         fields.add(fi5);
         fields.add(fi6);
 
+        int xenclos1 = Position.WIDTH_ENCLOS / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100 - 40;
+        int yenclos1 = topLeftCamp.y - Position.HEIGHT / 2 + Position.HEIGHT_ENCLOS - (int) (Position.HEIGHT_ENCLOS * 1.4) + 20;
+        int xenclos2 = topLeftCamp.x + Position.WIDTH - prc1 * Position.WIDTH / 100 - Position.WIDTH_ENCLOS / 2 + 30;
+        int yenclos2 = -Position.HEIGHT_FIELD / 2 + topLeftCamp.y - prc1 * Position.HEIGHT / 100 - 7;
         Enclos e1 = new Enclos(
                 new Point(
-                        Position.WIDTH_ENCLOS / 2 + topLeftCamp.x + prc1 * Position.WIDTH / 100,
+                        xenclos1,
                         // On soustrait pour "descendre" dans un repère où Y+ = haut
-                        topLeftCamp.y - Position.HEIGHT / 2 + Position.HEIGHT_ENCLOS - (int) (Position.HEIGHT_ENCLOS * 1.4)
+                        yenclos1
                 ),
                 this.id, livestocks);
 
-        Enclos e2 = new Enclos(new Point(topLeftCamp.x + Position.WIDTH - prc1 * Position.WIDTH / 100 - Position.WIDTH_ENCLOS / 2,
-                -Position.HEIGHT_FIELD / 2 + topLeftCamp.y - prc1 * Position.HEIGHT / 100), this.id, livestocks);
+        Enclos e2 = new Enclos(new Point(xenclos2, yenclos2), this.id, livestocks);
+
+        Sheep s1 = new Sheep(100, new Point(xenclos1 - 5 , yenclos1), this.id, 6);
+        Sheep s2 = new Sheep(100, new Point(xenclos1 + 17, yenclos1), this.id, 5);
+        Sheep s3= new Sheep(100, new Point(xenclos1 - 5 , yenclos1 - 13), this.id, 6);
+        Sheep s4 = new Sheep(100, new Point(xenclos1 + 17, yenclos1 - 13), this.id, 5);
+        sheeps.add(s1);
+        sheeps.add(s2);
+        sheeps.add(s3);
+        sheeps.add(s4);
+        ressources.add(s1);
+        ressources.add(s2);
+        ressources.add(s3);
+        ressources.add(s4);
+
+
+        Cow c1 = new Cow(100, new Point(xenclos2 - 7, yenclos2), this.id, 6/*,this*/);
+        Cow c2 = new Cow(100, new Point(xenclos2 + 19, yenclos2), this.id, 5/*,this*/);
+        Cow c3 = new Cow(100, new Point(xenclos2 - 7, yenclos2 - 13), this.id, 5/*,this*/);
+        Cow c4 = new Cow(100, new Point(xenclos2 + 19, yenclos2 - 13), this.id, 5/*,this*/);
+
+        cows.add(c1);
+        cows.add(c2);
+        cows.add(c3);
+        cows.add(c4);
+
+        ressources.add(c1);
+        ressources.add(c2);
+        ressources.add(c3);
+        ressources.add(c4);
+
+        e1.addLivestock(s1);
+        e1.addLivestock(s2);
+        e1.addLivestock(s3);
+        e1.addLivestock(s4);
+
+        e2.addLivestock(c1);
+        e2.addLivestock(c2);
+        e2.addLivestock(c3);
+        e2.addLivestock(c4);
 
         enclosses.add(e1);
         enclosses.add(e2);
+
 
         // ajoute tout les objet de camp créer dans entities
         entities = new ArrayList<>();
@@ -168,6 +211,7 @@ public class Camp {
         entities.addAll(farmers);
         entities.addAll(sheeps);
         entities.addAll(wheats);
+        entities.addAll(cows);
 
         livestocks.addAll(sheeps);
         livestocks.addAll(cows);
@@ -221,7 +265,6 @@ public class Camp {
      * envoi n warrior pour attquer le camp avec l'id id
      * Précondition:  le nombre de guerriers soit suffisant
      * @param n
-     * @param id
      */
     public void attack(int n,Camp campSrc, Camp camp, Point dst, int idResource) {
 
@@ -230,13 +273,13 @@ public class Camp {
             warrior.moveAttack(dst,campSrc, camp, idResource);
             // add the warrior to the vikingsAttack
             if (this.vikingsAttack.containsKey(id)) {
-                this.vikingsAttack.get(id).add(warrior);
+                this.vikingsAttack.get(camp.getId()).add(warrior);
             } else {
                 ArrayList<Warrior> warriors = new ArrayList<>();
                 warriors.add(warrior);
-                this.vikingsAttack.put(id, warriors);
+                this.vikingsAttack.put(camp.getId(), warriors);
             }
-            warriorsInCamp.remove(i);
+            warriorsInCamp.remove(warrior);
         }
 
     }
@@ -256,15 +299,10 @@ public class Camp {
         System.out.println("Début du repli vers le camp " + this.id + " depuis le camp attaqué " + attackedCampId);
 
         for (Warrior warrior : attackingWarriors) {
-            Thread moveThread = new Thread(() -> {
-                warrior.move(dest);
-                synchronized (warriorsInCamp) {
-                    warriorsInCamp.add(warrior);
-                }
-            });
-            moveThread.start();
-        }
+            warrior.move(dest);
 
+        }
+        warriorsInCamp.addAll(attackingWarriors);
         vikingsAttack.remove(attackedCampId);
     }
 
@@ -291,6 +329,13 @@ public class Camp {
     public void vikingEats(Livestock animal) {
         // remove the livestock from the camp
         this.removeLiveStock(animal);
+        this.addRessource(animal);
+        this.entities.remove(animal);
+        if(animal instanceof Sheep){
+            this.sheeps.remove((Sheep)animal);
+        }else if(animal instanceof Cow){
+            this.cows.remove((Cow)animal);
+        }
         // increase the strength of the camp
         this.increaseStrength(animal.getHealth() * Viking.getCoeffStrength());
     }
@@ -535,6 +580,14 @@ public class Camp {
 
     public void removeRessource(Entity e){
         this.ressources.remove(e);
+    }
+
+    public ArrayList<Enclos> getEnclosses() {
+        return enclosses;
+    }
+
+    public HashMap<Integer, ArrayList<Warrior>> getVikingsAttack() {
+        return vikingsAttack;
     }
 }
 
