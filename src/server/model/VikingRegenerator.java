@@ -24,7 +24,7 @@ public class VikingRegenerator implements Runnable {
         this.locked = false;
     }
     private void checkAndLockIfNeeded() {
-        if (camp.getWarriors().size() > 4) {
+        if (camp.getWarriors().size() > 8) {
             lock();
         }
     }
@@ -57,7 +57,7 @@ public class VikingRegenerator implements Runnable {
                             return;
                         }
                         // Recheck the condition to possibly unlock
-                        if (camp.getWarriors().size() <= 4) {
+                        if (camp.getWarriors().size() <= 8) {
                             unlock();
                         }
                     }
@@ -67,18 +67,22 @@ public class VikingRegenerator implements Runnable {
 
             try {
                 float health = 100.0f;
-
+                Point basePos = Position.MAP_CAMPS_POSITION.get(camp.getId());
                 TimeUnit.SECONDS.sleep(5);
-                Point pos= Position.MAP_CAMPS_POSITION.get(camp.getId());
-                Point position = new Point(pos.x+100, pos.y);
 
+                int spacing = 40;
+                int index = camp.getWarriors().size();
 
+                int x = basePos.x + (index * spacing)/2;
+                int y = basePos.y;
+
+                Point position = new Point(x, y);
                 Warrior newWarrior = new Warrior(health, position, camp.getId());
                 newWarrior.setId(camp.generateNewId());
 
                 camp.addWarrior(newWarrior);
 
-                PacketNewWarrior packet = new PacketNewWarrior(newWarrior.getId(), newWarrior.getPosition().x, newWarrior.getPosition().y);
+                PacketNewWarrior packet = new PacketNewWarrior(newWarrior.getId(), position.x, position.y);
                 String packetJson = new Gson().toJson(packet);
                 threadCommunicationServer.sendMessage(FormatPacket.format("PacketNewWarrior", packetJson), true);
 

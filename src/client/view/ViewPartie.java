@@ -99,8 +99,8 @@ public class ViewPartie extends JPanel {
          });
 
          // Initialize the progress bar
-         timeBar = new BarreDeTemps(20);
-         timeBar.setTemps(20);
+         timeBar = new BarreDeTemps(180);
+         timeBar.setTemps(180);
 
          // Add the progress bar to the bottom of the panel
          this.add(timeBar, BorderLayout.NORTH);
@@ -224,12 +224,11 @@ public class ViewPartie extends JPanel {
      * @param g2
      */
     private void drawCamp(Camp camp, Graphics2D g2) {
+        drawBareer(camp.getEnclosses(), g2);
         drawWarriors(camp.getWarriors(), g2, camp);
         drawSheep(camp.getSheeps(), g2);
         drawFarmers(camp.getFarmers(), g2);
         drawCow(camp.getCows(), g2);
-        drawBareer(camp.getEnclosses(), g2);
-
     }
 
 

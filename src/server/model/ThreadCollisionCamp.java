@@ -9,7 +9,7 @@ import java.util.TreeSet;
 public class ThreadCollisionCamp extends Thread {
     public static final int CHECK_INTERVAL_MS = 100;
     // le max que deux entité peuvent être proches
-    public static final int CLOSEST = Position.WIDTH_VIKINGS + 2;
+    public static final int CLOSEST = Position.WIDTH_VIKINGS - 5;
     private Camp camp;
     private TreeSet<Entity> entities;
 

@@ -60,20 +60,35 @@ public class Camp {
         Point topLeftCamp = Position.MAP_CAMPS_POSITION.get(this.id);
         Random random = new Random();
 
-        for (int i = 0; i < 8; i++) {
-            int x = random.nextInt(Position.WIDTH + 1);  // +1 pour inclure WIDTH
-            int y = random.nextInt(Position.HEIGHT + 1); // +1 pour inclure HEIGHT
-            Point p = new Point(topLeftCamp.x + x, topLeftCamp.y - y);
-            Warrior v = new Warrior(100, p, i); // on utilise 'i' comme identifiant
-            warriors.add(v);
-            warriorsInCamp.add(v);
-            vikings.add(v);
-        }
+        int warriorsCount = 4;
+        int rows = 2;
+        int cols = (int) Math.ceil(warriorsCount / (double) rows);
+        int spacingX = Position.WIDTH / (cols + 1);
+        int spacingY = Position.HEIGHT / (rows +1);
 
-        for (int i = 0; i < 3; i++) {
-            int x = random.nextInt(Position.WIDTH + 1);
-            int y = random.nextInt(Position.HEIGHT + 1);
-            Point p = new Point(topLeftCamp.x + x, topLeftCamp.y - y);
+        int warriorId = 0;
+        for (int row = 1; row <= rows; row++) {
+            for (int col = 1; col <= cols && warriorId < warriorsCount; col++) {
+                int x = topLeftCamp.x + spacingX * col;
+                int y = topLeftCamp.y - spacingY * row;
+                Point p = new Point(x, y);
+                Warrior w = new Warrior(100, p, warriorId);
+                warriors.add(w);
+                warriorsInCamp.add(w);
+                vikings.add(w);
+                warriorId++;
+            }
+        }
+        int farmersCount = 3;
+        cols = farmersCount;
+        rows = 1;
+        spacingX = Position.WIDTH / (cols + 1);
+        spacingY = Position.HEIGHT / 6;  // on les place plus haut dans le camp (ex : en haut à gauche)
+
+        for (int i = 0; i < farmersCount; i++) {
+            int x = topLeftCamp.x + spacingX * (i + 1);
+            int y = topLeftCamp.y - spacingY;
+            Point p = new Point(x, y);
             Farmer f = new Farmer(100, p, i);
             farmers.add(f);
             vikings.add(f);
