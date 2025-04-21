@@ -16,7 +16,7 @@ public class BarreDeTemps extends JComponent {
         this.tempsActuelle = tempsMax;
         this.setPreferredSize(new Dimension(200, 40));
         try {
-            horlogeImage = ImageIO.read(getClass().getResource("/assets/horloge_pixel.png"));
+            horlogeImage = ImageIO.read(getClass().getResource("/ressources/images/horloge_pixel.png"));
         } catch (IOException | IllegalArgumentException e) {
             System.err.println("Image de l'horloge introuvable !");
             horlogeImage = null;

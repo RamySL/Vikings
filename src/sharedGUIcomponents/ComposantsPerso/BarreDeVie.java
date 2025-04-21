@@ -16,7 +16,7 @@ public class BarreDeVie extends JComponent {
         this.vieActuelle = vieMax;
         this.setPreferredSize(new Dimension(200, 20)); // ajustable selon le sprite
         try {
-            coeurImage = ImageIO.read(getClass().getResource("/assets/coeur_pixel.png"));
+            coeurImage = ImageIO.read(getClass().getResource("/ressources/images/coeur_pixel.png"));
         } catch (IOException | IllegalArgumentException e) {
             System.err.println("Image du cœur introuvable !");
             coeurImage = null;
